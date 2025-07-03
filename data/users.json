@@ -12,10 +12,10 @@
     "market": "JP",
     "preferredChannel": "LINE",
     "balance": {
-      "total": 800,
-      "available": 800,
+      "total": 2150,
+      "available": 2150,
       "used": 0,
-      "version": 2
+      "version": 11
     }
   },
   "user_002": {
@@ -30,10 +30,10 @@
     "market": "HK",
     "preferredChannel": "WECHAT",
     "balance": {
-      "total": 5000,
-      "available": 5000,
+      "total": 19700,
+      "available": 19700,
       "used": 0,
-      "version": 2
+      "version": 16
     }
   },
   "user_003": {
@@ -48,10 +48,10 @@
     "market": "JP",
     "preferredChannel": "WECHAT",
     "balance": {
-      "total": 0,
-      "available": 0,
+      "total": 1450,
+      "available": 1450,
       "used": 0,
-      "version": 6
+      "version": 20
     }
   },
   "user_004": {
@@ -66,10 +66,10 @@
     "market": "HK",
     "preferredChannel": "LINE",
     "balance": {
-      "total": 0,
-      "available": 0,
+      "total": 5800,
+      "available": 5800,
       "used": 0,
-      "version": 1
+      "version": 7
     }
   },
   "user_005": {
@@ -84,10 +84,10 @@
     "market": "JP",
     "preferredChannel": "WECHAT",
     "balance": {
-      "total": 0,
-      "available": 0,
+      "total": 1350,
+      "available": 1350,
       "used": 0,
-      "version": 2
+      "version": 11
     }
   },
   "user_006": {
@@ -103,10 +103,10 @@
     "market": "TW",
     "preferredChannel": "LINE",
     "balance": {
-      "total": 0,
-      "available": 0,
+      "total": 450,
+      "available": 450,
       "used": 0,
-      "version": 1
+      "version": 10
     }
   },
   "user_007": {
@@ -121,10 +121,10 @@
     "market": "TW",
     "preferredChannel": "WECHAT",
     "balance": {
-      "total": 0,
-      "available": 0,
+      "total": 2400,
+      "available": 2400,
       "used": 0,
-      "version": 1
+      "version": 10
     }
   },
   "user_008": {
@@ -139,10 +139,10 @@
     "market": "HK",
     "preferredChannel": "WECHAT",
     "balance": {
-      "total": 8000,
-      "available": 8000,
+      "total": 57500,
+      "available": 57500,
       "used": 0,
-      "version": 2
+      "version": 12
     }
   },
   "user_009": {
@@ -157,10 +157,10 @@
     "market": "JP",
     "preferredChannel": "LINE",
     "balance": {
-      "total": 0,
-      "available": 0,
+      "total": 3000,
+      "available": 3000,
       "used": 0,
-      "version": 1
+      "version": 5
     }
   },
   "user_010": {
@@ -179,7 +179,34 @@
       "total": 3000,
       "available": 3000,
       "used": 0,
-      "version": 2
+      "version": 9
+    }
+  },
+  "user_011": {
+    "consumerId": "user_011",
+    "balance": {
+      "total": 6000,
+      "available": 6000,
+      "used": 0,
+      "version": 5
+    }
+  },
+  "user_012": {
+    "consumerId": "user_012",
+    "balance": {
+      "total": 0,
+      "available": 0,
+      "used": 0,
+      "version": 5
+    }
+  },
+  "user_test": {
+    "consumerId": "user_test",
+    "balance": {
+      "total": 11000,
+      "available": 11000,
+      "used": 0,
+      "version": 3
     }
   }
 }

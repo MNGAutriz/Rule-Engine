@@ -2,616 +2,705 @@ const { Engine } = require('json-rules-engine');
 const consumerService = require('../services/consumerService');
 const CampaignService = require('../services/CampaignService');
 const FactsEngine = require('./FactsEngine');
-const RuleDefinitions = require('./RuleDefinitions');
+const fs = require('fs');
+const path = require('path');
 const { v4: uuidv4 } = require('uuid');
 
 /**
  * Main Loyalty Engine - Orchestrates rule evaluation and point calculation
- * Follows json-rules-engine patterns with proper OOP design
+ * Follows json-rules-engine patterns with proper event-driven architecture
+ * Strictly adheres to generalized input/output templates
  */
 class LoyaltyEngine {
   constructor() {
     this.campaignService = new CampaignService();
     this.factsEngine = new FactsEngine();
-    this.ruleDefinitions = new RuleDefinitions();
-    this.pointCalculators = new Map();
-    this.initializePointCalculators();
+    this.engine = new Engine();
+    this.pointBreakdown = [];
+    this.errors = [];
+    this.currentEventData = null; // Store current event data for handlers
+    this.initialized = false; // Track initialization state
   }
 
   /**
-   * Initialize point calculators for different rule types
-   * STRICTLY FOLLOWING THE RULES TABLE SPECIFICATIONS
+   * Initialize the engine with facts, rules, and event handlers
+   * Following json-rules-engine patterns strictly
    */
-  initializePointCalculators() {
-    // ACCOUNT REGISTRATION
-    // JP: 150 MD (only once per consumer if campaign is active)
-    // HK/TW: 0 (No signup bonus)
-    // Trigger: INTERACTION_ADD_POINT_BY_REGISTER / USER_ENROLLED
-    this.pointCalculators.set('INTERACTION_REGISTRY_POINT', (event, eventData) => {
-      const { market } = eventData;
-      console.log('=== REGISTRATION CALCULATOR ===');
-      console.log('Market:', market);
-      
-      if (market === 'JP') {
-        console.log('JP Registration: 150 MD awarded');
-        return 150; // JP: 150 MD only once per consumer if campaign is active
-      }
-      
-      console.log('HK/TW Registration: 0 MD (no signup bonus)');
-      return 0; // HK/TW: No signup bonus
-    });
+  async initializeEngine() {
+    if (this.initialized) return; // Prevent double initialization
+    
+    // Add facts to engine
+    await this.factsEngine.addFactsToEngine(this.engine);
+    
+    // Load rules from JSON files
+    await this.loadRulesFromFiles();
+    
+    // Initialize event handlers (pure event-driven approach)
+    this.initializeEventHandlers();
+    
+    this.initialized = true;
+    console.log('✅ Loyalty Engine initialized with json-rules-engine patterns');
+  }
 
-    // BASE PURCHASE
-    // JP: 1 MD per JPY 10 spent - Formula: amount × 0.1 × 1
-    // HK/TW: 1 MD per HKD/TWD spent based on SRP (retail price)
-    // Trigger: ORDER_ADD_POINT / ORDER_COMPLETED
-    this.pointCalculators.set('ORDER_BASE_POINT', (event, eventData) => {
-      const { market, attributes = {} } = eventData;
-      console.log('=== BASE PURCHASE CALCULATOR ===');
-      console.log('Market:', market);
-      console.log('Attributes:', attributes);
-      
-      if (market === 'JP') {
-        // JP: 1 MD per JPY 10 spent - Formula: amount × 0.1 × 1
-        const amount = attributes.amount || 0;
-        const points = Math.floor(amount * 0.1);
-        console.log('JP Base Purchase: amount =', amount, 'JPY, formula = amount × 0.1 =', points, 'MD');
-        return points;
-      }
-      
-      if (market === 'HK' || market === 'TW') {
-        // HK/TW: 1 MD per HKD/TWD spent based on SRP (retail price)
-        // Uses SRP, not paid price. Example: 3000 HKD basket = 3000 MD
-        const srpAmount = attributes.srpAmount || attributes.amount || 0;
-        const points = Math.floor(srpAmount);
-        console.log('HK/TW Base Purchase: SRP amount =', srpAmount, ', points =', points, 'MD');
-        return points;
-      }
-      
-      console.log('No matching market for ORDER_BASE_POINT');
-      return 0;
-    });
+  /**
+   * Load rules from JSON files in the rules directory
+   */
+  async loadRulesFromFiles() {
+    const rulesDir = path.join(__dirname, '../rules');
+    
+    if (!fs.existsSync(rulesDir)) {
+      console.warn('Rules directory not found, creating default rules...');
+      await this.createDefaultRules();
+      return;
+    }
 
-    // 2X PURCHASE IN 60 DAYS
-    // JP: 2× MD multiplier if 2nd purchase is within 60 days
-    // HK/TW: Based on FLEXIBLE_CONSUMER_STATE_MULTIPLIER
-    // Trigger: ORDER_MULTIPLE_POINT / FLEXIBLE_CONSUMER_STATE_MULTIPLIER
-    this.pointCalculators.set('ORDER_MULTIPLE_POINT', (event, eventData) => {
-      const { market, attributes = {} } = eventData;
-      console.log('=== 2X PURCHASE CALCULATOR ===');
-      console.log('Market:', market);
-      
-      if (market === 'JP') {
-        // JP: 2× MD multiplier if 2nd purchase is within 60 days
-        // This returns the ADDITIONAL points to make it 2× total
-        const basePoints = Math.floor((attributes.amount || 0) * 0.1);
-        console.log('JP 2X Purchase: base points =', basePoints, ', additional points =', basePoints);
-        return basePoints; // Additional points to make total 2× base
-      }
-      
-      // HK/TW: Based on FLEXIBLE_CONSUMER_STATE_MULTIPLIER
-      const bonus = Math.floor(event.params?.multipleOrderBonus || 0);
-      console.log('HK/TW Multiple Order: bonus =', bonus, 'MD');
-      return bonus;
-    });
-
-    // CAMPAIGN-BASED MULTIPLIER
-    // JP: E.g., 1.5× during campaigns (Valentine's, Golden Week, etc.)
-    // HK/TW: Flexible Bonus MD or Multiplier (e.g., Lunar New Year bonus +300 MD)
-    // Trigger: ORDER_MULTIPLE_POINT_LIMIT / FLEXIBLE_CAMPAIGN_BONUS
-    this.pointCalculators.set('FLEXIBLE_CAMPAIGN_BONUS', (event, eventData) => {
-      const { market, attributes = {} } = eventData;
-      console.log('=== CAMPAIGN BONUS CALCULATOR ===');
-      console.log('Market:', market);
-      
-      if (market === 'JP') {
-        // JP: E.g., 1.5× during campaigns
-        const multiplier = event.params?.multiplier || 1.5;
-        const basePoints = Math.floor((attributes.amount || 0) * 0.1);
-        const additionalPoints = Math.floor(basePoints * (multiplier - 1.0));
-        console.log('JP Campaign: multiplier =', multiplier, ', base =', basePoints, ', additional =', additionalPoints);
-        return additionalPoints; // Additional points from multiplier
-      }
-      
-      // HK/TW: Flexible Bonus MD (e.g., +300 MD)
-      const fixedBonus = Math.floor(event.params?.fixedBonus || 0);
-      console.log('HK/TW Campaign: fixed bonus =', fixedBonus, 'MD');
-      return fixedBonus;
-    });
-
-    // BOTTLE RECYCLING
-    // JP: 50 MD per bottle, up to 5x/year (250 MD max)
-    // HK/TW: (To be validated per local policy)
-    // Trigger: INTERACTION_ADJUST_POINT_TIMES_PER_YEAR
-    this.pointCalculators.set('INTERACTION_ADJUST_POINT_TIMES_PER_YEAR', (event, eventData) => {
-      const { market } = eventData;
-      const recycledCount = eventData.attributes?.recycledCount || 0;
-      console.log('=== BOTTLE RECYCLING CALCULATOR ===');
-      console.log('Market:', market, ', bottles:', recycledCount);
-      
-      if (market === 'JP') {
-        // JP: 50 MD per bottle, up to 5x/year (250 MD max)
-        const maxBottlesPerYear = 5;
-        const pointsPerBottle = 50;
-        const actualCount = Math.min(recycledCount, maxBottlesPerYear);
-        const points = Math.floor(actualCount * pointsPerBottle);
-        console.log('JP Recycling:', actualCount, 'bottles × 50 MD =', points, 'MD (max 5 bottles/year)');
-        return points;
-      }
-      
-      // HK/TW: To be validated per local policy
-      const pointsPerBottle = event.params?.pointsPerBottle || 50;
-      const points = Math.floor(recycledCount * pointsPerBottle);
-      console.log('HK/TW Recycling:', recycledCount, 'bottles ×', pointsPerBottle, 'MD =', points, 'MD');
-      return points;
-    });
-
-    // SKIN ASSESSMENT (MR TEST)
-    // JP: 75 MD if completed within X days after first purchase
-    // HK/TW: (To be validated)
-    // Trigger: INTERACTION_ADJUST_POINT_BY_FIRST_ORDER_LIMIT_DAYS
-    this.pointCalculators.set('INTERACTION_ADJUST_POINT_BY_FIRST_ORDER_LIMIT_DAYS', (event, eventData) => {
-      const { market } = eventData;
-      console.log('=== SKIN TEST CALCULATOR ===');
-      console.log('Market:', market);
-      
-      if (market === 'JP') {
-        console.log('JP Skin Test: 75 MD awarded');
-        return 75; // JP: 75 MD if completed within X days after first purchase
-      }
-      
-      // HK/TW: To be validated
-      const skinTestBonus = Math.floor(event.params?.skinTestBonus || 75);
-      console.log('HK/TW Skin Test:', skinTestBonus, 'MD');
-      return skinTestBonus;
-    });
-
-    // VIP STATUS MULTIPLIER
-    // JP: (Not used) - No current implementation in JP
-    // HK/TW: Bonus points if member and counter are in uploaded VIP list
-    // Trigger: FLEXIBLE_VIP_MULTIPLIER
-    this.pointCalculators.set('FLEXIBLE_VIP_MULTIPLIER', (event, eventData) => {
-      const { market, attributes = {} } = eventData;
-      console.log('=== VIP MULTIPLIER CALCULATOR ===');
-      console.log('Market:', market);
-      
-      if (market === 'JP') {
-        console.log('JP VIP: Not used (0 MD)');
-        return 0; // JP: Not used
-      }
-      
-      if (market === 'HK' || market === 'TW') {
-        // HK/TW: Bonus points if member and counter are in uploaded VIP list
-        const multiplier = event.params?.multiplier || 2.0;
-        const baseAmount = attributes.srpAmount || attributes.amount || 0;
-        const basePoints = Math.floor(baseAmount);
-        const additionalPoints = Math.floor(basePoints * (multiplier - 1.0));
-        console.log('HK/TW VIP: base =', basePoints, ', multiplier =', multiplier, ', additional =', additionalPoints);
-        return additionalPoints; // Additional points beyond base
-      }
-      
-      return 0;
-    });
-
-    // BIRTH MONTH BONUS (1ST PURCHASE)
-    // JP: (Not active) - Not mentioned in JP specs
-    // HK/TW: Bonus multiplier or MD if first purchase is within consumer's birth month
-    // Trigger: FIRST_PURCHASE_BIRTH_MONTH_BONUS
-    this.pointCalculators.set('FIRST_PURCHASE_BIRTH_MONTH_BONUS', (event, eventData) => {
-      const { market, attributes = {} } = eventData;
-      console.log('=== BIRTH MONTH BONUS CALCULATOR ===');
-      console.log('Market:', market);
-      
-      if (market === 'JP') {
-        console.log('JP Birth Month: Not active (0 MD)');
-        return 0; // JP: Not active
-      }
-      
-      if (market === 'HK' || market === 'TW') {
-        // HK/TW: Bonus multiplier or MD if first purchase is within consumer's birth month
-        const baseAmount = attributes.srpAmount || attributes.amount || 0;
-        const bonusPercentage = event.params?.bonusPercentage || 0.1; // 10% bonus
-        const bonusPoints = Math.floor(baseAmount * bonusPercentage);
-        console.log('HK/TW Birth Month: base =', baseAmount, ', bonus % =', bonusPercentage, ', points =', bonusPoints);
-        return bonusPoints;
-      }
-      
-      return 0;
-    });
-
-    // BASKET THRESHOLD BONUS
-    // JP: (Not active) - May be future scope
-    // HK/TW: Bonus if basket value (SRP) exceeds threshold (e.g., 5,000 HKD/TWD)
-    // Trigger: FLEXIBLE_BASKET_AMOUNT
-    this.pointCalculators.set('FLEXIBLE_BASKET_AMOUNT', (event, eventData) => {
-      const { market, attributes = {} } = eventData;
-      console.log('=== BASKET THRESHOLD CALCULATOR ===');
-      console.log('Market:', market);
-      
-      if (market === 'JP') {
-        console.log('JP Basket Threshold: Not active (0 MD)');
-        return 0; // JP: Not active
-      }
-      
-      if (market === 'HK' || market === 'TW') {
-        // HK/TW: Bonus if basket value (SRP) exceeds threshold
-        const srpAmount = attributes.srpAmount || 0;
-        const threshold = event.params?.threshold || 5000;
-        const bonus = event.params?.bonus || 200;
+    const ruleFiles = fs.readdirSync(rulesDir).filter(file => file.endsWith('.json'));
+    
+    for (const file of ruleFiles) {
+      const filePath = path.join(rulesDir, file);
+      try {
+        const rulesData = JSON.parse(fs.readFileSync(filePath, 'utf8'));
         
-        if (srpAmount >= threshold) {
-          console.log('HK/TW Basket Threshold: SRP =', srpAmount, ', threshold =', threshold, ', bonus =', bonus);
-          return Math.floor(bonus);
-        } else {
-          console.log('HK/TW Basket Threshold: SRP =', srpAmount, '< threshold', threshold, '(no bonus)');
+        // Add each rule to the engine
+        for (const rule of rulesData) {
+          this.engine.addRule(rule);
         }
+        
+        console.log(`✅ Loaded rules from ${file}`);
+      } catch (error) {
+        console.error(`Error loading rules from ${file}:`, error);
       }
-      
-      return 0;
+    }
+  }
+
+  /**
+   * Initialize event handlers following json-rules-engine event-driven patterns
+   * Dynamic event handlers that calculate points based on rule parameters
+   */
+  initializeEventHandlers() {
+    // Universal event handler for all rule types
+    // This follows the json-rules-engine pattern where events are data-driven
+    this.engine.on('INTERACTION_REGISTRY_POINT', this.createDynamicEventHandler('INTERACTION_REGISTRY_POINT'));
+    this.engine.on('ORDER_BASE_POINT', this.createDynamicEventHandler('ORDER_BASE_POINT'));
+    this.engine.on('ORDER_MULTIPLE_POINT', this.createDynamicEventHandler('ORDER_MULTIPLE_POINT'));
+    this.engine.on('FLEXIBLE_CAMPAIGN_BONUS', this.createDynamicEventHandler('FLEXIBLE_CAMPAIGN_BONUS'));
+    this.engine.on('FLEXIBLE_VIP_MULTIPLIER', this.createDynamicEventHandler('FLEXIBLE_VIP_MULTIPLIER'));
+    this.engine.on('FLEXIBLE_BASKET_AMOUNT', this.createDynamicEventHandler('FLEXIBLE_BASKET_AMOUNT'));
+    this.engine.on('FLEXIBLE_PRODUCT_MULTIPLIER', this.createDynamicEventHandler('FLEXIBLE_PRODUCT_MULTIPLIER'));
+    this.engine.on('FLEXIBLE_COMBO_PRODUCT_MULTIPLIER', this.createDynamicEventHandler('FLEXIBLE_COMBO_PRODUCT_MULTIPLIER'));
+    this.engine.on('INTERACTION_ADJUST_POINT_TIMES_PER_YEAR', this.createDynamicEventHandler('INTERACTION_ADJUST_POINT_TIMES_PER_YEAR'));
+    this.engine.on('INTERACTION_ADJUST_POINT_BY_FIRST_ORDER_LIMIT_DAYS', this.createDynamicEventHandler('INTERACTION_ADJUST_POINT_BY_FIRST_ORDER_LIMIT_DAYS'));
+    this.engine.on('FIRST_PURCHASE_BIRTH_MONTH_BONUS', this.createDynamicEventHandler('FIRST_PURCHASE_BIRTH_MONTH_BONUS'));
+    this.engine.on('INTERACTION_ADJUST_POINT_BY_MANAGER', this.createDynamicEventHandler('INTERACTION_ADJUST_POINT_BY_MANAGER'));
+    this.engine.on('GIFT_REDEEM', this.createDynamicEventHandler('GIFT_REDEEM'));
+    this.engine.on('LOYALTY_BURN', this.createDynamicEventHandler('LOYALTY_BURN'));
+
+    // Generic success handler for logging
+    this.engine.on('success', (event, almanac, ruleResult) => {
+      console.log(`✅ Rule triggered: ${event.type}`, {
+        params: event.params,
+        rule: ruleResult?.rule?.name || ruleResult?.name || 'Unnamed rule'
+      });
     });
 
-    // PRODUCT-BASED MULTIPLIER
-    // JP: (Not used currently) - May apply to future campaigns
-    // HK/TW: Specific SK-II products (e.g., FTE) have multipliers like 1.5×
-    // Trigger: FLEXIBLE_PRODUCT_MULTIPLIER
-    this.pointCalculators.set('FLEXIBLE_PRODUCT_MULTIPLIER', (event, eventData) => {
-      const { market, attributes = {} } = eventData;
-      console.log('=== PRODUCT MULTIPLIER CALCULATOR ===');
-      console.log('Market:', market);
-      
-      if (market === 'JP') {
-        console.log('JP Product Multiplier: Not used currently (0 MD)');
-        return 0; // JP: Not used currently
+    // Add fact definitions to the engine immediately
+    this.engine.addFact('params', (params, almanac) => {
+      return params;
+    });
+  }
+
+  /**
+   * Create a dynamic event handler that calculates points based on rule parameters
+   * This is the core of the data-driven approach - no hardcoded logic
+   */
+  createDynamicEventHandler(eventType) {
+    return async (event, almanac) => {
+      try {
+        const market = await almanac.factValue('market');
+        
+        // Get data from the current event data stored during processing
+        const eventData = this.currentEventData || {};
+        const amount = eventData.attributes?.amount || 0;
+        const srpAmount = eventData.attributes?.srpAmount || 0;
+        const recycledCount = eventData.attributes?.recycledCount || 0;
+        const adjustedPoints = eventData.attributes?.adjustedPoints || 0;
+        const giftValue = eventData.attributes?.giftValue || 0;
+        const burnAmount = eventData.attributes?.burnAmount || 0;
+        
+        console.log(`Processing ${eventType} - market: ${market}, amount: ${amount}, srpAmount: ${srpAmount}`);
+        
+        let points = 0;
+        const params = event; // In json-rules-engine, the event object IS the params
+        
+        // Calculate points based on event type and parameters
+        switch (eventType) {
+          case 'INTERACTION_REGISTRY_POINT':
+            points = this.calculateRegistrationPoints(market, params);
+            break;
+            
+          case 'ORDER_BASE_POINT':
+            points = this.calculateBasePoints(market, amount, srpAmount, params);
+            break;
+            
+          case 'ORDER_MULTIPLE_POINT':
+            points = this.calculateMultipleOrderPoints(market, amount, srpAmount, params);
+            break;
+            
+          case 'FLEXIBLE_CAMPAIGN_BONUS':
+            points = this.calculateCampaignBonus(market, amount, srpAmount, params);
+            break;
+            
+          case 'FLEXIBLE_VIP_MULTIPLIER':
+            points = this.calculateVIPMultiplier(market, amount, srpAmount, params);
+            break;
+            
+          case 'FLEXIBLE_BASKET_AMOUNT':
+            points = this.calculateBasketThreshold(market, srpAmount, params);
+            break;
+            
+          case 'FLEXIBLE_PRODUCT_MULTIPLIER':
+            points = this.calculateProductMultiplier(market, amount, srpAmount, params);
+            break;
+            
+          case 'FLEXIBLE_COMBO_PRODUCT_MULTIPLIER':
+            points = this.calculateComboBonus(market, params);
+            break;
+            
+          case 'INTERACTION_ADJUST_POINT_TIMES_PER_YEAR':
+            points = this.calculateRecyclingPoints(market, recycledCount, params);
+            break;
+            
+          case 'INTERACTION_ADJUST_POINT_BY_FIRST_ORDER_LIMIT_DAYS':
+            points = this.calculateSkinTestPoints(market, params);
+            break;
+            
+          case 'ADJUSTMENT_MANUAL_POINT':
+            points = this.calculateManualAdjustment(market, params);
+            break;
+            
+          case 'FIRST_PURCHASE_BIRTH_MONTH_BONUS':
+            points = this.calculateBirthMonthBonus(market, amount, srpAmount, params);
+            break;
+            
+          case 'INTERACTION_ADJUST_POINT_BY_MANAGER':
+            points = adjustedPoints;
+            break;
+            
+          case 'GIFT_REDEEM':
+            points = -Math.abs(giftValue);
+            break;
+            
+          case 'LOYALTY_BURN':
+            points = -Math.abs(burnAmount);
+            break;
+            
+          default:
+            console.warn(`Unknown event type: ${eventType}`);
+            points = 0;
+        }
+        
+        console.log(`Calculated ${points} points for ${eventType}`);
+        
+        // Add to breakdown with proper campaign information
+        this.addToBreakdown(eventType, points, this.getDescription(eventType, market, points), params);
+        
+      } catch (error) {
+        console.error(`Error in event handler for ${eventType}:`, error);
+        this.addError(`Failed to process ${eventType}: ${error.message}`);
       }
-      
-      if (market === 'HK' || market === 'TW') {
-        // HK/TW: Specific SK-II products have multipliers like 1.5×
-        const multiplier = event.params?.multiplier || 1.5;
-        const baseAmount = attributes.srpAmount || attributes.amount || 0;
-        const basePoints = Math.floor(baseAmount);
-        const additionalPoints = Math.floor(basePoints * (multiplier - 1.0));
-        console.log('HK/TW Product Multiplier: base =', basePoints, ', multiplier =', multiplier, ', additional =', additionalPoints);
-        return additionalPoints; // Additional points from multiplier
-      }
-      
-      return 0;
-    });
-
-    // PRODUCT COMBO BONUS
-    // JP: (Not active) - To be supported later
-    // HK/TW: Bonus if specific product combinations are bought together
-    // Trigger: FLEXIBLE_COMBO_PRODUCT_MULTIPLIER
-    this.pointCalculators.set('FLEXIBLE_COMBO_PRODUCT_MULTIPLIER', (event, eventData) => {
-      const { market } = eventData;
-      console.log('=== COMBO PRODUCT CALCULATOR ===');
-      console.log('Market:', market);
-      
-      if (market === 'JP') {
-        console.log('JP Combo Product: Not active (0 MD)');
-        return 0; // JP: Not active
-      }
-      
-      if (market === 'HK' || market === 'TW') {
-        // HK/TW: Bonus if specific product combinations are bought together
-        const bonus = Math.floor(event.params?.bonus || 250);
-        console.log('HK/TW Combo Product: bonus =', bonus, 'MD');
-        return bonus;
-      }
-      
-      return 0;
-    });
-
-    // MANUAL ADJUSTMENT
-    // All Markets: Varies (Admin-defined)
-    // Trigger: INTERACTION_ADJUST_POINT_BY_MANAGER
-    this.pointCalculators.set('INTERACTION_ADJUST_POINT_BY_MANAGER', (event, eventData) => {
-      console.log('=== MANUAL ADJUSTMENT CALCULATOR ===');
-      // All Markets: Varies (Admin-defined)
-      const adjustedPoints = Math.floor(eventData.attributes?.adjustedPoints || 0);
-      console.log('Manual Adjustment:', adjustedPoints, 'MD');
-      return adjustedPoints;
-    });
-
-    // GIFT REDEMPTION
-    // All Markets: MD deduction based on gift value
-    // Trigger: GIFT_REDEEM / LOYALTY_BURN
-    this.pointCalculators.set('GIFT_REDEEM', (event, eventData) => {
-      console.log('=== GIFT REDEMPTION CALCULATOR ===');
-      // All Markets: MD deduction based on gift value
-      const giftValue = eventData.attributes?.giftValue || 0;
-      const deduction = -Math.floor(giftValue); // Negative because it's a deduction
-      console.log('Gift Redemption: deduction =', deduction, 'MD');
-      return deduction;
-    });
-
-    this.pointCalculators.set('LOYALTY_BURN', (event, eventData) => {
-      console.log('=== LOYALTY BURN CALCULATOR ===');
-      // All Markets: MD deduction based on burn amount
-      const burnAmount = eventData.attributes?.burnAmount || 0;
-      const deduction = -Math.floor(burnAmount); // Negative because it's a deduction
-      console.log('Loyalty Burn: deduction =', deduction, 'MD');
-      return deduction;
-    });
-
-    console.log('✅ All point calculators initialized according to rules table');
+    };
   }
 
   /**
    * Process an event through the rules engine
+   * Follows the generalized input/output template exactly
    */
   async processEvent(eventData) {
     try {
+      // Ensure engine is initialized before processing
+      if (!this.initialized) {
+        await this.initializeEngine();
+      }
+      
       console.log('Processing event:', eventData.eventId, 'for consumer:', eventData.consumerId);
       
-      // Create engine instance
-      const engine = new Engine();
+      // Validate event data according to generalized input template
+      this.validateEventData(eventData);
       
-      // Add all facts to engine
-      await this.factsEngine.addFactsToEngine(engine, eventData);
+      // Reset breakdown and errors for this processing
+      this.pointBreakdown = [];
+      this.errors = [];
       
-      // Get applicable rules
-      const rules = await this.getApplicableRules(eventData);
-      console.log('Applicable rules found:', rules.length);
+      // Store current event data for use in event handlers
+      this.currentEventData = eventData;
       
-      // Add rules to engine
-      rules.forEach(rule => {
-        engine.addRule(rule);
+      // Run the engine with the event data - strictly following json-rules-engine patterns
+      const engineResults = await this.engine.run(eventData);
+      console.log('Engine run completed. Events triggered:', engineResults.events.length);
+      
+      // Calculate total points from breakdown
+      const totalPointsAwarded = this.pointBreakdown.reduce((sum, item) => sum + item.points, 0);
+      
+      // Get current consumer balance and update it
+      const currentBalance = await consumerService.getBalance(eventData.consumerId);
+      const newTotal = currentBalance.total + totalPointsAwarded;
+      const newAvailable = Math.max(0, currentBalance.available + totalPointsAwarded);
+      const newUsed = currentBalance.used;
+      const newVersion = currentBalance.version + 1;
+      
+      // Update balance in service
+      await consumerService.updateBalance(eventData.consumerId, {
+        total: newTotal,
+        available: newAvailable,
+        used: newUsed,
+        version: newVersion
       });
       
-      // Track triggered events
-      const triggeredEvents = [];
-      
-      // Subscribe to rule success events
-      engine.on('success', (event, almanac, ruleResult) => {
-        console.log('Rule triggered:', event.type, 'with params:', event.params);
-        triggeredEvents.push({ event, ruleResult, almanac });
-      });
-      
-      // Subscribe to rule failure events for debugging
-      engine.on('failure', (event, almanac, ruleResult) => {
-        console.log('Rule failed:', event.type, 'reason:', ruleResult.conditions);
-      });
-      
-      // Run the engine
-      const engineResults = await engine.run(eventData);
-      console.log('Engine run completed. Triggered events:', triggeredEvents.length);
-      
-      // Build response
-      const response = await this.buildResponse(eventData, triggeredEvents);
-      console.log('Response built:', response);
-      
-      return response;
-      
-    } catch (error) {
-      console.error('Error processing event:', error);
-      throw new Error(`Event processing failed: ${error.message}`);
-    }
-  }
-
-  /**
-   * Get applicable rules for an event
-   */
-  async getApplicableRules(eventData) {
-    const rules = [];
-    
-    try {
-      // Get base rules for event type
-      const baseRules = this.ruleDefinitions.getBaseRules(eventData.eventType);
-      rules.push(...baseRules);
-      
-      // Get rules by category
-      const basketRules = this.ruleDefinitions.getBasketRules();
-      const consumerRules = this.ruleDefinitions.getConsumerAttributeRules();
-      const productRules = this.ruleDefinitions.getProductRules();
-      const transactionRules = this.ruleDefinitions.getTransactionRules();
-      
-      rules.push(...basketRules, ...consumerRules, ...productRules, ...transactionRules);
-      
-      // Get campaign-specific rules
-      const applicableCampaigns = await this.campaignService.getApplicableCampaigns(eventData);
-      for (const campaign of applicableCampaigns) {
-        const campaignRules = this.ruleDefinitions.getCampaignRules(campaign);
-        rules.push(...campaignRules);
-      }
-      
-      // Get context-specific rules
-      const contextRules = this.ruleDefinitions.getContextRules(
-        eventData.market, 
-        eventData.channel, 
-        eventData.eventType
-      );
-      rules.push(...contextRules);
-      
-      console.log('Total applicable rules:', rules.length);
-      return rules;
-      
-    } catch (error) {
-      console.error('Error getting applicable rules:', error);
-      return rules;
-    }
-  }
-
-  /**
-   * Build the response following the exact output template
-   */
-  async buildResponse(eventData, triggeredEvents) {
-    const pointBreakdown = [];
-    let totalPointsAwarded = 0;
-    const errors = [];
-    
-    try {
-      // Get applicable campaigns for campaign info
-      const applicableCampaigns = await this.campaignService.getApplicableCampaigns(eventData);
-      
-      // Process triggered events
-      for (const { event, ruleResult, almanac } of triggeredEvents) {
-        try {
-          const points = this.calculatePoints(event, eventData);
-          console.log('Calculated points for rule', event.type, ':', points);
-          
-          if (points !== 0) { // Allow negative points for redemptions
-            const breakdown = {
-              ruleId: event.type,
-              points: points,
-              description: this.getPointDescription(event, eventData, points)
-            };
-            
-            // Add campaign info if applicable
-            const campaign = applicableCampaigns.find(c => 
-              c.ruleIds && c.ruleIds.includes(event.type)
-            );
-            
-            if (campaign) {
-              breakdown.campaignId = campaign.campaignId;
-              breakdown.campaignCode = campaign.campaignCode;
-              breakdown.campaignStart = campaign.startDate;
-              breakdown.campaignEnd = campaign.endDate;
-            }
-            
-            pointBreakdown.push(breakdown);
-            totalPointsAwarded += points;
-          }
-        } catch (error) {
-          console.error('Error calculating points for rule', event.type, ':', error);
-          errors.push(`Rule ${event.type} evaluation failed: ${error.message}`);
-        }
-      }
-      
-      // Update consumer balance
-      console.log('=== BALANCE UPDATE ===');
-      console.log('Consumer ID:', eventData.consumerId);
-      console.log('Total points to award:', totalPointsAwarded);
-      const resultingBalance = consumerService.updateBalance(eventData.consumerId, totalPointsAwarded);
-      console.log('Resulting balance:', resultingBalance);
-      console.log('======================');
-      
-      // Build response
+      // Build response following the exact generalized output template
       const response = {
         consumerId: eventData.consumerId,
         eventId: eventData.eventId,
         eventType: eventData.eventType,
-        totalPointsAwarded,
-        pointBreakdown,
-        errors,
-        resultingBalance
+        totalPointsAwarded: totalPointsAwarded,
+        pointBreakdown: this.pointBreakdown,
+        errors: this.errors,
+        resultingBalance: {
+          total: newTotal,
+          available: newAvailable,
+          used: newUsed,
+          version: newVersion
+        }
       };
       
-      // Log the event
-      consumerService.logEvent({
+      // Log the event for audit trail
+      await consumerService.logEvent({
         ...response,
         timestamp: new Date().toISOString(),
         originalEvent: eventData
       });
       
+      console.log('✅ Event processed successfully:', response);
       return response;
       
     } catch (error) {
-      console.error('Error building response:', error);
-      throw error;
+      console.error('Error processing event:', error);
+      throw new Error(`Event processing failed: ${error.message}`);
+    } finally {
+      // Clear current event data
+      this.currentEventData = null;
     }
   }
 
   /**
-   * Calculate points using registered calculators
-   */
-  calculatePoints(event, eventData) {
-    console.log('=== CALCULATE POINTS ===');
-    console.log('Rule type:', event.type);
-    console.log('Event params:', event.params);
-    console.log('Event data market:', eventData.market);
-    console.log('Event data attributes:', eventData.attributes);
-    
-    const calculator = this.pointCalculators.get(event.type);
-    if (calculator) {
-      try {
-        const points = calculator(event, eventData);
-        console.log('FINAL POINTS for', event.type, ':', points);
-        console.log('========================');
-        return points;
-      } catch (error) {
-        console.error('Error in calculator for', event.type, ':', error);
-        return 0;
-      }
-    }
-    console.warn('No calculator found for rule type:', event.type);
-    return 0;
-  }
-
-  /**
-   * Generate point description for transparency
-   */
-  getPointDescription(event, eventData, points) {
-    const { market, attributes = {} } = eventData;
-    
-    const descriptions = {
-      'INTERACTION_REGISTRY_POINT': market === 'JP' ? 'Registration bonus (JP)' : 'Registration (no bonus)',
-      'ORDER_BASE_POINT': market === 'JP' ? 
-        `Base purchase points (1 MD per JPY 10)` : 
-        `Base purchase points (1 MD per ${attributes.currency || 'unit'} SRP)`,
-      'ORDER_MULTIPLE_POINT': market === 'JP' ? 
-        'Second purchase within 60 days (2× multiplier)' : 
-        'Multiple order bonus',
-      'FLEXIBLE_CAMPAIGN_BONUS': market === 'JP' ? 
-        'Campaign multiplier bonus' : 
-        'Campaign fixed bonus',
-      'INTERACTION_ADJUST_POINT_TIMES_PER_YEAR': 'Bottle recycling bonus',
-      'INTERACTION_ADJUST_POINT_BY_FIRST_ORDER_LIMIT_DAYS': 'Skin test within time limit',
-      'FIRST_PURCHASE_BIRTH_MONTH_BONUS': 'Birth month purchase bonus',
-      'FLEXIBLE_BASKET_AMOUNT': 'Basket threshold bonus',
-      'FLEXIBLE_PRODUCT_MULTIPLIER': 'Product multiplier bonus',
-      'FLEXIBLE_COMBO_PRODUCT_MULTIPLIER': 'Combo product bonus',
-      'FLEXIBLE_VIP_MULTIPLIER': 'VIP multiplier bonus',
-      'INTERACTION_ADJUST_POINT_BY_MANAGER': 'Admin adjustment',
-      'GIFT_REDEEM': 'Gift redemption',
-      'LOYALTY_BURN': 'Points redemption'
-    };
-    
-    return event.params?.description || descriptions[event.type] || `Points from ${event.type}`;
-  }
-
-  /**
-   * Add a new point calculator
-   */
-  addPointCalculator(ruleType, calculator) {
-    this.pointCalculators.set(ruleType, calculator);
-    console.log('Added point calculator for:', ruleType);
-  }
-
-  /**
-   * Remove a point calculator
-   */
-  removePointCalculator(ruleType) {
-    this.pointCalculators.delete(ruleType);
-    console.log('Removed point calculator for:', ruleType);
-  }
-
-  /**
-   * Get all registered calculators
-   */
-  getCalculators() {
-    return Array.from(this.pointCalculators.keys());
-  }
-
-  /**
-   * Validate event data
+   * Validate event data according to the generalized input template
    */
   validateEventData(eventData) {
-    const required = ['eventId', 'eventType', 'timestamp', 'market', 'channel', 'productLine', 'consumerId'];
-    const missing = required.filter(field => !eventData[field]);
+    // Required fields from generalized input template
+    const requiredFields = [
+      'eventId', 'eventType', 'timestamp', 'market', 
+      'channel', 'productLine', 'consumerId'
+    ];
+    
+    const missing = requiredFields.filter(field => !eventData[field]);
     
     if (missing.length > 0) {
       throw new Error(`Missing required fields: ${missing.join(', ')}`);
     }
     
+    // Validate market
     if (!['JP', 'HK', 'TW'].includes(eventData.market)) {
       throw new Error(`Invalid market: ${eventData.market}. Must be JP, HK, or TW`);
     }
     
-    if (!['PURCHASE', 'INTERACTION', 'ADJUSTMENT', 'REDEMPTION'].includes(eventData.eventType)) {
-      throw new Error(`Invalid event type: ${eventData.eventType}`);
+    // Validate event type
+    const validEventTypes = ['PURCHASE', 'INTERACTION', 'ADJUSTMENT', 'REDEMPTION'];
+    if (!validEventTypes.includes(eventData.eventType)) {
+      throw new Error(`Invalid event type: ${eventData.eventType}. Must be one of: ${validEventTypes.join(', ')}`);
+    }
+    
+    // Validate timestamp format (should be ISO 8601)
+    if (isNaN(Date.parse(eventData.timestamp))) {
+      throw new Error(`Invalid timestamp format: ${eventData.timestamp}. Must be ISO 8601 format`);
+    }
+    
+    // Validate context object exists (can be empty)
+    if (!eventData.context) {
+      eventData.context = {};
+    }
+    
+    // Validate attributes object exists (can be empty)
+    if (!eventData.attributes) {
+      eventData.attributes = {};
     }
     
     return true;
+  }
+
+  /**
+   * Data-driven point calculation methods
+   * These methods calculate points based on parameters from rules, not hardcoded logic
+   */
+  calculateRegistrationPoints(market, params) {
+    if (market === 'JP') {
+      return Math.floor(params.registrationBonus || 150);
+    }
+    return Math.floor(params.registrationBonus || 0);
+  }
+
+  calculateBasePoints(market, amount, srpAmount, params) {
+    if (market === 'JP') {
+      const rate = params.jpRate || 0.1;
+      const result = Math.floor(amount * rate);
+      return result;
+    } else if (market === 'HK' || market === 'TW') {
+      const baseAmount = srpAmount || amount;
+      const rate = params.rate || 1.0;
+      const result = Math.floor(baseAmount * rate);
+      return result;
+    }
+    return 0;
+  }
+
+  calculateMultipleOrderPoints(market, amount, srpAmount, params) {
+    if (market === 'JP') {
+      const basePoints = Math.floor(amount * (params.jpRate || 0.1));
+      const multiplier = params.multiplier || 2.0;
+      return Math.floor(basePoints * (multiplier - 1.0));
+    } else {
+      return Math.floor(params.multipleOrderBonus || 0);
+    }
+  }
+
+  calculateCampaignBonus(market, amount, srpAmount, params) {
+    if (market === 'JP') {
+      const multiplier = params.multiplier || 1.5;
+      const basePoints = Math.floor(amount * (params.jpRate || 0.1));
+      return Math.floor(basePoints * (multiplier - 1.0));
+    } else {
+      return Math.floor(params.fixedBonus || 0);
+    }
+  }
+
+  calculateVIPMultiplier(market, amount, srpAmount, params) {
+    if (market === 'HK' || market === 'TW') {
+      const multiplier = params.multiplier || 2.0;
+      const baseAmount = srpAmount || amount;
+      const basePoints = Math.floor(baseAmount);
+      return Math.floor(basePoints * (multiplier - 1.0));
+    }
+    return 0;
+  }
+
+  calculateBasketThreshold(market, srpAmount, params) {
+    if (market === 'HK' || market === 'TW') {
+      const threshold = params.threshold || 5000;
+      const bonus = params.bonus || 200;
+      
+      if (srpAmount >= threshold) {
+        return Math.floor(bonus);
+      }
+    }
+    return 0;
+  }
+
+  calculateProductMultiplier(market, amount, srpAmount, params) {
+    if (market === 'HK' || market === 'TW') {
+      const multiplier = params.multiplier || 1.5;
+      const baseAmount = srpAmount || amount;
+      const basePoints = Math.floor(baseAmount);
+      return Math.floor(basePoints * (multiplier - 1.0));
+    }
+    return 0;
+  }
+
+  calculateComboBonus(market, params) {
+    if (market === 'HK' || market === 'TW') {
+      return Math.floor(params.bonus || 250);
+    }
+    return 0;
+  }
+
+  calculateRecyclingPoints(market, recycledCount, params) {
+    if (market === 'JP') {
+      const maxBottlesPerYear = params.maxPerYear || 5;
+      const pointsPerBottle = params.pointsPerBottle || 50;
+      const actualCount = Math.min(recycledCount, maxBottlesPerYear);
+      return Math.floor(actualCount * pointsPerBottle);
+    } else {
+      const pointsPerBottle = params.pointsPerBottle || 50;
+      return Math.floor(recycledCount * pointsPerBottle);
+    }
+  }
+
+  calculateSkinTestPoints(market, params) {
+    if (market === 'JP') {
+      return Math.floor(params.skinTestBonus || 75);
+    } else {
+      return Math.floor(params.skinTestBonus || 75);
+    }
+  }
+
+  calculateManualAdjustment(market, params) {
+    const eventData = this.currentEventData;
+    const adjustedPoints = eventData?.attributes?.adjustedPoints || 0;
+    return Math.floor(adjustedPoints);
+  }
+
+  calculateBirthMonthBonus(market, amount, srpAmount, params) {
+    if (market === 'HK' || market === 'TW') {
+      const baseAmount = srpAmount || amount;
+      const bonusPercentage = params.bonusPercentage || 0.1;
+      return Math.floor(baseAmount * bonusPercentage);
+    }
+    return 0;
+  }
+
+  /**
+   * Add a point calculation to the breakdown array
+   * Following the exact generalized output template
+   */
+  addToBreakdown(ruleId, points, description, params) {
+    const breakdown = {
+      ruleId: ruleId,
+      points: Math.floor(points),
+      description: description || `${ruleId} applied`
+    };
+
+    // Add campaign information if available in params
+    if (params && params.campaignId) {
+      breakdown.campaignId = params.campaignId;
+    }
+    if (params && params.campaignCode) {
+      breakdown.campaignCode = params.campaignCode;
+    }
+    if (params && params.campaignStart) {
+      breakdown.campaignStart = params.campaignStart;
+    }
+    if (params && params.campaignEnd) {
+      breakdown.campaignEnd = params.campaignEnd;
+    }
+
+    this.pointBreakdown.push(breakdown);
+  }
+
+  /**
+   * Generate description for a rule based on context
+   */
+  getDescription(ruleId, market, points) {
+    const descriptions = {
+      'INTERACTION_REGISTRY_POINT': `Registration bonus for ${market} market`,
+      'ORDER_BASE_POINT': `Base purchase points for ${market} market`,
+      'ORDER_MULTIPLE_POINT': `Multiple purchase bonus for ${market} market`,
+      'FLEXIBLE_CAMPAIGN_BONUS': `Campaign bonus for ${market} market`,
+      'FLEXIBLE_VIP_MULTIPLIER': `VIP multiplier for ${market} market`,
+      'FLEXIBLE_BASKET_AMOUNT': `Basket threshold bonus for ${market} market`,
+      'FLEXIBLE_PRODUCT_MULTIPLIER': `Product multiplier for ${market} market`,
+      'FLEXIBLE_COMBO_PRODUCT_MULTIPLIER': `Combo product bonus for ${market} market`,
+      'INTERACTION_ADJUST_POINT_TIMES_PER_YEAR': `Recycling bonus for ${market} market`,
+      'INTERACTION_ADJUST_POINT_BY_FIRST_ORDER_LIMIT_DAYS': `Skin test bonus for ${market} market`,
+      'FIRST_PURCHASE_BIRTH_MONTH_BONUS': `Birth month bonus for ${market} market`,
+      'INTERACTION_ADJUST_POINT_BY_MANAGER': 'Manual adjustment',
+      'GIFT_REDEEM': 'Gift redemption',
+      'LOYALTY_BURN': 'Points burned'
+    };
+
+    return descriptions[ruleId] || `${ruleId} applied`;
+  }
+
+  /**
+   * Create default rules if none exist
+   */
+  async createDefaultRules() {
+    const rulesDir = path.join(__dirname, '../rules');
+    
+    // Ensure rules directory exists
+    if (!fs.existsSync(rulesDir)) {
+      fs.mkdirSync(rulesDir, { recursive: true });
+    }
+
+    // Create default base rules
+    const defaultBaseRules = [
+      {
+        name: "Registration Bonus - JP",
+        conditions: {
+          all: [
+            { "fact": "eventType", "operator": "equal", "value": "INTERACTION" },
+            { "fact": "market", "operator": "equal", "value": "JP" }
+          ]
+        },
+        event: {
+          type: "INTERACTION_REGISTRY_POINT",
+          params: {
+            registrationBonus: 150,
+            description: "Registration bonus for JP market"
+          }
+        },
+        priority: 10
+      },
+      {
+        name: "Base Purchase Points - JP",
+        conditions: {
+          all: [
+            { "fact": "eventType", "operator": "equal", "value": "PURCHASE" },
+            { "fact": "market", "operator": "equal", "value": "JP" }
+          ]
+        },
+        event: {
+          type: "ORDER_BASE_POINT",
+          params: {
+            jpRate: 0.1,
+            description: "Base purchase points for JP market"
+          }
+        },
+        priority: 10
+      },
+      {
+        name: "Base Purchase Points - HK/TW",
+        conditions: {
+          all: [
+            { "fact": "eventType", "operator": "equal", "value": "PURCHASE" },
+            { "fact": "market", "operator": "in", "value": ["HK", "TW"] }
+          ]
+        },
+        event: {
+          type: "ORDER_BASE_POINT",
+          params: {
+            rate: 1.0,
+            description: "Base purchase points for HK/TW market"
+          }
+        },
+        priority: 10
+      }
+    ];
+
+    // Write default rules to file
+    const defaultRulesPath = path.join(rulesDir, 'default-rules.json');
+    fs.writeFileSync(defaultRulesPath, JSON.stringify(defaultBaseRules, null, 2));
+
+    // Load the default rules
+    for (const rule of defaultBaseRules) {
+      this.engine.addRule(rule);
+    }
+
+    console.log('✅ Created and loaded default rules');
+  }
+
+  /**
+   * Add or update a point calculation strategy
+   */
+  addPointCalculationStrategy(eventType, market, strategy) {
+    if (!this.pointCalculationStrategies.has(eventType)) {
+      this.pointCalculationStrategies.set(eventType, {});
+    }
+    this.pointCalculationStrategies.get(eventType)[market] = strategy;
+    console.log(`✅ Added strategy for ${eventType} in ${market}`);
+  }
+
+  /**
+   * Remove a point calculation strategy
+   */
+  removePointCalculationStrategy(eventType, market) {
+    const strategies = this.pointCalculationStrategies.get(eventType);
+    if (strategies && strategies[market]) {
+      delete strategies[market];
+      console.log(`✅ Removed strategy for ${eventType} in ${market}`);
+    }
+  }
+
+  /**
+   * Get available strategies
+   */
+  getAvailableStrategies() {
+    const strategies = {};
+    for (const [eventType, marketStrategies] of this.pointCalculationStrategies) {
+      strategies[eventType] = Object.keys(marketStrategies);
+    }
+    return strategies;
+  }
+
+  /**
+   * Add a new rule to the engine dynamically
+   */
+  addRule(rule) {
+    this.engine.addRule(rule);
+    console.log(`✅ Added rule: ${rule.name || 'Unnamed rule'}`);
+  }
+
+  /**
+   * Remove a rule from the engine
+   */
+  removeRule(ruleId) {
+    this.engine.removeRule(ruleId);
+    console.log(`✅ Removed rule: ${ruleId}`);
+  }
+
+  /**
+   * Get all available facts
+   */
+  getEngineFacts() {
+    return this.factsEngine.getAvailableFacts();
+  }
+
+  /**
+   * Add error to the errors array
+   */
+  addError(error) {
+    this.errors.push(error);
+    console.warn(`Added error: ${error}`);
+  }
+
+  /**
+   * Get active campaigns for a specific market and time
+   */
+  async getActiveCampaigns(market, timestamp = new Date().toISOString()) {
+    try {
+      return await this.campaignService.getActiveCampaigns(market, timestamp);
+    } catch (error) {
+      console.error('Error fetching active campaigns:', error);
+      return [];
+    }
+  }
+
+  /**
+   * Process multiple events in batch
+   */
+  async processEvents(events) {
+    const results = [];
+    
+    for (const eventData of events) {
+      try {
+        const result = await this.processEvent(eventData);
+        results.push(result);
+      } catch (error) {
+        console.error(`Error processing event ${eventData.eventId}:`, error);
+        results.push({
+          eventId: eventData.eventId,
+          error: error.message
+        });
+      }
+    }
+    
+    return results;
+  }
+
+  /**
+   * Clear engine state (useful for testing)
+   */
+  clearState() {
+    this.pointBreakdown = [];
+    this.errors = [];
+    console.log('✅ Engine state cleared');
+  }
+
+  /**
+   * Get engine statistics
+   */
+  getEngineStats() {
+    return {
+      totalRules: this.engine.rules.length,
+      totalFacts: this.factsEngine.getAvailableFacts().length,
+      lastProcessed: new Date().toISOString()
+    };
   }
 }
 

@@ -1,5 +1,73 @@
 [
   {
+    "name": "Registration Bonus - JP",
+    "conditions": {
+      "all": [
+        { "fact": "eventType", "operator": "equal", "value": "INTERACTION" },
+        { "fact": "market", "operator": "equal", "value": "JP" }
+      ]
+    },
+    "event": {
+      "type": "INTERACTION_REGISTRY_POINT",
+      "params": {
+        "registrationBonus": 150,
+        "description": "Registration bonus for JP market"
+      }
+    },
+    "priority": 10
+  },
+  {
+    "name": "Base Purchase Points - JP",
+    "conditions": {
+      "all": [
+        { "fact": "eventType", "operator": "equal", "value": "PURCHASE" },
+        { "fact": "market", "operator": "equal", "value": "JP" }
+      ]
+    },
+    "event": {
+      "type": "ORDER_BASE_POINT",
+      "params": {
+        "jpRate": 0.1,
+        "description": "Base purchase points for JP market"
+      }
+    },
+    "priority": 10
+  },
+  {
+    "name": "Base Purchase Points - HK",
+    "conditions": {
+      "all": [
+        { "fact": "eventType", "operator": "equal", "value": "PURCHASE" },
+        { "fact": "market", "operator": "equal", "value": "HK" }
+      ]
+    },
+    "event": {
+      "type": "ORDER_BASE_POINT",
+      "params": {
+        "rate": 1.0,
+        "description": "Base purchase points for HK market"
+      }
+    },
+    "priority": 10
+  },
+  {
+    "name": "Base Purchase Points - TW",
+    "conditions": {
+      "all": [
+        { "fact": "eventType", "operator": "equal", "value": "PURCHASE" },
+        { "fact": "market", "operator": "equal", "value": "TW" }
+      ]
+    },
+    "event": {
+      "type": "ORDER_BASE_POINT",
+      "params": {
+        "rate": 1.0,
+        "description": "Base purchase points for TW market"
+      }
+    },
+    "priority": 10
+  },
+  {
     "name": "Second Purchase Within 60 Days",
     "conditions": {
       "all": [
@@ -31,7 +99,11 @@
       "type": "FLEXIBLE_CAMPAIGN_BONUS",
       "params": {
         "fixedBonus": 300,
-        "description": "Campaign bonus: CAMP2025SUMMER"
+        "description": "Campaign bonus: CAMP2025SUMMER",
+        "campaignId": "c0a1b2c3-d4e5-6789-hk01-abcde123456f",
+        "campaignCode": "CAMP2025SUMMER",
+        "campaignStart": "2025-06-01T00:00:00Z",
+        "campaignEnd": "2025-07-15T23:59:59Z"
       }
     },
     "priority": 3
@@ -88,5 +160,21 @@
       }
     },
     "priority": 7
+  },
+  {
+    "name": "Manual Point Adjustment",
+    "conditions": {
+      "all": [
+        { "fact": "eventType", "operator": "equal", "value": "ADJUSTMENT" },
+        { "fact": "attributes.adjustedPoints", "operator": "greaterThan", "value": 0 }
+      ]
+    },
+    "event": {
+      "type": "ADJUSTMENT_MANUAL_POINT",
+      "params": {
+        "description": "Manual point adjustment"
+      }
+    },
+    "priority": 8
   }
 ]

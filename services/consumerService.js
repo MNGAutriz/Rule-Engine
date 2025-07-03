@@ -16,9 +16,9 @@ function getBalance(id) {
   return { total: 0, available: 0, used: 0, version: 1 };
 }
 
-function updateBalance(id, points) {
+function updateBalance(id, balanceData) {
   console.log(`=== UPDATING BALANCE FOR ${id} ===`);
-  console.log(`Points to add: ${points}`);
+  console.log(`Balance data:`, balanceData);
   
   const users = db.load('users.json');
   
@@ -40,10 +40,13 @@ function updateBalance(id, points) {
   const oldBalance = { ...users[id].balance };
   console.log(`Previous balance:`, oldBalance);
   
-  // Update balance
-  users[id].balance.total += points;
-  users[id].balance.available += points;
-  users[id].balance.version += 1;
+  // Update balance with new data
+  users[id].balance = {
+    total: balanceData.total,
+    available: balanceData.available,
+    used: balanceData.used,
+    version: balanceData.version
+  };
   
   console.log(`New balance:`, users[id].balance);
   
@@ -157,6 +160,36 @@ function getDaysSinceFirstPurchase(consumerId) {
   return diffDays;
 }
 
+// Helper method to reset purchase count for testing
+function resetPurchaseCount(consumerId, targetCount) {
+  const events = db.load('events.json');
+  const userEvents = events.filter(event => event.consumerId === consumerId);
+  const purchaseEvents = userEvents.filter(event => event.eventType === 'PURCHASE');
+  
+  // Remove excess purchase events
+  if (purchaseEvents.length > targetCount) {
+    const eventsToRemove = purchaseEvents.slice(targetCount);
+    const filteredEvents = events.filter(event => 
+      !eventsToRemove.some(removeEvent => removeEvent.eventId === event.eventId)
+    );
+    db.save('events.json', filteredEvents);
+  }
+  
+  console.log(`Reset purchase count for ${consumerId} to ${targetCount}`);
+  return targetCount;
+}
+
+// Helper method to reset balance for testing
+function resetBalance(consumerId, balanceData) {
+  const users = db.load('users.json');
+  if (users[consumerId]) {
+    users[consumerId].balance = balanceData;
+    db.save('users.json', users);
+    console.log(`Reset balance for ${consumerId}:`, balanceData);
+  }
+  return balanceData;
+}
+
 module.exports = { 
   getConsumerById, 
   getBalance, 
@@ -168,5 +201,7 @@ module.exports = {
   updateConsumerProfile,
   hasPurchaseWithinDays,
   getPurchaseCount,
-  getDaysSinceFirstPurchase
+  getDaysSinceFirstPurchase,
+  resetPurchaseCount,
+  resetBalance
 };

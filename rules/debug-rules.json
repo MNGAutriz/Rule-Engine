@@ -1,0 +1,18 @@
+[
+  {
+    "name": "Debug SRP Amount Rule",
+    "conditions": {
+      "all": [
+        { "fact": "eventType", "operator": "equal", "value": "PURCHASE" },
+        { "fact": "debug.srpAmount", "operator": "greaterThan", "value": 1000 }
+      ]
+    },
+    "event": {
+      "type": "DEBUG_SRP_TEST",
+      "params": {
+        "description": "Debug SRP amount test"
+      }
+    },
+    "priority": 1
+  }
+]
