@@ -1,0 +1,59 @@
+[
+  {
+    "name": "High Value Basket Bonus - HKD 5000",
+    "conditions": {
+      "all": [
+        { "fact": "eventType", "operator": "equal", "value": "PURCHASE" },
+        { "fact": "market", "operator": "equal", "value": "HK" },
+        { "fact": "attributes.srpAmount", "operator": "greaterThanInclusive", "value": 5000 }
+      ]
+    },
+    "event": {
+      "type": "FLEXIBLE_BASKET_AMOUNT",
+      "params": {
+        "threshold": 5000,
+        "bonus": 200,
+        "description": "Bonus for spending over HKD 5000 SRP"
+      }
+    },
+    "priority": 4
+  },
+  {
+    "name": "Premium Basket Bonus - HKD 10000",
+    "conditions": {
+      "all": [
+        { "fact": "eventType", "operator": "equal", "value": "PURCHASE" },
+        { "fact": "market", "operator": "equal", "value": "HK" },
+        { "fact": "attributes.srpAmount", "operator": "greaterThanInclusive", "value": 10000 }
+      ]
+    },
+    "event": {
+      "type": "FLEXIBLE_BASKET_AMOUNT",
+      "params": {
+        "threshold": 10000,
+        "bonus": 500,
+        "description": "Bonus for spending over HKD 10000 SRP"
+      }
+    },
+    "priority": 3
+  },
+  {
+    "name": "Ultra Premium Basket Bonus - TWD 15000",
+    "conditions": {
+      "all": [
+        { "fact": "eventType", "operator": "equal", "value": "PURCHASE" },
+        { "fact": "market", "operator": "equal", "value": "TW" },
+        { "fact": "attributes.srpAmount", "operator": "greaterThanInclusive", "value": 15000 }
+      ]
+    },
+    "event": {
+      "type": "FLEXIBLE_BASKET_AMOUNT",
+      "params": {
+        "threshold": 15000,
+        "bonus": 800,
+        "description": "Bonus for spending over TWD 15000 SRP"
+      }
+    },
+    "priority": 2
+  }
+]

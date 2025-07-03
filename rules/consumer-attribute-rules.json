@@ -1,0 +1,73 @@
+[
+  {
+    "name": "Birth Month First Purchase Bonus",
+    "conditions": {
+      "all": [
+        { "fact": "eventType", "operator": "equal", "value": "PURCHASE" },
+        { "fact": "isBirthMonth", "operator": "equal", "value": true },
+        { "fact": "isFirstPurchase", "operator": "equal", "value": true }
+      ]
+    },
+    "event": {
+      "type": "FIRST_PURCHASE_BIRTH_MONTH_BONUS",
+      "params": {
+        "multiplier": 1.1,
+        "description": "Bonus for first purchase in birth month"
+      }
+    },
+    "priority": 5
+  },
+  {
+    "name": "VIP Store Multiplier",
+    "conditions": {
+      "all": [
+        { "fact": "eventType", "operator": "equal", "value": "PURCHASE" },
+        { "fact": "isVIP", "operator": "equal", "value": true },
+        { "fact": "storeType", "operator": "equal", "value": "VIP" }
+      ]
+    },
+    "event": {
+      "type": "FLEXIBLE_VIP_MULTIPLIER",
+      "params": {
+        "multiplier": 2.0,
+        "description": "2× VIP multiplier applied"
+      }
+    },
+    "priority": 4
+  },
+  {
+    "name": "Premium Customer Bonus",
+    "conditions": {
+      "all": [
+        { "fact": "eventType", "operator": "equal", "value": "PURCHASE" },
+        { "fact": "tags", "operator": "contains", "value": "PREMIUM" }
+      ]
+    },
+    "event": {
+      "type": "FLEXIBLE_VIP_MULTIPLIER",
+      "params": {
+        "multiplier": 1.5,
+        "description": "Premium customer 1.5× multiplier"
+      }
+    },
+    "priority": 6
+  },
+  {
+    "name": "New Customer Welcome Bonus",
+    "conditions": {
+      "all": [
+        { "fact": "eventType", "operator": "equal", "value": "PURCHASE" },
+        { "fact": "tags", "operator": "contains", "value": "NEW_CUSTOMER" },
+        { "fact": "purchaseCount", "operator": "equal", "value": 0 }
+      ]
+    },
+    "event": {
+      "type": "FLEXIBLE_CAMPAIGN_BONUS",
+      "params": {
+        "fixedBonus": 500,
+        "description": "New customer welcome bonus"
+      }
+    },
+    "priority": 3
+  }
+]

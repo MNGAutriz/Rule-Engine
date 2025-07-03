@@ -1,0 +1,185 @@
+{
+  "user_001": {
+    "consumerId": "user_001",
+    "birthMonth": 6,
+    "isVIP": true,
+    "tags": [
+      "VIP",
+      "PREMIUM"
+    ],
+    "firstOrderDate": "2025-01-15T10:00:00Z",
+    "registrationDate": "2025-01-10T10:00:00Z",
+    "market": "JP",
+    "preferredChannel": "LINE",
+    "balance": {
+      "total": 800,
+      "available": 800,
+      "used": 0,
+      "version": 2
+    }
+  },
+  "user_002": {
+    "consumerId": "user_002",
+    "birthMonth": 12,
+    "isVIP": false,
+    "tags": [
+      "STANDARD"
+    ],
+    "firstOrderDate": "2025-02-20T12:00:00Z",
+    "registrationDate": "2025-02-15T12:00:00Z",
+    "market": "HK",
+    "preferredChannel": "WECHAT",
+    "balance": {
+      "total": 5000,
+      "available": 5000,
+      "used": 0,
+      "version": 2
+    }
+  },
+  "user_003": {
+    "consumerId": "user_003",
+    "birthMonth": 3,
+    "isVIP": false,
+    "tags": [
+      "NEW_CUSTOMER"
+    ],
+    "firstOrderDate": "2025-06-01T15:00:00Z",
+    "registrationDate": "2025-05-30T15:00:00Z",
+    "market": "JP",
+    "preferredChannel": "WECHAT",
+    "balance": {
+      "total": 0,
+      "available": 0,
+      "used": 0,
+      "version": 6
+    }
+  },
+  "user_004": {
+    "consumerId": "user_004",
+    "birthMonth": 8,
+    "isVIP": false,
+    "tags": [
+      "STANDARD"
+    ],
+    "firstOrderDate": "2025-03-10T14:00:00Z",
+    "registrationDate": "2025-03-05T14:00:00Z",
+    "market": "HK",
+    "preferredChannel": "LINE",
+    "balance": {
+      "total": 0,
+      "available": 0,
+      "used": 0,
+      "version": 1
+    }
+  },
+  "user_005": {
+    "consumerId": "user_005",
+    "birthMonth": 11,
+    "isVIP": false,
+    "tags": [
+      "ECO_FRIENDLY"
+    ],
+    "firstOrderDate": "2025-04-20T16:00:00Z",
+    "registrationDate": "2025-04-18T16:00:00Z",
+    "market": "JP",
+    "preferredChannel": "WECHAT",
+    "balance": {
+      "total": 0,
+      "available": 0,
+      "used": 0,
+      "version": 2
+    }
+  },
+  "user_006": {
+    "consumerId": "user_006",
+    "birthMonth": 5,
+    "isVIP": true,
+    "tags": [
+      "VIP",
+      "FREQUENT_BUYER"
+    ],
+    "firstOrderDate": "2025-05-15T11:00:00Z",
+    "registrationDate": "2025-05-10T11:00:00Z",
+    "market": "TW",
+    "preferredChannel": "LINE",
+    "balance": {
+      "total": 0,
+      "available": 0,
+      "used": 0,
+      "version": 1
+    }
+  },
+  "user_007": {
+    "consumerId": "user_007",
+    "birthMonth": 7,
+    "isVIP": false,
+    "tags": [
+      "STANDARD"
+    ],
+    "firstOrderDate": null,
+    "registrationDate": "2025-07-01T10:00:00Z",
+    "market": "TW",
+    "preferredChannel": "WECHAT",
+    "balance": {
+      "total": 0,
+      "available": 0,
+      "used": 0,
+      "version": 1
+    }
+  },
+  "user_008": {
+    "consumerId": "user_008",
+    "birthMonth": 2,
+    "isVIP": false,
+    "tags": [
+      "HIGH_SPENDER"
+    ],
+    "firstOrderDate": "2025-06-25T13:00:00Z",
+    "registrationDate": "2025-06-20T13:00:00Z",
+    "market": "HK",
+    "preferredChannel": "WECHAT",
+    "balance": {
+      "total": 8000,
+      "available": 8000,
+      "used": 0,
+      "version": 2
+    }
+  },
+  "user_009": {
+    "consumerId": "user_009",
+    "birthMonth": 10,
+    "isVIP": false,
+    "tags": [
+      "ECO_FRIENDLY"
+    ],
+    "firstOrderDate": "2025-06-30T17:00:00Z",
+    "registrationDate": "2025-06-28T17:00:00Z",
+    "market": "JP",
+    "preferredChannel": "LINE",
+    "balance": {
+      "total": 0,
+      "available": 0,
+      "used": 0,
+      "version": 1
+    }
+  },
+  "user_010": {
+    "consumerId": "user_010",
+    "birthMonth": 9,
+    "isVIP": true,
+    "tags": [
+      "VIP",
+      "RETURNING_CUSTOMER"
+    ],
+    "firstOrderDate": "2025-07-02T09:00:00Z",
+    "registrationDate": "2025-07-01T09:00:00Z",
+    "market": "TW",
+    "preferredChannel": "LINE",
+    "balance": {
+      "total": 3000,
+      "available": 3000,
+      "used": 0,
+      "version": 2
+    }
+  }
+}
