@@ -609,5 +609,294 @@
         "registrationSource": "LINE"
       }
     }
+  },
+  {
+    "consumerId": "user_002",
+    "eventId": "purchase_hk_001",
+    "eventType": "PURCHASE",
+    "totalPointsAwarded": 1500,
+    "pointBreakdown": [
+      {
+        "ruleId": "ORDER_BASE_POINT",
+        "points": 1200,
+        "description": "Base purchase points for HK market"
+      },
+      {
+        "ruleId": "FLEXIBLE_CAMPAIGN_BONUS",
+        "points": 300,
+        "description": "Campaign bonus for HK market",
+        "campaignId": "c0a1b2c3-d4e5-6789-hk01-abcde123456f",
+        "campaignCode": "CAMP2025SUMMER",
+        "campaignStart": "2025-06-01T00:00:00Z",
+        "campaignEnd": "2025-07-15T23:59:59Z"
+      }
+    ],
+    "errors": [],
+    "resultingBalance": {
+      "total": 26500,
+      "available": 26500,
+      "used": 0,
+      "version": 20
+    },
+    "timestamp": "2025-07-03T19:30:38.761Z",
+    "originalEvent": {
+      "eventId": "purchase_hk_001",
+      "consumerId": "user_002",
+      "eventType": "PURCHASE",
+      "timestamp": "2025-07-04T11:00:00Z",
+      "market": "HK",
+      "channel": "LINE",
+      "productLine": "PREMIUM_SERIES",
+      "context": {
+        "ruleId": "ORDER_BASE_POINT",
+        "externalId": "txn_hk_001",
+        "storeId": "store_hk_001"
+      },
+      "attributes": {
+        "amount": 1000,
+        "currency": "HKD",
+        "srpAmount": 1200,
+        "skuList": [
+          "SK2_HK_001"
+        ]
+      }
+    }
+  },
+  {
+    "consumerId": "user_008",
+    "eventId": "campaign_purchase_001",
+    "eventType": "PURCHASE",
+    "totalPointsAwarded": 1500,
+    "pointBreakdown": [
+      {
+        "ruleId": "ORDER_BASE_POINT",
+        "points": 1200,
+        "description": "Base purchase points for HK market"
+      },
+      {
+        "ruleId": "ORDER_MULTIPLE_POINT",
+        "points": 0,
+        "description": "Multiple purchase bonus for HK market"
+      },
+      {
+        "ruleId": "FLEXIBLE_CAMPAIGN_BONUS",
+        "points": 300,
+        "description": "Campaign bonus for HK market",
+        "campaignId": "c0a1b2c3-d4e5-6789-hk01-abcde123456f",
+        "campaignCode": "CAMP2025SUMMER",
+        "campaignStart": "2025-06-01T00:00:00Z",
+        "campaignEnd": "2025-07-15T23:59:59Z"
+      }
+    ],
+    "errors": [],
+    "resultingBalance": {
+      "total": 70600,
+      "available": 70600,
+      "used": 0,
+      "version": 15
+    },
+    "timestamp": "2025-07-03T19:30:46.583Z",
+    "originalEvent": {
+      "eventId": "campaign_purchase_001",
+      "consumerId": "user_008",
+      "eventType": "PURCHASE",
+      "timestamp": "2025-06-15T14:00:00Z",
+      "market": "HK",
+      "channel": "LINE",
+      "productLine": "PREMIUM_SERIES",
+      "context": {
+        "ruleId": "FLEXIBLE_CAMPAIGN_BONUS",
+        "externalId": "txn_campaign_001",
+        "storeId": "store_hk_001"
+      },
+      "attributes": {
+        "amount": 1000,
+        "currency": "HKD",
+        "srpAmount": 1200,
+        "skuList": [
+          "SK2_HK_001"
+        ]
+      }
+    }
+  },
+  {
+    "consumerId": "user_004",
+    "eventId": "registration_001",
+    "eventType": "INTERACTION",
+    "totalPointsAwarded": 150,
+    "pointBreakdown": [
+      {
+        "ruleId": "INTERACTION_REGISTRY_POINT",
+        "points": 150,
+        "description": "Registration bonus for JP market"
+      }
+    ],
+    "errors": [],
+    "resultingBalance": {
+      "total": 4600,
+      "available": 4600,
+      "used": 0,
+      "version": 8
+    },
+    "timestamp": "2025-07-03T19:30:50.620Z",
+    "originalEvent": {
+      "eventId": "registration_001",
+      "consumerId": "user_004",
+      "eventType": "INTERACTION",
+      "timestamp": "2025-07-04T12:00:00Z",
+      "market": "JP",
+      "channel": "LINE",
+      "productLine": "PREMIUM_SERIES",
+      "context": {
+        "ruleId": "REGISTRATION_BONUS",
+        "externalId": "reg_001",
+        "storeId": "online"
+      },
+      "attributes": {
+        "registrationSource": "LINE"
+      }
+    }
+  },
+  {
+    "consumerId": "user_002",
+    "eventId": "purchase_hk_001",
+    "eventType": "PURCHASE",
+    "totalPointsAwarded": 1500,
+    "pointBreakdown": [
+      {
+        "ruleId": "ORDER_BASE_POINT",
+        "points": 1200,
+        "description": "Base purchase points for HK market"
+      },
+      {
+        "ruleId": "FLEXIBLE_CAMPAIGN_BONUS",
+        "points": 300,
+        "description": "Campaign bonus for HK market",
+        "campaignId": "c0a1b2c3-d4e5-6789-hk01-abcde123456f",
+        "campaignCode": "CAMP2025SUMMER",
+        "campaignStart": "2025-06-01T00:00:00Z",
+        "campaignEnd": "2025-07-15T23:59:59Z"
+      }
+    ],
+    "errors": [],
+    "resultingBalance": {
+      "total": 28000,
+      "available": 28000,
+      "used": 0,
+      "version": 21
+    },
+    "timestamp": "2025-07-03T19:40:22.660Z",
+    "originalEvent": {
+      "eventId": "purchase_hk_001",
+      "consumerId": "user_002",
+      "eventType": "PURCHASE",
+      "timestamp": "2025-07-04T11:00:00Z",
+      "market": "HK",
+      "channel": "LINE",
+      "productLine": "PREMIUM_SERIES",
+      "context": {
+        "ruleId": "ORDER_BASE_POINT",
+        "externalId": "txn_hk_001",
+        "storeId": "store_hk_001"
+      },
+      "attributes": {
+        "amount": 1000,
+        "currency": "HKD",
+        "srpAmount": 1200,
+        "skuList": [
+          "SK2_HK_001"
+        ]
+      }
+    }
+  },
+  {
+    "consumerId": "user_008",
+    "eventId": "campaign_purchase_001",
+    "eventType": "PURCHASE",
+    "totalPointsAwarded": 1500,
+    "pointBreakdown": [
+      {
+        "ruleId": "ORDER_BASE_POINT",
+        "points": 1200,
+        "description": "Base purchase points for HK market"
+      },
+      {
+        "ruleId": "FLEXIBLE_CAMPAIGN_BONUS",
+        "points": 300,
+        "description": "Campaign bonus for HK market",
+        "campaignId": "c0a1b2c3-d4e5-6789-hk01-abcde123456f",
+        "campaignCode": "CAMP2025SUMMER",
+        "campaignStart": "2025-06-01T00:00:00Z",
+        "campaignEnd": "2025-07-15T23:59:59Z"
+      }
+    ],
+    "errors": [],
+    "resultingBalance": {
+      "total": 72100,
+      "available": 72100,
+      "used": 0,
+      "version": 16
+    },
+    "timestamp": "2025-07-03T19:40:25.129Z",
+    "originalEvent": {
+      "eventId": "campaign_purchase_001",
+      "consumerId": "user_008",
+      "eventType": "PURCHASE",
+      "timestamp": "2025-06-15T14:00:00Z",
+      "market": "HK",
+      "channel": "LINE",
+      "productLine": "PREMIUM_SERIES",
+      "context": {
+        "ruleId": "FLEXIBLE_CAMPAIGN_BONUS",
+        "externalId": "txn_campaign_001",
+        "storeId": "store_hk_001"
+      },
+      "attributes": {
+        "amount": 1000,
+        "currency": "HKD",
+        "srpAmount": 1200,
+        "skuList": [
+          "SK2_HK_001"
+        ]
+      }
+    }
+  },
+  {
+    "consumerId": "user_004",
+    "eventId": "registration_001",
+    "eventType": "INTERACTION",
+    "totalPointsAwarded": 150,
+    "pointBreakdown": [
+      {
+        "ruleId": "INTERACTION_REGISTRY_POINT",
+        "points": 150,
+        "description": "Registration bonus for JP market"
+      }
+    ],
+    "errors": [],
+    "resultingBalance": {
+      "total": 4750,
+      "available": 4750,
+      "used": 0,
+      "version": 9
+    },
+    "timestamp": "2025-07-03T19:40:28.834Z",
+    "originalEvent": {
+      "eventId": "registration_001",
+      "consumerId": "user_004",
+      "eventType": "INTERACTION",
+      "timestamp": "2025-07-04T12:00:00Z",
+      "market": "JP",
+      "channel": "LINE",
+      "productLine": "PREMIUM_SERIES",
+      "context": {
+        "ruleId": "REGISTRATION_BONUS",
+        "externalId": "reg_001",
+        "storeId": "online"
+      },
+      "attributes": {
+        "registrationSource": "LINE"
+      }
+    }
   }
 ]

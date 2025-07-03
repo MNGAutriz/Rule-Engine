@@ -41,9 +41,10 @@ class PointsExpirationService {
    * @param {string} market - Market (Japan, HK, TW)
    * @param {Date} lastOrderDate - Date of last order
    * @param {Array} pointsHistory - Array of point transactions with dates
+   * @param {Object} consumerData - Additional consumer data
    * @returns {string|null} - ISO date string of next expiration or null
    */
-  calculateNextExpiration(consumerId, market = 'JP', lastOrderDate = null, pointsHistory = []) {
+  calculateNextExpiration(consumerId, market = 'JP', lastOrderDate = null, pointsHistory = [], consumerData = null) {
     const config = this.expirationConfigs[market] || this.expirationConfigs['JP'];
     const now = new Date();
 
@@ -51,18 +52,18 @@ class PointsExpirationService {
     if (config.standardExpiry === 'fiscal_year') {
       return this.calculateFiscalYearExpiration(market, now);
     } else {
-      return this.calculateJPExpiration(lastOrderDate, pointsHistory, now);
+      return this.calculateJPExpiration(lastOrderDate, pointsHistory, now, consumerData);
     }
   }
 
   /**
    * Calculate expiration for JP market (365 days from last ORDER)
    */
-  calculateJPExpiration(lastOrderDate, pointsHistory, now) {
+  calculateJPExpiration(lastOrderDate, pointsHistory, now, consumerData = null) {
     const config = this.expirationConfigs['JP'];
     
     // Find the most recent qualifying event date
-    const qualifyingDate = this.findMostRecentQualifyingDate(lastOrderDate, pointsHistory, ['PURCHASE', 'ORDER']);
+    const qualifyingDate = this.findMostRecentQualifyingDate(lastOrderDate, pointsHistory, ['PURCHASE', 'ORDER'], consumerData);
     
     if (!qualifyingDate) {
       return null;
@@ -80,9 +81,10 @@ class PointsExpirationService {
    * @param {Date|string} lastOrderDate - Explicit last order date
    * @param {Array} pointsHistory - Points transaction history
    * @param {Array} validEventTypes - Event types that qualify for expiration extension
+   * @param {Object} consumerData - Additional consumer data including firstOrderDate
    * @returns {Date|null} - Most recent qualifying date
    */
-  findMostRecentQualifyingDate(lastOrderDate, pointsHistory, validEventTypes) {
+  findMostRecentQualifyingDate(lastOrderDate, pointsHistory, validEventTypes, consumerData = null) {
     // If explicit date provided, use it
     if (lastOrderDate) {
       return typeof lastOrderDate === 'string' ? new Date(lastOrderDate) : lastOrderDate;
@@ -93,15 +95,24 @@ class PointsExpirationService {
       validEventTypes.includes(event.eventType)
     );
     
-    if (qualifyingEvents.length === 0) {
-      // Fallback to registration event if no qualifying events found
-      const registrationEvent = pointsHistory.find(event => event.eventType === 'REGISTRATION');
-      return registrationEvent ? new Date(registrationEvent.timestamp) : null;
+    if (qualifyingEvents.length > 0) {
+      // Sort by timestamp descending and get the most recent
+      qualifyingEvents.sort((a, b) => new Date(b.timestamp) - new Date(a.timestamp));
+      return new Date(qualifyingEvents[0].timestamp);
     }
 
-    // Sort by timestamp descending and get the most recent
-    qualifyingEvents.sort((a, b) => new Date(b.timestamp) - new Date(a.timestamp));
-    return new Date(qualifyingEvents[0].timestamp);
+    // If no qualifying events found, check for firstOrderDate from consumer data
+    if (consumerData && consumerData.firstOrderDate) {
+      return new Date(consumerData.firstOrderDate);
+    }
+
+    // Fallback to registration event if no qualifying events found
+    const registrationEvent = pointsHistory.find(event => event.eventType === 'REGISTRATION');
+    if (registrationEvent) {
+      return new Date(registrationEvent.timestamp);
+    }
+
+    return null;
   }
 
   /**
@@ -156,7 +167,7 @@ class PointsExpirationService {
     const pointsHistory = consumerData.history || [];
     const lastOrderDate = consumerData.lastOrderDate;
     
-    const nextExpiration = this.calculateNextExpiration(consumerId, market, lastOrderDate, pointsHistory);
+    const nextExpiration = this.calculateNextExpiration(consumerId, market, lastOrderDate, pointsHistory, consumerData);
     const config = this.expirationConfigs[market] || this.expirationConfigs['JP'];
     
     return {

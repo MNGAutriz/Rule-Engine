@@ -82,7 +82,9 @@ function getConsumerPoints(consumerId) {
   const expirationDetails = expirationService.getExpirationDetails(consumerId, market, {
     history,
     lastOrderDate: consumer?.lastOrderDate,
-    balance
+    balance,
+    firstOrderDate: consumer?.firstOrderDate,
+    registrationDate: consumer?.registrationDate
   });
   
   return {
@@ -264,7 +266,9 @@ function getExpirationDetails(consumerId, market = null) {
   return expirationService.getExpirationDetails(consumerId, actualMarket, {
     history,
     lastOrderDate: consumer?.lastOrderDate,
-    balance
+    balance,
+    firstOrderDate: consumer?.firstOrderDate,
+    registrationDate: consumer?.registrationDate
   });
 }
 
