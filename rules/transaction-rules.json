@@ -166,7 +166,7 @@
     "conditions": {
       "all": [
         { "fact": "eventType", "operator": "equal", "value": "ADJUSTMENT" },
-        { "fact": "attributes.adjustedPoints", "operator": "greaterThan", "value": 0 }
+        { "fact": "attributes.adjustedPoints", "operator": "notEqual", "value": null }
       ]
     },
     "event": {

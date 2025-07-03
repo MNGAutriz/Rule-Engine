@@ -227,6 +227,11 @@ class LoyaltyEngine {
       // Validate event data according to generalized input template
       this.validateEventData(eventData);
       
+      // Set consumer market if provided in event data
+      if (eventData.market) {
+        await consumerService.setConsumerMarket(eventData.consumerId, eventData.market);
+      }
+      
       // Reset breakdown and errors for this processing
       this.pointBreakdown = [];
       this.errors = [];
@@ -307,13 +312,14 @@ class LoyaltyEngine {
       throw new Error(`Missing required fields: ${missing.join(', ')}`);
     }
     
-    // Validate market
-    if (!['JP', 'HK', 'TW'].includes(eventData.market)) {
-      throw new Error(`Invalid market: ${eventData.market}. Must be JP, HK, or TW`);
+    // Validate market - only accept GitHub format codes
+    const validMarkets = ['JP', 'HK', 'TW'];
+    if (!validMarkets.includes(eventData.market)) {
+      throw new Error(`Invalid market: ${eventData.market}. Must be one of: ${validMarkets.join(', ')}`);
     }
     
     // Validate event type
-    const validEventTypes = ['PURCHASE', 'INTERACTION', 'ADJUSTMENT', 'REDEMPTION'];
+    const validEventTypes = ['PURCHASE', 'INTERACTION', 'ADJUSTMENT', 'REDEMPTION', 'REGISTRATION'];
     if (!validEventTypes.includes(eventData.eventType)) {
       throw new Error(`Invalid event type: ${eventData.eventType}. Must be one of: ${validEventTypes.join(', ')}`);
     }

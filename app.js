@@ -3,6 +3,7 @@ const cors = require('cors');
 const eventsRouter = require('./api/eventsRouter');
 const consumerRouter = require('./api/consumerRouter');
 const campaignRouter = require('./api/campaignRouter');
+const rulesRouter = require('./api/rulesRouter');
 
 const app = express();
 const PORT = process.env.PORT || 3000;
@@ -38,6 +39,7 @@ app.use((req, res, next) => {
 app.use('/api/events', eventsRouter);
 app.use('/api/consumer', consumerRouter);
 app.use('/api/campaigns', campaignRouter);
+app.use('/api/rules', rulesRouter);
 
 // Health check endpoint
 app.get('/health', (req, res) => {

@@ -1,4 +1,7 @@
 const db = require('./mockDatabase');
+const PointsExpirationService = require('./PointsExpirationService');
+
+const expirationService = new PointsExpirationService();
 
 function getConsumerById(id) {
   // Get user data from consolidated users.json
@@ -61,17 +64,36 @@ function logEvent(event) {
   const events = db.load('events.json');
   events.push(event);
   db.save('events.json', events);
+  
+  // Update last order date for expiration tracking
+  updateLastOrderDate(event.consumerId, event.eventType, event.timestamp);
 }
 
 // New methods for API support
 function getConsumerPoints(consumerId) {
   const balance = getBalance(consumerId);
+  const consumer = getConsumerById(consumerId);
+  const market = consumer?.market || 'JP'; // Default to JP if no market specified
+  
+  // Get consumer's point history to calculate expiration
+  const history = getConsumerHistory(consumerId, { limit: 100 });
+  
+  // Calculate next expiration based on market rules
+  const expirationDetails = expirationService.getExpirationDetails(consumerId, market, {
+    history,
+    lastOrderDate: consumer?.lastOrderDate,
+    balance
+  });
+  
   return {
     consumerId,
     total: balance.total,
     available: balance.available,
     used: balance.used,
-    nextExpiration: null // Can be implemented later with expiration logic
+    nextExpiration: expirationDetails.nextExpiration,
+    expirationRule: expirationDetails.expirationRule,
+    market: market,
+    timezone: expirationDetails.timezone
   };
 }
 
@@ -95,12 +117,12 @@ function getConsumerHistory(consumerId, options = {}) {
     history = history.slice(0, options.limit);
   }
   
-  // Format for API response
+  // Format for API response to match the expected format
   return history.map(event => ({
     eventId: event.eventId,
     timestamp: event.timestamp,
     eventType: event.eventType,
-    points: event.totalPointsAwarded,
+    points: event.totalPointsAwarded || 0,
     ruleId: event.pointBreakdown?.[0]?.ruleId || 'UNKNOWN',
     description: event.pointBreakdown?.[0]?.description || 'Points awarded'
   }));
@@ -190,6 +212,62 @@ function resetBalance(consumerId, balanceData) {
   return balanceData;
 }
 
+// Helper method to update last order date for expiration calculations
+function updateLastOrderDate(consumerId, eventType, timestamp) {
+  if (eventType === 'PURCHASE' || eventType === 'ORDER') {
+    const users = db.load('users.json');
+    
+    if (!users[consumerId]) {
+      users[consumerId] = {
+        consumerId: consumerId,
+        balance: { total: 0, available: 0, used: 0, version: 1 }
+      };
+    }
+    
+    // Update last order date
+    users[consumerId].lastOrderDate = timestamp;
+    
+    // Determine market if not set (can be enhanced with more logic)
+    if (!users[consumerId].market) {
+      users[consumerId].market = 'JP'; // Default market
+    }
+    
+    db.save('users.json', users);
+    console.log(`Updated last order date for ${consumerId}: ${timestamp}`);
+  }
+}
+
+// Helper method to set consumer market
+function setConsumerMarket(consumerId, market) {
+  const users = db.load('users.json');
+  
+  if (!users[consumerId]) {
+    users[consumerId] = {
+      consumerId: consumerId,
+      balance: { total: 0, available: 0, used: 0, version: 1 }
+    };
+  }
+  
+  users[consumerId].market = market;
+  db.save('users.json', users);
+  console.log(`Set market for ${consumerId}: ${market}`);
+  return users[consumerId];
+}
+
+// Helper method to get expiration details for a consumer
+function getExpirationDetails(consumerId, market = null) {
+  const consumer = getConsumerById(consumerId);
+  const actualMarket = market || consumer?.market || 'JP';
+  const history = getConsumerHistory(consumerId, { limit: 100 });
+  const balance = getBalance(consumerId);
+  
+  return expirationService.getExpirationDetails(consumerId, actualMarket, {
+    history,
+    lastOrderDate: consumer?.lastOrderDate,
+    balance
+  });
+}
+
 module.exports = { 
   getConsumerById, 
   getBalance, 
@@ -203,5 +281,8 @@ module.exports = {
   getPurchaseCount,
   getDaysSinceFirstPurchase,
   resetPurchaseCount,
-  resetBalance
+  resetBalance,
+  updateLastOrderDate,
+  setConsumerMarket,
+  getExpirationDetails
 };

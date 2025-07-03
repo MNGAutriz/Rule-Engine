@@ -102,24 +102,38 @@ class CampaignService {
       );
     }
     
-    if (filters.startDate) {
-      const filterStart = new Date(filters.startDate);
-      activeCampaigns = activeCampaigns.filter(c => 
-        new Date(c.startDate) >= filterStart
-      );
-    }
-    
-    if (filters.endDate) {
-      const filterEnd = new Date(filters.endDate);
-      activeCampaigns = activeCampaigns.filter(c => 
-        new Date(c.endDate) <= filterEnd
-      );
+    // Improved date filtering - check for overlap
+    if (filters.startDate || filters.endDate) {
+      const filterStart = filters.startDate ? new Date(filters.startDate) : new Date('1900-01-01');
+      const filterEnd = filters.endDate ? new Date(filters.endDate) : new Date('2100-12-31');
+      
+      activeCampaigns = activeCampaigns.filter(campaign => {
+        const campaignStart = new Date(campaign.startDate);
+        const campaignEnd = new Date(campaign.endDate);
+        
+        // Campaign overlaps with filter range
+        return campaignStart <= filterEnd && campaignEnd >= filterStart;
+      });
     }
 
     // Sort by priority
     activeCampaigns.sort((a, b) => a.priority - b.priority);
 
-    return activeCampaigns;
+    // Format response to match expected structure
+    return activeCampaigns.map(campaign => ({
+      campaignCode: campaign.campaignCode,
+      campaignId: campaign.campaignId,
+      name: campaign.name,
+      market: campaign.market,
+      channel: campaign.channel,
+      brand: "SK-II", // Default brand
+      startDate: campaign.startDate,
+      endDate: campaign.endDate,
+      ruleIds: campaign.ruleIds,
+      active: campaign.isActive,
+      priority: campaign.priority,
+      description: campaign.description
+    }));
   }
 
   /**
