@@ -2,6 +2,9 @@ const { Engine } = require('json-rules-engine');
 const consumerService = require('../services/consumerService');
 const CampaignService = require('../services/CampaignService');
 const FactsEngine = require('./FactsEngine');
+const CalculationHelpers = require('./helpers/CalculationHelpers');
+const ValidationHelpers = require('./helpers/ValidationHelpers');
+const FormattingHelpers = require('./helpers/FormattingHelpers');
 const fs = require('fs');
 const path = require('path');
 const { v4: uuidv4 } = require('uuid');
@@ -11,6 +14,7 @@ const { v4: uuidv4 } = require('uuid');
  * Follows json-rules-engine patterns with proper event-driven architecture
  * Flexible and market-agnostic design for global scalability
  */
+
 class RulesEngine {
   constructor() {
     this.campaignService = new CampaignService();
@@ -133,47 +137,47 @@ class RulesEngine {
         // Calculate rewards based on event type and parameters
         switch (eventType) {
           case 'INTERACTION_REGISTRY_POINT':
-            rewardPoints = this.calculateRegistrationReward(market, params);
+            rewardPoints = CalculationHelpers.calculateRegistrationReward(market, params);
             break;
             
           case 'ORDER_BASE_POINT':
-            rewardPoints = this.calculateBaseReward(market, baseAmount, discountedAmount, params);
+            rewardPoints = CalculationHelpers.calculateBaseReward(market, baseAmount, discountedAmount, params);
             break;
             
           case 'ORDER_MULTIPLE_POINT_LIMIT':
-            rewardPoints = this.calculateMultiplierReward(market, baseAmount, discountedAmount, params);
+            rewardPoints = CalculationHelpers.calculateMultiplierReward(market, baseAmount, discountedAmount, params);
             break;
             
           case 'FLEXIBLE_CAMPAIGN_BONUS':
-            rewardPoints = this.calculateCampaignReward(market, baseAmount, discountedAmount, params);
+            rewardPoints = CalculationHelpers.calculateCampaignReward(market, baseAmount, discountedAmount, params);
             break;
             
           case 'FLEXIBLE_VIP_MULTIPLIER':
-            rewardPoints = this.calculateTierMultiplier(market, baseAmount, discountedAmount, params);
+            rewardPoints = CalculationHelpers.calculateTierMultiplier(market, baseAmount, discountedAmount, params);
             break;
             
           case 'FLEXIBLE_BASKET_AMOUNT':
-            rewardPoints = this.calculateThresholdReward(market, discountedAmount, params);
+            rewardPoints = CalculationHelpers.calculateThresholdReward(market, discountedAmount, params);
             break;
             
           case 'FLEXIBLE_PRODUCT_MULTIPLIER':
-            rewardPoints = this.calculateProductReward(market, baseAmount, discountedAmount, params);
+            rewardPoints = CalculationHelpers.calculateProductReward(market, baseAmount, discountedAmount, params);
             break;
             
           case 'FLEXIBLE_COMBO_PRODUCT_MULTIPLIER':
-            rewardPoints = this.calculateComboReward(market, params);
+            rewardPoints = CalculationHelpers.calculateComboReward(market, params);
             break;
             
           case 'INTERACTION_ADJUST_POINT_TIMES_PER_YEAR':
-            rewardPoints = this.calculateActivityReward(market, itemCount, params);
+            rewardPoints = CalculationHelpers.calculateActivityReward(market, itemCount, params);
             break;
             
           case 'INTERACTION_ADJUST_POINT_BY_FIRST_ORDER_LIMIT_DAYS':
-            rewardPoints = this.calculateSkinTestReward(market, params);
+            rewardPoints = CalculationHelpers.calculateSkinTestReward(market, params);
             break;
             
           case 'FIRST_PURCHASE_BIRTH_MONTH_BONUS':
-            rewardPoints = this.calculateTimedBonus(market, baseAmount, discountedAmount, params);
+            rewardPoints = CalculationHelpers.calculateTimedBonus(market, baseAmount, discountedAmount, params);
             break;
             
           case 'INTERACTION_ADJUST_POINT_BY_MANAGER':
@@ -188,7 +192,7 @@ class RulesEngine {
         console.log(`Calculated ${rewardPoints} reward points for ${eventType}`);
         
         // Add to breakdown with proper campaign information
-        this.addToBreakdown(eventType, rewardPoints, this.getDescription(eventType, market, rewardPoints), params);
+        this.addToBreakdown(eventType, rewardPoints, FormattingHelpers.getDescription(eventType, market, rewardPoints), params);
         
       } catch (error) {
         console.error(`Error in event handler for ${eventType}:`, error);
@@ -211,7 +215,7 @@ class RulesEngine {
       console.log('Processing event:', eventData.eventId, 'for consumer:', eventData.consumerId);
       
       // Validate event data according to generalized input template
-      this.validateEventData(eventData);
+      ValidationHelpers.validateEventData(eventData);
       
       // Set consumer market if provided in event data
       if (eventData.market) {
@@ -283,205 +287,12 @@ class RulesEngine {
   }
 
   /**
-   * Validate event data according to the generalized input template
-   */
-  validateEventData(eventData) {
-    // Required fields from generalized input template
-    const requiredFields = [
-      'eventId', 'eventType', 'timestamp', 'market', 
-      'channel', 'productLine', 'consumerId'
-    ];
-    
-    const missing = requiredFields.filter(field => !eventData[field]);
-    
-    if (missing.length > 0) {
-      throw new Error(`Missing required fields: ${missing.join(', ')}`);
-    }
-    
-    // Validate market
-    const validMarkets = ['JP', 'HK', 'TW'];
-    if (!validMarkets.includes(eventData.market)) {
-      throw new Error(`Invalid market: ${eventData.market}. Must be one of: ${validMarkets.join(', ')}`);
-    }
-    
-    // Validate event type
-    const validEventTypes = ['PURCHASE', 'INTERACTION', 'ADJUSTMENT', 'REDEMPTION', 'REGISTRATION'];
-    if (!validEventTypes.includes(eventData.eventType)) {
-      throw new Error(`Invalid event type: ${eventData.eventType}. Must be one of: ${validEventTypes.join(', ')}`);
-    }
-    
-    // Validate timestamp format (should be ISO 8601)
-    if (isNaN(Date.parse(eventData.timestamp))) {
-      throw new Error(`Invalid timestamp format: ${eventData.timestamp}. Must be ISO 8601 format`);
-    }
-    
-    // Validate context object exists (can be empty)
-    if (!eventData.context) {
-      eventData.context = {};
-    }
-    
-    // Validate attributes object exists (can be empty)
-    if (!eventData.attributes) {
-      eventData.attributes = {};
-    }
-    
-    return true;
-  }
-
-  /**
-   * Flexible reward calculation methods
-   * These methods calculate rewards based purely on parameters from rules
-   * Market-agnostic and data-driven approach for global scalability
-   */
-  calculateRegistrationReward(market, params) {
-    return Math.floor(params.registrationBonus || params.fixedReward || 0);
-  }
-
-  calculateBaseReward(market, baseAmount, discountedAmount, params) {
-    const calculationAmount = discountedAmount || baseAmount;
-    const rewardRate = params.rate || params.jpRate || params.conversionRate || 0;
-    return Math.floor(calculationAmount * rewardRate);
-  }
-
-  calculateMultiplierReward(market, baseAmount, discountedAmount, params) {
-    const calculationAmount = discountedAmount || baseAmount;
-    const baseRate = params.baseRate || params.jpRate || params.rate || 0;
-    const baseReward = Math.floor(calculationAmount * baseRate);
-    const multiplier = params.multiplier || 1.0;
-    return Math.floor(baseReward * (multiplier - 1.0));
-  }
-
-  calculateCampaignReward(market, baseAmount, discountedAmount, params) {
-    // Support both fixed bonus and multiplier approaches
-    if (params.fixedBonus !== undefined) {
-      return Math.floor(params.fixedBonus);
-    } else {
-      const calculationAmount = discountedAmount || baseAmount;
-      const baseRate = params.baseRate || params.jpRate || params.rate || 0;
-      const baseReward = Math.floor(calculationAmount * baseRate);
-      const multiplier = params.multiplier || 1.0;
-      return Math.floor(baseReward * (multiplier - 1.0));
-    }
-  }
-
-  calculateTierMultiplier(market, baseAmount, discountedAmount, params) {
-    const calculationAmount = discountedAmount || baseAmount;
-    const baseRate = params.baseRate || params.rate || 1.0;
-    const baseReward = Math.floor(calculationAmount * baseRate);
-    const multiplier = params.multiplier || 1.0;
-    return Math.floor(baseReward * (multiplier - 1.0));
-  }
-
-  calculateThresholdReward(market, discountedAmount, params) {
-    const threshold = params.threshold || 0;
-    const bonus = params.bonus || params.reward || 0;
-    
-    if (discountedAmount >= threshold) {
-      return Math.floor(bonus);
-    }
-    return 0;
-  }
-
-  calculateProductReward(market, baseAmount, discountedAmount, params) {
-    const calculationAmount = discountedAmount || baseAmount;
-    const baseRate = params.baseRate || params.rate || 1.0;
-    const baseReward = Math.floor(calculationAmount * baseRate);
-    const multiplier = params.multiplier || 1.0;
-    return Math.floor(baseReward * (multiplier - 1.0));
-  }
-
-  calculateComboReward(market, params) {
-    return Math.floor(params.bonus || params.reward || params.fixedBonus || 0);
-  }
-
-  calculateActivityReward(market, itemCount, params) {
-    const maxItemsPerPeriod = params.maxPerYear || params.maxPerPeriod || itemCount;
-    const rewardPerItem = params.pointsPerBottle || params.rewardPerItem || params.rewardPerActivity || 0;
-    const actualCount = Math.min(itemCount, maxItemsPerPeriod);
-    return Math.floor(actualCount * rewardPerItem);
-  }
-
-  calculateSkinTestReward(market, params) {
-    // TODO: In a real implementation, we'd check if the skin test is within the allowed timeframe
-    // For now, just return the bonus if skinTestBonus is defined
-    return Math.floor(params.skinTestBonus || 0);
-  }
-
-  calculateTimedBonus(market, baseAmount, discountedAmount, params) {
-    const calculationAmount = discountedAmount || baseAmount;
-    const baseRate = params.baseRate || params.jpRate || params.rate || 1.0;
-    const baseReward = Math.floor(calculationAmount * baseRate);
-    const multiplier = params.multiplier || 1.0;
-    return Math.floor(baseReward * (multiplier - 1.0));
-  }
-
-  /**
    * Add a reward calculation to the breakdown array
    * Following the exact generalized output template
    */
   addToBreakdown(ruleId, rewardPoints, description, params) {
-    const breakdown = {
-      ruleId: ruleId,
-      points: Math.floor(rewardPoints),
-      description: description || `${ruleId} reward applied`,
-      ruleCategory: this.getRuleCategory(ruleId)
-    };
-
-    // Add campaign information if available in params
-    if (params && (params.campaignId || params.campaignCode)) {
-      breakdown.campaignDetails = {
-        ...(params.campaignId && { campaignId: params.campaignId }),
-        ...(params.campaignCode && { campaignCode: params.campaignCode }),
-        ...(params.campaignStart && { campaignStart: params.campaignStart }),
-        ...(params.campaignEnd && { campaignEnd: params.campaignEnd })
-      };
-    }
-
+    const breakdown = FormattingHelpers.formatBreakdownEntry(ruleId, rewardPoints, description, params);
     this.rewardBreakdown.push(breakdown);
-  }
-
-  /**
-   * Generate user-friendly description for a rule based on context
-   */
-  getDescription(ruleId, market, rewardPoints) {
-    const descriptions = {
-      'INTERACTION_REGISTRY_POINT': `Welcome bonus for ${market} registration (+${rewardPoints} MD)`,
-      'ORDER_BASE_POINT': `Base purchase reward for ${market} market (+${rewardPoints} MD)`,
-      'ORDER_MULTIPLE_POINT_LIMIT': `Repeat purchase bonus for ${market} (+${rewardPoints} MD)`,
-      'FLEXIBLE_CAMPAIGN_BONUS': `Special campaign bonus for ${market} (+${rewardPoints} MD)`,
-      'FLEXIBLE_VIP_MULTIPLIER': `VIP tier multiplier bonus for ${market} (+${rewardPoints} MD)`,
-      'FLEXIBLE_BASKET_AMOUNT': `High value purchase threshold bonus (+${rewardPoints} MD)`,
-      'FLEXIBLE_PRODUCT_MULTIPLIER': `Product-specific bonus for ${market} (+${rewardPoints} MD)`,
-      'FLEXIBLE_COMBO_PRODUCT_MULTIPLIER': `Product combination bonus (+${rewardPoints} MD)`,
-      'INTERACTION_ADJUST_POINT_TIMES_PER_YEAR': `Engagement activity reward (+${rewardPoints} MD)`,
-      'INTERACTION_ADJUST_POINT_BY_FIRST_ORDER_LIMIT_DAYS': `Skin assessment completion bonus (+${rewardPoints} MD)`,
-      'FIRST_PURCHASE_BIRTH_MONTH_BONUS': `Birthday month special bonus (+${rewardPoints} MD)`,
-      'INTERACTION_ADJUST_POINT_BY_MANAGER': `Manual account adjustment (+${rewardPoints} MD)`
-    };
-
-    return descriptions[ruleId] || `${ruleId} reward applied (+${rewardPoints} MD)`;
-  }
-
-  /**
-   * Get rule category for better organization in responses
-   */
-  getRuleCategory(ruleId) {
-    const categories = {
-      'INTERACTION_REGISTRY_POINT': 'REGISTRATION',
-      'ORDER_BASE_POINT': 'BASE_PURCHASE',
-      'ORDER_MULTIPLE_POINT': 'PURCHASE_BONUS',
-      'FLEXIBLE_CAMPAIGN_BONUS': 'CAMPAIGN',
-      'FLEXIBLE_VIP_MULTIPLIER': 'VIP_TIER',
-      'FLEXIBLE_BASKET_AMOUNT': 'SPENDING_THRESHOLD',
-      'FLEXIBLE_PRODUCT_MULTIPLIER': 'PRODUCT_BONUS',
-      'FLEXIBLE_COMBO_PRODUCT_MULTIPLIER': 'PRODUCT_COMBO',
-      'INTERACTION_ADJUST_POINT_TIMES_PER_YEAR': 'ENGAGEMENT_ACTIVITY',
-      'INTERACTION_ADJUST_POINT_BY_FIRST_ORDER_LIMIT_DAYS': 'ENGAGEMENT_ACTIVITY',
-      'FIRST_PURCHASE_BIRTH_MONTH_BONUS': 'PERSONAL_MILESTONE',
-      'INTERACTION_ADJUST_POINT_BY_MANAGER': 'MANUAL_ADJUSTMENT'
-    };
-
-    return categories[ruleId] || 'OTHER';
   }
 
   /**
