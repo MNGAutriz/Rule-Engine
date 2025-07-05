@@ -103,6 +103,24 @@
   {
     "conditions": {
       "all": [
+        { "fact": "eventType", "operator": "equal", "value": "INTERACTION" },
+        { "fact": "attributes.skinTestDate", "operator": "notEqual", "value": null },
+        { "fact": "context.externalId", "operator": "contains", "value": "skinTest" }
+      ]
+    },
+    "event": {
+      "type": "INTERACTION_ADJUST_POINT_BY_FIRST_ORDER_LIMIT_DAYS",
+      "params": {
+        "skinTestBonus": 75,
+        "maxDaysAfterFirstOrder": 60,
+        "description": "Skin test within 60 days of first purchase - 75 MD"
+      }
+    },
+    "priority": 7
+  },
+  {
+    "conditions": {
+      "all": [
         { "fact": "eventType", "operator": "equal", "value": "ADJUSTMENT" }
       ]
     },

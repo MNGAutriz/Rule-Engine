@@ -16,7 +16,7 @@ function getBalance(id) {
     return user.balance;
   }
   // Return default balance if user doesn't exist or has no balance
-  return { total: 0, available: 0, used: 0, version: 1 };
+  return { total: 0, available: 0, used: 0, accountVersion: 1 };
 }
 
 function updateBalance(id, balanceData) {
@@ -30,14 +30,14 @@ function updateBalance(id, balanceData) {
     console.log(`Creating new user: ${id}`);
     users[id] = {
       consumerId: id,
-      balance: { total: 0, available: 0, used: 0, version: 1 }
+      balance: { total: 0, available: 0, used: 0, accountVersion: 1 }
     };
   }
   
   // Initialize balance if doesn't exist
   if (!users[id].balance) {
     console.log(`Creating new balance for user: ${id}`);
-    users[id].balance = { total: 0, available: 0, used: 0, version: 1 };
+    users[id].balance = { total: 0, available: 0, used: 0, accountVersion: 1 };
   }
   
   const oldBalance = { ...users[id].balance };
@@ -48,7 +48,7 @@ function updateBalance(id, balanceData) {
     total: balanceData.total,
     available: balanceData.available,
     used: balanceData.used,
-    version: balanceData.version
+    accountVersion: balanceData.accountVersion || oldBalance.accountVersion || 1
   };
   
   console.log(`New balance:`, users[id].balance);
@@ -92,10 +92,11 @@ function getConsumerPoints(consumerId) {
     total: balance.total,
     available: balance.available,
     used: balance.used,
-    nextExpiration: expirationDetails.nextExpiration,
-    expirationRule: expirationDetails.expirationRule,
+    pointsExpirationDate: expirationDetails.nextExpiration,
+    expirationPolicy: expirationDetails.expirationRule,
     market: market,
-    timezone: expirationDetails.timezone
+    timezone: expirationDetails.timezone,
+    accountVersion: balance.accountVersion || 1
   };
 }
 

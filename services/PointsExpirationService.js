@@ -198,7 +198,6 @@ class PointsExpirationService {
       market,
       expiredConsumers,
       totalExpiredPoints: 0,
-      note: 'This would be implemented as a scheduled job in production'
     };
   }
 

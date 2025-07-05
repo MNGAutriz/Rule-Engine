@@ -1454,5 +1454,137 @@
         "registrationSource": "LINE"
       }
     }
+  },
+  {
+    "consumerId": "user_008",
+    "eventId": "campaign_purchase_001",
+    "eventType": "PURCHASE",
+    "totalPointsAwarded": 1500,
+    "pointBreakdown": [
+      {
+        "ruleId": "ORDER_BASE_POINT",
+        "points": 1200,
+        "description": "Base purchase reward for HK market (+1200 MD)",
+        "ruleCategory": "BASE_PURCHASE"
+      },
+      {
+        "ruleId": "FLEXIBLE_CAMPAIGN_BONUS",
+        "points": 300,
+        "description": "Special campaign bonus for HK (+300 MD)",
+        "ruleCategory": "CAMPAIGN"
+      }
+    ],
+    "errors": [],
+    "resultingBalance": {
+      "total": 81100,
+      "available": 81100,
+      "used": 0,
+      "accountVersion": 3
+    },
+    "timestamp": "2025-07-05T06:25:07.617Z",
+    "originalEvent": {
+      "eventId": "campaign_purchase_001",
+      "eventType": "PURCHASE",
+      "timestamp": "2025-06-15T14:00:00Z",
+      "market": "HK",
+      "channel": "LINE",
+      "productLine": "PREMIUM_SERIES",
+      "consumerId": "user_008",
+      "context": {
+        "ruleId": "FLEXIBLE_CAMPAIGN_BONUS",
+        "externalId": "txn_campaign_001",
+        "storeId": "store_hk_001"
+      },
+      "attributes": {
+        "amount": 1000,
+        "currency": "HKD",
+        "srpAmount": 1200,
+        "skuList": [
+          "SK2_HK_001"
+        ]
+      }
+    }
+  },
+  {
+    "consumerId": "user_004",
+    "eventId": "registration_001",
+    "eventType": "INTERACTION",
+    "totalPointsAwarded": 0,
+    "pointBreakdown": [],
+    "errors": [],
+    "resultingBalance": {
+      "total": 4900,
+      "available": 4900,
+      "used": 0,
+      "accountVersion": 2
+    },
+    "timestamp": "2025-07-05T06:25:17.337Z",
+    "originalEvent": {
+      "eventId": "registration_001",
+      "eventType": "INTERACTION",
+      "timestamp": "2025-07-04T12:00:00Z",
+      "market": "JP",
+      "channel": "LINE",
+      "productLine": "PREMIUM_SERIES",
+      "consumerId": "user_004",
+      "context": {
+        "ruleId": "REGISTRATION_BONUS",
+        "externalId": "reg_001",
+        "storeId": "online"
+      },
+      "attributes": {
+        "registrationSource": "LINE"
+      }
+    }
+  },
+  {
+    "consumerId": "user_002",
+    "eventId": "purchase_hk_001",
+    "eventType": "PURCHASE",
+    "totalPointsAwarded": 1500,
+    "pointBreakdown": [
+      {
+        "ruleId": "ORDER_BASE_POINT",
+        "points": 1200,
+        "description": "Base purchase reward for HK market (+1200 MD)",
+        "ruleCategory": "BASE_PURCHASE"
+      },
+      {
+        "ruleId": "FLEXIBLE_CAMPAIGN_BONUS",
+        "points": 300,
+        "description": "Special campaign bonus for HK (+300 MD)",
+        "ruleCategory": "CAMPAIGN"
+      }
+    ],
+    "errors": [],
+    "resultingBalance": {
+      "total": 35500,
+      "available": 35500,
+      "used": 0,
+      "accountVersion": 2
+    },
+    "timestamp": "2025-07-05T06:25:21.909Z",
+    "originalEvent": {
+      "eventId": "purchase_hk_001",
+      "eventType": "PURCHASE",
+      "timestamp": "2025-07-04T11:00:00Z",
+      "market": "HK",
+      "channel": "LINE",
+      "productLine": "PREMIUM_SERIES",
+      "consumerId": "user_002",
+      "context": {
+        "ruleId": "ORDER_BASE_POINT",
+        "externalId": "txn_hk_001",
+        "storeId": "store_hk_001"
+      },
+      "attributes": {
+        "amount": 1000,
+        "currency": "HKD",
+        "srpAmount": 1200,
+        "skuList": [
+          "SK2_HK_001"
+        ]
+      }
+    }
   }
 ]

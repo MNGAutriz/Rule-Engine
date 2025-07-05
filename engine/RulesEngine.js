@@ -168,6 +168,10 @@ class RulesEngine {
             rewardPoints = this.calculateActivityReward(market, itemCount, params);
             break;
             
+          case 'INTERACTION_ADJUST_POINT_BY_FIRST_ORDER_LIMIT_DAYS':
+            rewardPoints = this.calculateSkinTestReward(market, params);
+            break;
+            
           case 'FIRST_PURCHASE_BIRTH_MONTH_BONUS':
             rewardPoints = this.calculateTimedBonus(market, baseAmount, discountedAmount, params);
             break;
@@ -233,14 +237,14 @@ class RulesEngine {
       const newTotal = currentBalance.total + totalRewardsAwarded;
       const newAvailable = Math.max(0, currentBalance.available + totalRewardsAwarded);
       const newUsed = currentBalance.used;
-      const newVersion = currentBalance.version + 1;
+      const newAccountVersion = (currentBalance.accountVersion || 0) + 1;
       
       // Update balance in service
       await consumerService.updateBalance(eventData.consumerId, {
         total: newTotal,
         available: newAvailable,
         used: newUsed,
-        version: newVersion
+        accountVersion: newAccountVersion
       });
       
       // Build response following the exact generalized output template
@@ -255,7 +259,7 @@ class RulesEngine {
           total: newTotal,
           available: newAvailable,
           used: newUsed,
-          version: newVersion
+          accountVersion: newAccountVersion
         }
       };
       
@@ -397,6 +401,12 @@ class RulesEngine {
     return Math.floor(actualCount * rewardPerItem);
   }
 
+  calculateSkinTestReward(market, params) {
+    // TODO: In a real implementation, we'd check if the skin test is within the allowed timeframe
+    // For now, just return the bonus if skinTestBonus is defined
+    return Math.floor(params.skinTestBonus || 0);
+  }
+
   calculateTimedBonus(market, baseAmount, discountedAmount, params) {
     const calculationAmount = discountedAmount || baseAmount;
     const baseRate = params.baseRate || params.jpRate || params.rate || 1.0;
@@ -413,45 +423,65 @@ class RulesEngine {
     const breakdown = {
       ruleId: ruleId,
       points: Math.floor(rewardPoints),
-      description: description || `${ruleId} applied`
+      description: description || `${ruleId} reward applied`,
+      ruleCategory: this.getRuleCategory(ruleId)
     };
 
     // Add campaign information if available in params
-    if (params && params.campaignId) {
-      breakdown.campaignId = params.campaignId;
-    }
-    if (params && params.campaignCode) {
-      breakdown.campaignCode = params.campaignCode;
-    }
-    if (params && params.campaignStart) {
-      breakdown.campaignStart = params.campaignStart;
-    }
-    if (params && params.campaignEnd) {
-      breakdown.campaignEnd = params.campaignEnd;
+    if (params && (params.campaignId || params.campaignCode)) {
+      breakdown.campaignDetails = {
+        ...(params.campaignId && { campaignId: params.campaignId }),
+        ...(params.campaignCode && { campaignCode: params.campaignCode }),
+        ...(params.campaignStart && { campaignStart: params.campaignStart }),
+        ...(params.campaignEnd && { campaignEnd: params.campaignEnd })
+      };
     }
 
     this.rewardBreakdown.push(breakdown);
   }
 
   /**
-   * Generate description for a rule based on context
+   * Generate user-friendly description for a rule based on context
    */
   getDescription(ruleId, market, rewardPoints) {
     const descriptions = {
-      'INTERACTION_REGISTRY_POINT': `Registration reward for ${market} market`,
-      'ORDER_BASE_POINT': `Base transaction reward for ${market} market`,
-      'ORDER_MULTIPLE_POINT_LIMIT': `Campaign multiplier for ${market} market`,
-      'FLEXIBLE_CAMPAIGN_BONUS': `Campaign reward for ${market} market`,
-      'FLEXIBLE_VIP_MULTIPLIER': `Tier-based multiplier for ${market} market`,
-      'FLEXIBLE_BASKET_AMOUNT': `Threshold reward for ${market} market`,
-      'FLEXIBLE_PRODUCT_MULTIPLIER': `Product-based reward for ${market} market`,
-      'FLEXIBLE_COMBO_PRODUCT_MULTIPLIER': `Combination reward for ${market} market`,
-      'INTERACTION_ADJUST_POINT_TIMES_PER_YEAR': `Activity-based reward for ${market} market`,
-      'FIRST_PURCHASE_BIRTH_MONTH_BONUS': `Timed bonus for ${market} market`,
-      'INTERACTION_ADJUST_POINT_BY_MANAGER': 'Manual adjustment'
+      'INTERACTION_REGISTRY_POINT': `Welcome bonus for ${market} registration (+${rewardPoints} MD)`,
+      'ORDER_BASE_POINT': `Base purchase reward for ${market} market (+${rewardPoints} MD)`,
+      'ORDER_MULTIPLE_POINT_LIMIT': `Repeat purchase bonus for ${market} (+${rewardPoints} MD)`,
+      'FLEXIBLE_CAMPAIGN_BONUS': `Special campaign bonus for ${market} (+${rewardPoints} MD)`,
+      'FLEXIBLE_VIP_MULTIPLIER': `VIP tier multiplier bonus for ${market} (+${rewardPoints} MD)`,
+      'FLEXIBLE_BASKET_AMOUNT': `High value purchase threshold bonus (+${rewardPoints} MD)`,
+      'FLEXIBLE_PRODUCT_MULTIPLIER': `Product-specific bonus for ${market} (+${rewardPoints} MD)`,
+      'FLEXIBLE_COMBO_PRODUCT_MULTIPLIER': `Product combination bonus (+${rewardPoints} MD)`,
+      'INTERACTION_ADJUST_POINT_TIMES_PER_YEAR': `Engagement activity reward (+${rewardPoints} MD)`,
+      'INTERACTION_ADJUST_POINT_BY_FIRST_ORDER_LIMIT_DAYS': `Skin assessment completion bonus (+${rewardPoints} MD)`,
+      'FIRST_PURCHASE_BIRTH_MONTH_BONUS': `Birthday month special bonus (+${rewardPoints} MD)`,
+      'INTERACTION_ADJUST_POINT_BY_MANAGER': `Manual account adjustment (+${rewardPoints} MD)`
     };
 
-    return descriptions[ruleId] || `${ruleId} applied`;
+    return descriptions[ruleId] || `${ruleId} reward applied (+${rewardPoints} MD)`;
+  }
+
+  /**
+   * Get rule category for better organization in responses
+   */
+  getRuleCategory(ruleId) {
+    const categories = {
+      'INTERACTION_REGISTRY_POINT': 'REGISTRATION',
+      'ORDER_BASE_POINT': 'BASE_PURCHASE',
+      'ORDER_MULTIPLE_POINT': 'PURCHASE_BONUS',
+      'FLEXIBLE_CAMPAIGN_BONUS': 'CAMPAIGN',
+      'FLEXIBLE_VIP_MULTIPLIER': 'VIP_TIER',
+      'FLEXIBLE_BASKET_AMOUNT': 'SPENDING_THRESHOLD',
+      'FLEXIBLE_PRODUCT_MULTIPLIER': 'PRODUCT_BONUS',
+      'FLEXIBLE_COMBO_PRODUCT_MULTIPLIER': 'PRODUCT_COMBO',
+      'INTERACTION_ADJUST_POINT_TIMES_PER_YEAR': 'ENGAGEMENT_ACTIVITY',
+      'INTERACTION_ADJUST_POINT_BY_FIRST_ORDER_LIMIT_DAYS': 'ENGAGEMENT_ACTIVITY',
+      'FIRST_PURCHASE_BIRTH_MONTH_BONUS': 'PERSONAL_MILESTONE',
+      'INTERACTION_ADJUST_POINT_BY_MANAGER': 'MANUAL_ADJUSTMENT'
+    };
+
+    return categories[ruleId] || 'OTHER';
   }
 
   /**

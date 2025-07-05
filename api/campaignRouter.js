@@ -7,6 +7,7 @@ const campaignService = new CampaignService();
 /**
  * GET /api/campaigns/active?startDate={optional}&endDate={optional}
  * Return currently active campaigns scoped by optional date range
+ * Follows the generalized output template exactly
  */
 router.get('/active', async (req, res) => {
   try {
@@ -21,7 +22,20 @@ router.get('/active', async (req, res) => {
     };
     
     const activeCampaigns = await campaignService.getActiveCampaigns(filters);
-    res.json(activeCampaigns);
+    
+    // Format response to match generalized template exactly
+    const response = activeCampaigns.map(campaign => ({
+      campaignCode: campaign.campaignCode,
+      name: campaign.name,
+      market: campaign.market,
+      channel: campaign.channel,
+      brand: campaign.brand || 'SK-II',
+      startDate: campaign.startDate,
+      endDate: campaign.endDate,
+      ruleIds: campaign.ruleIds || []
+    }));
+    
+    res.json(response);
   } catch (error) {
     console.error('Error fetching active campaigns:', error);
     res.status(500).json({

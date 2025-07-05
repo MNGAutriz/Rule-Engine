@@ -6,6 +6,7 @@ const RulesEngine = require('../engine/RulesEngine');
 /**
  * GET /api/consumer/points?consumerId={id}
  * Return current point status for a given consumer
+ * Follows the generalized output template exactly
  */
 router.get('/points', async (req, res) => {
   try {
@@ -19,7 +20,21 @@ router.get('/points', async (req, res) => {
     }
     
     const pointsData = await consumerService.getConsumerPoints(consumerId);
-    res.json(pointsData);
+    
+    // Format response to match generalized template exactly
+    const response = {
+      consumerId: pointsData.consumerId,
+      total: pointsData.total,
+      available: pointsData.available,
+      used: pointsData.used,
+      pointsExpirationDate: pointsData.pointsExpirationDate,
+      expirationPolicy: pointsData.expirationPolicy,
+      market: pointsData.market,
+      timezone: pointsData.timezone,
+      accountVersion: pointsData.accountVersion
+    };
+    
+    res.json(response);
   } catch (error) {
     console.error('Error fetching consumer points:', error);
     res.status(500).json({
@@ -32,6 +47,7 @@ router.get('/points', async (req, res) => {
 /**
  * GET /api/consumer/history?consumerId={id}
  * Returns chronological point activity for a consumer
+ * Follows the generalized output template exactly
  */
 router.get('/history', async (req, res) => {
   try {
@@ -49,7 +65,17 @@ router.get('/history', async (req, res) => {
       { startDate, endDate, limit: parseInt(limit) }
     );
     
-    res.json(history);
+    // Format response to match generalized template exactly
+    const response = history.map(entry => ({
+      eventId: entry.eventId,
+      timestamp: entry.timestamp,
+      eventType: entry.eventType,
+      points: entry.points,
+      ruleId: entry.ruleId,
+      description: entry.description
+    }));
+    
+    res.json(response);
   } catch (error) {
     console.error('Error fetching consumer history:', error);
     res.status(500).json({

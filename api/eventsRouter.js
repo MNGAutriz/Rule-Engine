@@ -6,12 +6,12 @@ const { validateEventInput } = require('../utils/validators');
 /**
  * POST /api/events/process
  * Core API that processes all consumer events and computes points via the rule engine
- * Input format matches the specified template with eventId, eventType, timestamp, market, channel, etc.
+ * Follows the generalized input/output template exactly
  */
 router.post('/process', async (req, res) => {
   try {
-    // Validate input - the new format can include market, channel, productLine, context, attributes
-    const { eventId, eventType, timestamp, consumerId, market, channel, productLine, context, attributes } = req.body;
+    // Validate input according to generalized template
+    const { eventId, eventType, timestamp, market, channel, productLine, consumerId, context, attributes } = req.body;
     
     if (!eventId || !eventType || !timestamp || !consumerId) {
       return res.status(400).json({
@@ -20,29 +20,23 @@ router.post('/process', async (req, res) => {
       });
     }
 
-    // Convert to internal format for processing - flatten the structure
-    const internalEvent = {
+    // Process event using the exact input format (no transformation needed)
+    const eventData = {
       eventId,
-      consumerId,
       eventType,
       timestamp,
       market: market || 'JP',
       channel: channel || 'ONLINE',
-      productLine: productLine || 'STANDARD',
+      productLine: productLine || 'PREMIUM_SERIES',
+      consumerId,
       context: context || {},
-      attributes: attributes || {},
-      // For manual adjustments, extract points from attributes
-      ...(eventType === 'ADJUSTMENT' && attributes?.adjustmentAmount ? {
-        adjustmentAmount: attributes.adjustmentAmount,
-        reason: attributes.reason || 'Manual adjustment',
-        adminId: attributes.adminId || 'system'
-      } : {})
+      attributes: attributes || {}
     };
 
     const rulesEngine = new RulesEngine();
-    const result = await rulesEngine.processEvent(internalEvent);
+    const result = await rulesEngine.processEvent(eventData);
     
-    // Format response to match the expected output structure
+    // Format response to match the generalized output template exactly
     const response = {
       consumerId: result.consumerId,
       eventId: result.eventId,
@@ -50,11 +44,11 @@ router.post('/process', async (req, res) => {
       totalPointsAwarded: result.totalPointsAwarded,
       pointBreakdown: result.pointBreakdown || [],
       errors: result.errors || [],
-      resultingBalance: result.resultingBalance || {
-        total: result.newBalance?.total || 0,
-        available: result.newBalance?.available || 0,
-        used: result.newBalance?.used || 0,
-        version: result.newBalance?.version || 1
+      resultingBalance: {
+        total: result.resultingBalance?.total || 0,
+        available: result.resultingBalance?.available || 0,
+        used: result.resultingBalance?.used || 0,
+        accountVersion: result.resultingBalance?.accountVersion || 1
       }
     };
     
