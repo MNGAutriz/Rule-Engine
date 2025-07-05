@@ -3,7 +3,7 @@ const consumerService = require('../services/consumerService');
 /**
  * Facts Engine - Manages dynamic fact computation for the rules engine
  * Follows json-rules-engine fact patterns with pure functions
- * All facts are designed to be reusable and focused
+ * All facts are designed to be reusable and region-agnostic
  */
 class FactsEngine {
   constructor() {
@@ -21,6 +21,7 @@ class FactsEngine {
     this.factDefinitions.set('consumerId', (params) => params.consumerId);
     this.factDefinitions.set('eventType', (params) => params.eventType);
     this.factDefinitions.set('market', (params) => params.market);
+    this.factDefinitions.set('region', (params) => params.market); // Alias for market
     this.factDefinitions.set('channel', (params) => params.channel);
     this.factDefinitions.set('productLine', (params) => params.productLine);
     this.factDefinitions.set('timestamp', (params) => params.timestamp);
@@ -82,6 +83,11 @@ class FactsEngine {
     this.factDefinitions.set('isVIPStore', (params) => {
       const storeId = params.context?.storeId || '';
       return storeId.includes('VIP');
+    });
+
+    this.factDefinitions.set('isPremiumLocation', (params) => {
+      const storeId = params.context?.storeId || '';
+      return storeId.includes('VIP') || storeId.includes('PREMIUM');
     });
 
     // Consumer-based facts (async functions)

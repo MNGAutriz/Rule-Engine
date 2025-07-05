@@ -7,16 +7,16 @@ const path = require('path');
 const { v4: uuidv4 } = require('uuid');
 
 /**
- * Main Loyalty Engine - Orchestrates rule evaluation and point calculation
+ * Main Rules Engine - Orchestrates rule evaluation and point calculation
  * Follows json-rules-engine patterns with proper event-driven architecture
- * Strictly adheres to generalized input/output templates
+ * Flexible and market-agnostic design for global scalability
  */
-class LoyaltyEngine {
+class RulesEngine {
   constructor() {
     this.campaignService = new CampaignService();
     this.factsEngine = new FactsEngine();
     this.engine = new Engine();
-    this.pointBreakdown = [];
+    this.rewardBreakdown = [];
     this.errors = [];
     this.currentEventData = null; // Store current event data for handlers
     this.initialized = false; // Track initialization state
@@ -39,22 +39,25 @@ class LoyaltyEngine {
     this.initializeEventHandlers();
     
     this.initialized = true;
-    console.log('Loyalty Engine initialized with json-rules-engine patterns');
+    console.log('Rules Engine initialized with json-rules-engine patterns');
   }
 
   /**
    * Load rules from JSON files in the rules directory
+   * All rules must be defined in JSON files 
    */
   async loadRulesFromFiles() {
     const rulesDir = path.join(__dirname, '../rules');
     
     if (!fs.existsSync(rulesDir)) {
-      console.warn('Rules directory not found, creating default rules...');
-      await this.createDefaultRules();
-      return;
+      throw new Error('Rules directory not found. Please create the rules directory with JSON rule files.');
     }
 
     const ruleFiles = fs.readdirSync(rulesDir).filter(file => file.endsWith('.json'));
+    
+    if (ruleFiles.length === 0) {
+      throw new Error('No rule files found in rules directory. Please add JSON rule files.');
+    }
     
     for (const file of ruleFiles) {
       const filePath = path.join(rulesDir, file);
@@ -69,6 +72,7 @@ class LoyaltyEngine {
         console.log(`Loaded rules from ${file}`);
       } catch (error) {
         console.error(`Error loading rules from ${file}:`, error);
+        throw new Error(`Failed to load rules from ${file}: ${error.message}`);
       }
     }
   }
@@ -106,8 +110,8 @@ class LoyaltyEngine {
   }
 
   /**
-   * Create a dynamic event handler that calculates points based on rule parameters
-   * This is the core of the data-driven approach 
+   * Create a dynamic event handler that calculates rewards based on rule parameters
+   * This is the core of the flexible, market-agnostic approach 
    */
   createDynamicEventHandler(eventType) {
     return async (event, almanac) => {
@@ -116,73 +120,71 @@ class LoyaltyEngine {
         
         // Get data from the current event data stored during processing
         const eventData = this.currentEventData || {};
-        const amount = eventData.attributes?.amount || 0;
-        const srpAmount = eventData.attributes?.srpAmount || 0;
-        const recycledCount = eventData.attributes?.recycledCount || 0;
-        const adjustedPoints = eventData.attributes?.adjustedPoints || 0;
-        const giftValue = eventData.attributes?.giftValue || 0;
-        const burnAmount = eventData.attributes?.burnAmount || 0;
+        const baseAmount = eventData.attributes?.amount || 0;
+        const discountedAmount = eventData.attributes?.srpAmount || 0;
+        const itemCount = eventData.attributes?.recycledCount || 0;
+        const adjustmentValue = eventData.attributes?.adjustedPoints || 0;
         
-        console.log(`Processing ${eventType} - market: ${market}, amount: ${amount}, srpAmount: ${srpAmount}`);
+        console.log(`Processing ${eventType} - market: ${market}, baseAmount: ${baseAmount}, discountedAmount: ${discountedAmount}`);
         
-        let points = 0;
+        let rewardPoints = 0;
         const params = event; // In json-rules-engine, the event object IS the params
         
-        // Calculate points based on event type and parameters
+        // Calculate rewards based on event type and parameters
         switch (eventType) {
           case 'INTERACTION_REGISTRY_POINT':
-            points = this.calculateRegistrationPoints(market, params);
+            rewardPoints = this.calculateRegistrationReward(market, params);
             break;
             
           case 'ORDER_BASE_POINT':
-            points = this.calculateBasePoints(market, amount, srpAmount, params);
+            rewardPoints = this.calculateBaseReward(market, baseAmount, discountedAmount, params);
             break;
             
           case 'ORDER_MULTIPLE_POINT_LIMIT':
-            points = this.calculateCampaignMultiplier(market, amount, srpAmount, params);
+            rewardPoints = this.calculateMultiplierReward(market, baseAmount, discountedAmount, params);
             break;
             
           case 'FLEXIBLE_CAMPAIGN_BONUS':
-            points = this.calculateCampaignBonus(market, amount, srpAmount, params);
+            rewardPoints = this.calculateCampaignReward(market, baseAmount, discountedAmount, params);
             break;
             
           case 'FLEXIBLE_VIP_MULTIPLIER':
-            points = this.calculateVIPMultiplier(market, amount, srpAmount, params);
+            rewardPoints = this.calculateTierMultiplier(market, baseAmount, discountedAmount, params);
             break;
             
           case 'FLEXIBLE_BASKET_AMOUNT':
-            points = this.calculateBasketThreshold(market, srpAmount, params);
+            rewardPoints = this.calculateThresholdReward(market, discountedAmount, params);
             break;
             
           case 'FLEXIBLE_PRODUCT_MULTIPLIER':
-            points = this.calculateProductMultiplier(market, amount, srpAmount, params);
+            rewardPoints = this.calculateProductReward(market, baseAmount, discountedAmount, params);
             break;
             
           case 'FLEXIBLE_COMBO_PRODUCT_MULTIPLIER':
-            points = this.calculateComboBonus(market, params);
+            rewardPoints = this.calculateComboReward(market, params);
             break;
             
           case 'INTERACTION_ADJUST_POINT_TIMES_PER_YEAR':
-            points = this.calculateRecyclingPoints(market, recycledCount, params);
+            rewardPoints = this.calculateActivityReward(market, itemCount, params);
             break;
             
           case 'FIRST_PURCHASE_BIRTH_MONTH_BONUS':
-            points = this.calculateBirthMonthBonus(market, amount, srpAmount, params);
+            rewardPoints = this.calculateTimedBonus(market, baseAmount, discountedAmount, params);
             break;
             
           case 'INTERACTION_ADJUST_POINT_BY_MANAGER':
-            points = adjustedPoints;
+            rewardPoints = adjustmentValue;
             break;
             
           default:
             console.warn(`Unknown event type: ${eventType}`);
-            points = 0;
+            rewardPoints = 0;
         }
         
-        console.log(`Calculated ${points} points for ${eventType}`);
+        console.log(`Calculated ${rewardPoints} reward points for ${eventType}`);
         
         // Add to breakdown with proper campaign information
-        this.addToBreakdown(eventType, points, this.getDescription(eventType, market, points), params);
+        this.addToBreakdown(eventType, rewardPoints, this.getDescription(eventType, market, rewardPoints), params);
         
       } catch (error) {
         console.error(`Error in event handler for ${eventType}:`, error);
@@ -213,7 +215,7 @@ class LoyaltyEngine {
       }
       
       // Reset breakdown and errors for this processing
-      this.pointBreakdown = [];
+      this.rewardBreakdown = [];
       this.errors = [];
       
       // Store current event data for use in event handlers
@@ -224,12 +226,12 @@ class LoyaltyEngine {
       console.log('Engine run completed. Events triggered:', engineResults.events.length);
       
       // Calculate total points from breakdown
-      const totalPointsAwarded = this.pointBreakdown.reduce((sum, item) => sum + item.points, 0);
+      const totalRewardsAwarded = this.rewardBreakdown.reduce((sum, item) => sum + item.points, 0);
       
       // Get current consumer balance and update it
       const currentBalance = await consumerService.getBalance(eventData.consumerId);
-      const newTotal = currentBalance.total + totalPointsAwarded;
-      const newAvailable = Math.max(0, currentBalance.available + totalPointsAwarded);
+      const newTotal = currentBalance.total + totalRewardsAwarded;
+      const newAvailable = Math.max(0, currentBalance.available + totalRewardsAwarded);
       const newUsed = currentBalance.used;
       const newVersion = currentBalance.version + 1;
       
@@ -246,8 +248,8 @@ class LoyaltyEngine {
         consumerId: eventData.consumerId,
         eventId: eventData.eventId,
         eventType: eventData.eventType,
-        totalPointsAwarded: totalPointsAwarded,
-        pointBreakdown: this.pointBreakdown,
+        totalPointsAwarded: totalRewardsAwarded,
+        pointBreakdown: this.rewardBreakdown,
         errors: this.errors,
         resultingBalance: {
           total: newTotal,
@@ -323,126 +325,94 @@ class LoyaltyEngine {
   }
 
   /**
-   * Data-driven point calculation methods
-   * These methods calculate points based on parameters from rules, not hardcoded logic
+   * Flexible reward calculation methods
+   * These methods calculate rewards based purely on parameters from rules
+   * Market-agnostic and data-driven approach for global scalability
    */
-  calculateRegistrationPoints(market, params) {
-    if (market === 'JP') {
-      return Math.floor(params.registrationBonus || 150);
-    }
-    return Math.floor(params.registrationBonus || 0);
+  calculateRegistrationReward(market, params) {
+    return Math.floor(params.registrationBonus || params.fixedReward || 0);
   }
 
-  calculateBasePoints(market, amount, srpAmount, params) {
-    if (market === 'JP') {
-      const rate = params.jpRate || 0.1;
-      const result = Math.floor(amount * rate);
-      return result;
-    } else if (market === 'HK' || market === 'TW') {
-      const baseAmount = srpAmount || amount;
-      const rate = params.rate || 1.0;
-      const result = Math.floor(baseAmount * rate);
-      return result;
-    }
-    return 0;
+  calculateBaseReward(market, baseAmount, discountedAmount, params) {
+    const calculationAmount = discountedAmount || baseAmount;
+    const rewardRate = params.rate || params.jpRate || params.conversionRate || 0;
+    return Math.floor(calculationAmount * rewardRate);
   }
 
-  calculateCampaignMultiplier(market, amount, srpAmount, params) {
-    if (market === 'JP') {
-      const basePoints = Math.floor(amount * (params.jpRate || 0.1));
-      const multiplier = params.multiplier || 1.5;
-      return Math.floor(basePoints * (multiplier - 1.0));
+  calculateMultiplierReward(market, baseAmount, discountedAmount, params) {
+    const calculationAmount = discountedAmount || baseAmount;
+    const baseRate = params.baseRate || params.jpRate || params.rate || 0;
+    const baseReward = Math.floor(calculationAmount * baseRate);
+    const multiplier = params.multiplier || 1.0;
+    return Math.floor(baseReward * (multiplier - 1.0));
+  }
+
+  calculateCampaignReward(market, baseAmount, discountedAmount, params) {
+    // Support both fixed bonus and multiplier approaches
+    if (params.fixedBonus !== undefined) {
+      return Math.floor(params.fixedBonus);
     } else {
-      const baseAmount = srpAmount || amount;
-      const multiplier = params.multiplier || 1.5;
-      const basePoints = Math.floor(baseAmount);
-      return Math.floor(basePoints * (multiplier - 1.0));
+      const calculationAmount = discountedAmount || baseAmount;
+      const baseRate = params.baseRate || params.jpRate || params.rate || 0;
+      const baseReward = Math.floor(calculationAmount * baseRate);
+      const multiplier = params.multiplier || 1.0;
+      return Math.floor(baseReward * (multiplier - 1.0));
     }
   }
 
-  calculateCampaignBonus(market, amount, srpAmount, params) {
-    if (market === 'JP') {
-      const multiplier = params.multiplier || 1.5;
-      const basePoints = Math.floor(amount * (params.jpRate || 0.1));
-      return Math.floor(basePoints * (multiplier - 1.0));
-    } else {
-      return Math.floor(params.fixedBonus || 0);
-    }
+  calculateTierMultiplier(market, baseAmount, discountedAmount, params) {
+    const calculationAmount = discountedAmount || baseAmount;
+    const baseRate = params.baseRate || params.rate || 1.0;
+    const baseReward = Math.floor(calculationAmount * baseRate);
+    const multiplier = params.multiplier || 1.0;
+    return Math.floor(baseReward * (multiplier - 1.0));
   }
 
-  calculateVIPMultiplier(market, amount, srpAmount, params) {
-    if (market === 'HK' || market === 'TW') {
-      const multiplier = params.multiplier || 2.0;
-      const baseAmount = srpAmount || amount;
-      const basePoints = Math.floor(baseAmount);
-      return Math.floor(basePoints * (multiplier - 1.0));
+  calculateThresholdReward(market, discountedAmount, params) {
+    const threshold = params.threshold || 0;
+    const bonus = params.bonus || params.reward || 0;
+    
+    if (discountedAmount >= threshold) {
+      return Math.floor(bonus);
     }
     return 0;
   }
 
-  calculateBasketThreshold(market, srpAmount, params) {
-    if (market === 'HK' || market === 'TW') {
-      const threshold = params.threshold || 5000;
-      const bonus = params.bonus || 200;
-      
-      if (srpAmount >= threshold) {
-        return Math.floor(bonus);
-      }
-    }
-    return 0;
+  calculateProductReward(market, baseAmount, discountedAmount, params) {
+    const calculationAmount = discountedAmount || baseAmount;
+    const baseRate = params.baseRate || params.rate || 1.0;
+    const baseReward = Math.floor(calculationAmount * baseRate);
+    const multiplier = params.multiplier || 1.0;
+    return Math.floor(baseReward * (multiplier - 1.0));
   }
 
-  calculateProductMultiplier(market, amount, srpAmount, params) {
-    if (market === 'HK' || market === 'TW') {
-      const multiplier = params.multiplier || 1.5;
-      const baseAmount = srpAmount || amount;
-      const basePoints = Math.floor(baseAmount);
-      return Math.floor(basePoints * (multiplier - 1.0));
-    }
-    return 0;
+  calculateComboReward(market, params) {
+    return Math.floor(params.bonus || params.reward || params.fixedBonus || 0);
   }
 
-  calculateComboBonus(market, params) {
-    if (market === 'HK' || market === 'TW') {
-      return Math.floor(params.bonus || 250);
-    }
-    return 0;
+  calculateActivityReward(market, itemCount, params) {
+    const maxItemsPerPeriod = params.maxPerYear || params.maxPerPeriod || itemCount;
+    const rewardPerItem = params.pointsPerBottle || params.rewardPerItem || params.rewardPerActivity || 0;
+    const actualCount = Math.min(itemCount, maxItemsPerPeriod);
+    return Math.floor(actualCount * rewardPerItem);
   }
 
-  calculateRecyclingPoints(market, recycledCount, params) {
-    if (market === 'JP') {
-      const maxBottlesPerYear = params.maxPerYear || 5;
-      const pointsPerBottle = params.pointsPerBottle || 50;
-      const actualCount = Math.min(recycledCount, maxBottlesPerYear);
-      return Math.floor(actualCount * pointsPerBottle);
-    } else {
-      const pointsPerBottle = params.pointsPerBottle || 50;
-      return Math.floor(recycledCount * pointsPerBottle);
-    }
-  }
-
-  calculateBirthMonthBonus(market, amount, srpAmount, params) {
-    if (market === 'HK' || market === 'TW') {
-      const baseAmount = srpAmount || amount;
-      const multiplier = params.multiplier || 1.1;
-      const basePoints = Math.floor(baseAmount);
-      return Math.floor(basePoints * (multiplier - 1.0));
-    } else if (market === 'JP') {
-      const basePoints = Math.floor(amount * (params.jpRate || 0.1));
-      const multiplier = params.multiplier || 1.1;
-      return Math.floor(basePoints * (multiplier - 1.0));
-    }
-    return 0;
+  calculateTimedBonus(market, baseAmount, discountedAmount, params) {
+    const calculationAmount = discountedAmount || baseAmount;
+    const baseRate = params.baseRate || params.jpRate || params.rate || 1.0;
+    const baseReward = Math.floor(calculationAmount * baseRate);
+    const multiplier = params.multiplier || 1.0;
+    return Math.floor(baseReward * (multiplier - 1.0));
   }
 
   /**
-   * Add a point calculation to the breakdown array
+   * Add a reward calculation to the breakdown array
    * Following the exact generalized output template
    */
-  addToBreakdown(ruleId, points, description, params) {
+  addToBreakdown(ruleId, rewardPoints, description, params) {
     const breakdown = {
       ruleId: ruleId,
-      points: Math.floor(points),
+      points: Math.floor(rewardPoints),
       description: description || `${ruleId} applied`
     };
 
@@ -460,139 +430,28 @@ class LoyaltyEngine {
       breakdown.campaignEnd = params.campaignEnd;
     }
 
-    this.pointBreakdown.push(breakdown);
+    this.rewardBreakdown.push(breakdown);
   }
 
   /**
    * Generate description for a rule based on context
    */
-  getDescription(ruleId, market, points) {
+  getDescription(ruleId, market, rewardPoints) {
     const descriptions = {
-      'INTERACTION_REGISTRY_POINT': `Registration bonus for ${market} market`,
-      'ORDER_BASE_POINT': `Base purchase points for ${market} market`,
+      'INTERACTION_REGISTRY_POINT': `Registration reward for ${market} market`,
+      'ORDER_BASE_POINT': `Base transaction reward for ${market} market`,
       'ORDER_MULTIPLE_POINT_LIMIT': `Campaign multiplier for ${market} market`,
-      'FLEXIBLE_CAMPAIGN_BONUS': `Campaign bonus for ${market} market`,
-      'FLEXIBLE_VIP_MULTIPLIER': `VIP multiplier for ${market} market`,
-      'FLEXIBLE_BASKET_AMOUNT': `Basket threshold bonus for ${market} market`,
-      'FLEXIBLE_PRODUCT_MULTIPLIER': `Product multiplier for ${market} market`,
-      'FLEXIBLE_COMBO_PRODUCT_MULTIPLIER': `Combo product bonus for ${market} market`,
-      'INTERACTION_ADJUST_POINT_TIMES_PER_YEAR': `Recycling bonus for ${market} market`,
-      'FIRST_PURCHASE_BIRTH_MONTH_BONUS': `Birth month bonus for ${market} market`,
+      'FLEXIBLE_CAMPAIGN_BONUS': `Campaign reward for ${market} market`,
+      'FLEXIBLE_VIP_MULTIPLIER': `Tier-based multiplier for ${market} market`,
+      'FLEXIBLE_BASKET_AMOUNT': `Threshold reward for ${market} market`,
+      'FLEXIBLE_PRODUCT_MULTIPLIER': `Product-based reward for ${market} market`,
+      'FLEXIBLE_COMBO_PRODUCT_MULTIPLIER': `Combination reward for ${market} market`,
+      'INTERACTION_ADJUST_POINT_TIMES_PER_YEAR': `Activity-based reward for ${market} market`,
+      'FIRST_PURCHASE_BIRTH_MONTH_BONUS': `Timed bonus for ${market} market`,
       'INTERACTION_ADJUST_POINT_BY_MANAGER': 'Manual adjustment'
     };
 
     return descriptions[ruleId] || `${ruleId} applied`;
-  }
-
-  /**
-   * Create default rules if none exist
-   */
-  async createDefaultRules() {
-    const rulesDir = path.join(__dirname, '../rules');
-    
-    // Ensure rules directory exists
-    if (!fs.existsSync(rulesDir)) {
-      fs.mkdirSync(rulesDir, { recursive: true });
-    }
-
-    // Create default base rules
-    const defaultBaseRules = [
-      {
-        name: "Registration Bonus - JP",
-        conditions: {
-          all: [
-            { "fact": "eventType", "operator": "equal", "value": "INTERACTION" },
-            { "fact": "market", "operator": "equal", "value": "JP" }
-          ]
-        },
-        event: {
-          type: "INTERACTION_REGISTRY_POINT",
-          params: {
-            registrationBonus: 150,
-            description: "Registration bonus for JP market"
-          }
-        },
-        priority: 10
-      },
-      {
-        name: "Base Purchase Points - JP",
-        conditions: {
-          all: [
-            { "fact": "eventType", "operator": "equal", "value": "PURCHASE" },
-            { "fact": "market", "operator": "equal", "value": "JP" }
-          ]
-        },
-        event: {
-          type: "ORDER_BASE_POINT",
-          params: {
-            jpRate: 0.1,
-            description: "Base purchase points for JP market"
-          }
-        },
-        priority: 10
-      },
-      {
-        name: "Base Purchase Points - HK/TW",
-        conditions: {
-          all: [
-            { "fact": "eventType", "operator": "equal", "value": "PURCHASE" },
-            { "fact": "market", "operator": "in", "value": ["HK", "TW"] }
-          ]
-        },
-        event: {
-          type: "ORDER_BASE_POINT",
-          params: {
-            rate: 1.0,
-            description: "Base purchase points for HK/TW market"
-          }
-        },
-        priority: 10
-      }
-    ];
-
-    // Write default rules to file
-    const defaultRulesPath = path.join(rulesDir, 'default-rules.json');
-    fs.writeFileSync(defaultRulesPath, JSON.stringify(defaultBaseRules, null, 2));
-
-    // Load the default rules
-    for (const rule of defaultBaseRules) {
-      this.engine.addRule(rule);
-    }
-
-    console.log('Created and loaded default rules');
-  }
-
-  /**
-   * Add or update a point calculation strategy
-   */
-  addPointCalculationStrategy(eventType, market, strategy) {
-    if (!this.pointCalculationStrategies.has(eventType)) {
-      this.pointCalculationStrategies.set(eventType, {});
-    }
-    this.pointCalculationStrategies.get(eventType)[market] = strategy;
-    console.log(`Added strategy for ${eventType} in ${market}`);
-  }
-
-  /**
-   * Remove a point calculation strategy
-   */
-  removePointCalculationStrategy(eventType, market) {
-    const strategies = this.pointCalculationStrategies.get(eventType);
-    if (strategies && strategies[market]) {
-      delete strategies[market];
-      console.log(`Removed strategy for ${eventType} in ${market}`);
-    }
-  }
-
-  /**
-   * Get available strategies
-   */
-  getAvailableStrategies() {
-    const strategies = {};
-    for (const [eventType, marketStrategies] of this.pointCalculationStrategies) {
-      strategies[eventType] = Object.keys(marketStrategies);
-    }
-    return strategies;
   }
 
   /**
@@ -664,7 +523,7 @@ class LoyaltyEngine {
    * Clear engine state (useful for testing)
    */
   clearState() {
-    this.pointBreakdown = [];
+    this.rewardBreakdown = [];
     this.errors = [];
     console.log('Engine state cleared');
   }
@@ -681,4 +540,4 @@ class LoyaltyEngine {
   }
 }
 
-module.exports = LoyaltyEngine;
+module.exports = RulesEngine;

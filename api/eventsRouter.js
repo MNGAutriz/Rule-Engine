@@ -1,6 +1,6 @@
 const express = require('express');
 const router = express.Router();
-const LoyaltyEngine = require('../engine/LoyaltyEngine');
+const RulesEngine = require('../engine/RulesEngine');
 const { validateEventInput } = require('../utils/validators');
 
 /**
@@ -39,8 +39,8 @@ router.post('/process', async (req, res) => {
       } : {})
     };
 
-    const loyaltyEngine = new LoyaltyEngine();
-    const result = await loyaltyEngine.processEvent(internalEvent);
+    const rulesEngine = new RulesEngine();
+    const result = await rulesEngine.processEvent(internalEvent);
     
     // Format response to match the expected output structure
     const response = {
@@ -84,12 +84,12 @@ router.post('/batch', async (req, res) => {
       });
     }
 
-    const loyaltyEngine = new LoyaltyEngine();
+    const rulesEngine = new RulesEngine();
     const results = [];
     
     for (const event of events) {
       try {
-        const result = await loyaltyEngine.processEvent(event);
+        const result = await rulesEngine.processEvent(event);
         results.push(result);
       } catch (error) {
         results.push({

@@ -8,7 +8,8 @@ class PointsExpirationService {
     // Market-specific expiration configurations
     this.expirationConfigs = {
       'JP': {
-        standardExpiry: 365, // days from last ORDER
+        standardExpiry: 'yearly', // cumulative days from last transaction
+        expiryDays: 365,
         extensionTrigger: 'ORDER',
         interactionPointsExpiry: 'individual', // expire individually 1 year after each action
         specialNotes: 'Uses LGR.1–LGR.4. Manual/admin actions don\'t extend expiry.',
@@ -57,7 +58,7 @@ class PointsExpirationService {
   }
 
   /**
-   * Calculate expiration for JP market (365 days from last ORDER)
+   * Calculate expiration for JP market (yearly cumulative from last ORDER)
    */
   calculateJPExpiration(lastOrderDate, pointsHistory, now, consumerData = null) {
     const config = this.expirationConfigs['JP'];
@@ -69,9 +70,9 @@ class PointsExpirationService {
       return null;
     }
 
-    // Add standard expiry period (365 days)
+    // Add standard expiry period (yearly cumulative)
     const expirationDate = new Date(qualifyingDate);
-    expirationDate.setDate(expirationDate.getDate() + config.standardExpiry);
+    expirationDate.setDate(expirationDate.getDate() + config.expiryDays);
     
     return expirationDate.toISOString();
   }

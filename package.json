@@ -1,7 +1,7 @@
 {
-  "name": "sk2-loyalty-rules-engine",
+  "name": "flexible-rules-engine",
   "version": "1.0.0",
-  "description": "Flexible loyalty rules engine for SK-II multi-market campaigns",
+  "description": "Flexible and scalable rules engine for multi-market campaigns and events",
   "main": "app.js",
   "scripts": {
     "start": "node app.js",
@@ -22,11 +22,13 @@
     "nodemon": "^3.0.2"
   },
   "keywords": [
-    "loyalty",
     "rules-engine",
-    "sk-ii",
-    "campaigns"
+    "campaigns",
+    "events",
+    "flexible",
+    "scalable",
+    "multi-market"
   ],
-  "author": "P&G SK-II Team",
+  "author": "Development Team",
   "license": "ISC"
 }

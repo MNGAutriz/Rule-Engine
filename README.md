@@ -1,24 +1,24 @@
-# Loyalty Points Rule Engine
+# Universal Rules Engine
 
-A focused rule-based loyalty points system supporting nine core event types across multiple markets (Japan, Hong Kong, Taiwan).
+A flexible, market-agnostic rule-based reward system supporting global expansion across markets, campaigns, and business models.
 
 ## Overview
 
-This system processes loyalty events and calculates points using configurable JSON rules. It supports market-specific business logic while maintaining a clean, maintainable architecture.
+This system processes reward events and calculates points using configurable JSON rules. It supports market-specific business logic while maintaining a clean, scalable architecture designed for global deployment.
 
 ## Supported Event Types
 
-The rule engine handles these nine core event types:
+The rules engine handles these nine core event types:
 
-1. **Registration Bonus** - Welcome points for new member registration
-2. **Campaign Bonus** - Time-based promotional bonuses and multipliers
-3. **Birth Month Bonus** - Special multipliers during customer's birth month
-4. **Basket Threshold Bonus** - Bonuses for reaching spending thresholds
-5. **Product Multiplier** - Enhanced points for specific products/lines
-6. **Product Combo Bonus** - Fixed bonuses for purchasing product combinations
-7. **VIP Status Multiplier** - Enhanced point rates for VIP members
+1. **Registration Reward** - Welcome points for new member registration
+2. **Campaign Reward** - Time-based promotional rewards and multipliers
+3. **Timed Bonus** - Special multipliers during specific periods (e.g., birth month)
+4. **Threshold Reward** - Rewards for reaching spending thresholds
+5. **Product Multiplier** - Enhanced points for specific products/categories
+6. **Combination Reward** - Fixed rewards for purchasing product combinations
+7. **Tier Multiplier** - Enhanced point rates based on customer tiers
 8. **Manual Adjustments** - Administrative point adjustments
-9. **Bottle Recycling** - Environmental initiative with yearly limits
+9. **Activity Reward** - Environmental or social activity rewards (e.g., recycling)
 
 ## Architecture
 
@@ -26,7 +26,7 @@ The rule engine handles these nine core event types:
 ┌─────────────────┐
 │   API Routes    │ ← REST endpoints for events
 ├─────────────────┤
-│ Loyalty Engine  │ ← Core processing logic
+│  Rules Engine   │ ← Core processing logic
 ├─────────────────┤
 │  Facts Engine   │ ← Context preparation
 ├─────────────────┤
@@ -36,30 +36,35 @@ The rule engine handles these nine core event types:
 
 ## Core Components
 
-### Rule Engine (`engine/LoyaltyEngine.js`)
+### Rule Engine (`engine/RulesEngine.js`)
 - Processes events through JSON rules
-- Calculates points based on market-specific logic
+- Calculates rewards based on market-specific logic
 - Handles rule priority and execution order
 
 ### Facts Engine (`engine/FactsEngine.js`)
 - Prepares event context and customer data
 - Enriches facts with derived calculations
-- Provides market-specific fact preparation
+- Provides market-agnostic fact preparation
 
 ### Rule Files (`rules/`)
-- `transaction-rules.json` - Registration, campaign, base purchase, recycling, manual adjustments
-- `consumer-attribute-rules.json` - Birth month and VIP status bonuses
-- `product-multiplier-rules.json` - Product-specific multipliers and combo bonuses
-- `basket-threshold-rules.json` - Spending threshold bonuses
+- `transaction-rules.json` - Registration, campaign, base purchase, activity rewards, manual adjustments
+- `consumer-attribute-rules.json` - Timed bonuses and tier-based multipliers
+- `product-multiplier-rules.json` - Product-specific multipliers and combination rewards
+- `basket-threshold-rules.json` - Spending threshold rewards
 
-## Japan Expiration Control
+## Market Expiration Control
 
-Japan points expire based on a 24-month rolling window, controlled by:
+Points expiration is controlled by flexible business rules:
 
 - **Service**: `services/PointsExpirationService.js` calculates expiration dates
-- **Consumer Data**: `expirationMonths` field in user profiles (Japan = 24 months)
-- **Storage**: Expiration dates stored with each point transaction
+- **Consumer Data**: `expirationMonths` field in user profiles configurable per market
+- **Storage**: Expiration dates stored with each reward transaction
 - **Rule Engine**: Does NOT control expiration - this is handled at the data/service layer
+
+Market examples:
+- Japan: **Yearly cumulative** (365 days from last transaction)
+- Hong Kong/Taiwan: **Fiscal year-based** (July 1 to June 30)
+- Other markets: **Configurable** based on business requirements
 
 ## API Endpoints
 
@@ -69,7 +74,7 @@ POST /api/events
 {
   "eventType": "PURCHASE|INTERACTION|ADJUSTMENT",
   "consumerId": "consumer_123",
-  "market": "JP|HK|TW",
+  "market": "JP|HK|TW|US|EU|...",
   "attributes": { ... },
   "context": { ... }
 }
@@ -93,7 +98,7 @@ The server runs on `http://localhost:3000`
 
 ## Rule Configuration
 
-Rules are defined in JSON files with this structure:
+Rules are defined in JSON files with this flexible structure:
 
 ```json
 {
@@ -106,26 +111,33 @@ Rules are defined in JSON files with this structure:
   "event": {
     "type": "ORDER_BASE_POINT",
     "params": {
-      "jpRate": 0.1,
-      "description": "JP base purchase - 1 MD per 10 JPY"
+      "rate": 0.1,
+      "description": "Base transaction reward - 1 point per 10 currency units"
     }
   },
   "priority": 10
 }
 ```
 
-## Market-Specific Logic
+## Market Logic Examples
 
 ### Japan (JP)
-- Registration: 150 MD bonus
-- Base purchase: 1 MD per 10 JPY
+- Registration: 150 points bonus
+- Base transaction: 1 point per 10 JPY
 - Campaign multipliers: 1.5x during promotions
-- Expiration: 24 months rolling
+- Expiration: Yearly cumulative (365 days rolling)
 
 ### Hong Kong/Taiwan (HK/TW)
-- Base purchase: 1 MD per 1 HKD/TWD SRP
-- Campaign bonuses: +300 MD fixed amounts
-- Basket thresholds: Tiered bonus structure
+- Base transaction: 1 point per 1 HKD/TWD SRP
+- Campaign rewards: +300 point fixed amounts
+- Threshold rewards: Tiered bonus structure
+- Expiration: Fiscal year-based
+
+### Global Flexibility
+- **Currency-agnostic**: Supports any currency via rate parameters
+- **Event-driven**: Any business event can trigger rewards
+- **Configurable**: All logic defined in JSON rules, not code
+- **Scalable**: Add new markets without code changes
 
 ## Testing
 
@@ -171,7 +183,7 @@ Rule-Engine/
 
 ## Core Components
 
-### 1. Loyalty Engine (`engine/LoyaltyEngine.js`)
+### 1. Rules Engine (`engine/RulesEngine.js`)
 
 The central orchestrator that coordinates all rule processing and point calculations.
 
@@ -487,7 +499,7 @@ Rule-Engine/
 │   ├── campaignRouter.js   # Campaign management
 │   └── recyclingRouter.js  # Bottle recycling endpoints
 ├── engine/                 # Core rule engine components
-│   ├── LoyaltyEngine.js    # Main orchestrator
+│   ├── RulesEngine.js      # Main orchestrator
 │   ├── FactsEngine.js      # Fact definitions and computation
 │   ├── RuleDefinitions.js  # Programmatic rule definitions
 │   └── facts.js            # Legacy fact definitions
@@ -639,7 +651,7 @@ Configuration is handled through:
 npm test
 
 # Run specific test suite
-npm test -- --grep "LoyaltyEngine"
+npm test -- --grep "RulesEngine"
 ```
 
 ### API Testing
@@ -669,7 +681,7 @@ curl -X POST http://localhost:3000/api/events/submit \
    - Check JSON rule file syntax
 
 2. **Point calculations incorrect**:
-   - Review event handler logic in LoyaltyEngine.js
+   - Review event handler logic in RulesEngine.js
    - Check market-specific parameters
    - Verify attribute mapping
 

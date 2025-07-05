@@ -1,7 +1,7 @@
 const express = require('express');
 const router = express.Router();
 const consumerService = require('../services/consumerService');
-const LoyaltyEngine = require('../engine/LoyaltyEngine');
+const RulesEngine = require('../engine/RulesEngine');
 
 /**
  * GET /api/consumer/points?consumerId={id}
