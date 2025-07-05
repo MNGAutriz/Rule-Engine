@@ -50,14 +50,15 @@ class FormattingHelpers {
   }
 
   /**
-   * Format reward breakdown entry with enhanced information
+   * Format reward breakdown entry with enhanced information and computation details
    */
   static formatBreakdownEntry(ruleId, rewardPoints, description, params) {
     const breakdown = {
       ruleId: ruleId,
       points: Math.floor(rewardPoints),
       description: description || `${ruleId} reward applied`,
-      ruleCategory: FormattingHelpers.getRuleCategory(ruleId)
+      ruleCategory: FormattingHelpers.getRuleCategory(ruleId),
+      computation: FormattingHelpers.generateComputationDetails(ruleId, rewardPoints, params)
     };
 
     // Add campaign information if available in params
@@ -71,6 +72,123 @@ class FormattingHelpers {
     }
 
     return breakdown;
+  }
+
+  /**
+   * Generate detailed computation information showing how points were calculated
+   */
+  static generateComputationDetails(ruleId, rewardPoints, params) {
+    const details = {
+      calculationType: FormattingHelpers.getCalculationType(ruleId),
+      formula: FormattingHelpers.getFormula(ruleId, params),
+      inputs: FormattingHelpers.getInputValues(ruleId, params),
+      result: Math.floor(rewardPoints)
+    };
+
+    return details;
+  }
+
+  /**
+   * Get calculation type for computation details
+   */
+  static getCalculationType(ruleId) {
+    const types = {
+      'INTERACTION_REGISTRY_POINT': 'FIXED_BONUS',
+      'ORDER_BASE_POINT': 'RATE_MULTIPLICATION',
+      'ORDER_MULTIPLE_POINT_LIMIT': 'MULTIPLIER_BONUS',
+      'FLEXIBLE_CAMPAIGN_BONUS': 'CAMPAIGN_BONUS',
+      'FLEXIBLE_VIP_MULTIPLIER': 'TIER_MULTIPLIER',
+      'FLEXIBLE_BASKET_AMOUNT': 'THRESHOLD_BONUS',
+      'FLEXIBLE_PRODUCT_MULTIPLIER': 'PRODUCT_MULTIPLIER',
+      'FLEXIBLE_COMBO_PRODUCT_MULTIPLIER': 'COMBO_BONUS',
+      'INTERACTION_ADJUST_POINT_TIMES_PER_YEAR': 'ACTIVITY_REWARD',
+      'FIRST_PURCHASE_BIRTH_MONTH_BONUS': 'TIMED_MULTIPLIER',
+      'INTERACTION_ADJUST_POINT_BY_MANAGER': 'MANUAL_ADJUSTMENT'
+    };
+    return types[ruleId] || 'UNKNOWN';
+  }
+
+  /**
+   * Get formula used for calculation with actual values
+   */
+  static getFormula(ruleId, params) {
+    switch (ruleId) {
+      case 'INTERACTION_REGISTRY_POINT':
+        return `registrationBonus = ${params.registrationBonus || 0}`;
+      
+      case 'ORDER_BASE_POINT':
+        const rate = params.jpRate || params.rate || params.conversionRate || 0;
+        return `floor(amount × ${rate})`;
+      
+      case 'ORDER_MULTIPLE_POINT_LIMIT':
+        const baseRate = params.baseRate || params.jpRate || params.rate || 0;
+        const multiplier = params.multiplier || 1.0;
+        return `floor(floor(amount × ${baseRate}) × (${multiplier} - 1.0))`;
+      
+      case 'FLEXIBLE_CAMPAIGN_BONUS':
+        if (params.fixedBonus !== undefined) {
+          return `fixedBonus = ${params.fixedBonus}`;
+        } else {
+          const campaignRate = params.baseRate || params.rate || 0;
+          const campaignMultiplier = params.multiplier || 1.0;
+          return `floor(floor(amount × ${campaignRate}) × (${campaignMultiplier} - 1.0))`;
+        }
+      
+      case 'FLEXIBLE_VIP_MULTIPLIER':
+        const vipRate = params.baseRate || params.rate || 1.0;
+        const vipMultiplier = params.multiplier || 1.0;
+        return `floor(floor(amount × ${vipRate}) × (${vipMultiplier} - 1.0))`;
+      
+      case 'FLEXIBLE_BASKET_AMOUNT':
+        const threshold = params.threshold || 0;
+        const bonus = params.bonus || params.reward || 0;
+        return `if amount >= ${threshold} then ${bonus} else 0`;
+      
+      case 'FLEXIBLE_PRODUCT_MULTIPLIER':
+        const prodRate = params.baseRate || params.rate || 1.0;
+        const prodMultiplier = params.multiplier || 1.0;
+        return `floor(floor(amount × ${prodRate}) × (${prodMultiplier} - 1.0))`;
+      
+      case 'FLEXIBLE_COMBO_PRODUCT_MULTIPLIER':
+        return `comboBonus = ${params.bonus || params.reward || params.fixedBonus || 0}`;
+      
+      case 'INTERACTION_ADJUST_POINT_TIMES_PER_YEAR':
+        const maxItems = params.maxPerYear || params.maxPerPeriod || 'unlimited';
+        const rewardPerItem = params.pointsPerBottle || params.rewardPerItem || params.rewardPerActivity || 0;
+        return `min(itemCount, ${maxItems}) × ${rewardPerItem}`;
+      
+      case 'FIRST_PURCHASE_BIRTH_MONTH_BONUS':
+        const birthRate = params.baseRate || params.jpRate || params.rate || 1.0;
+        const birthMultiplier = params.multiplier || 1.0;
+        return `floor(floor(amount × ${birthRate}) × (${birthMultiplier} - 1.0))`;
+      
+      case 'INTERACTION_ADJUST_POINT_BY_MANAGER':
+        return 'adjustedPoints (manual override)';
+      
+      default:
+        return 'Unknown calculation method';
+    }
+  }
+
+  /**
+   * Get input values used in calculation
+   */
+  static getInputValues(ruleId, params) {
+    const inputs = {};
+
+    // Add specific input values based on rule type
+    if (params.jpRate !== undefined) inputs.jpRate = params.jpRate;
+    if (params.rate !== undefined) inputs.rate = params.rate;
+    if (params.multiplier !== undefined) inputs.multiplier = params.multiplier;
+    if (params.threshold !== undefined) inputs.threshold = params.threshold;
+    if (params.bonus !== undefined) inputs.bonus = params.bonus;
+    if (params.registrationBonus !== undefined) inputs.registrationBonus = params.registrationBonus;
+    if (params.fixedBonus !== undefined) inputs.fixedBonus = params.fixedBonus;
+    if (params.baseRate !== undefined) inputs.baseRate = params.baseRate;
+    if (params.pointsPerBottle !== undefined) inputs.pointsPerBottle = params.pointsPerBottle;
+    if (params.maxPerYear !== undefined) inputs.maxPerYear = params.maxPerYear;
+
+    return inputs;
   }
 
   /**

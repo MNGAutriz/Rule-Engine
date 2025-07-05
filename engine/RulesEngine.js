@@ -71,6 +71,7 @@ class RulesEngine {
         // Add each rule to the engine
         for (const rule of rulesData) {
           this.engine.addRule(rule);
+          console.log(`✅ Added rule:`, rule.event?.type, 'with conditions:', JSON.stringify(rule.conditions));
         }
         
         console.log(`Loaded rules from ${file}`);
@@ -229,9 +230,16 @@ class RulesEngine {
       // Store current event data for use in event handlers
       this.currentEventData = eventData;
       
+      // DEBUG: Log facts for debugging
+      console.log('=== DEBUG: Event Data ===');
+      console.log('EventType:', eventData.eventType);
+      console.log('Market:', eventData.market);
+      console.log('Full Event:', JSON.stringify(eventData, null, 2));
+      
       // Run the engine with the event data - strictly following json-rules-engine patterns
       const engineResults = await this.engine.run(eventData);
       console.log('Engine run completed. Events triggered:', engineResults.events.length);
+      console.log('Triggered events:', engineResults.events.map(e => ({type: e.type, params: e.params})));
       
       // Calculate total points from breakdown
       const totalRewardsAwarded = this.rewardBreakdown.reduce((sum, item) => sum + item.points, 0);

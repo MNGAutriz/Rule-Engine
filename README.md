@@ -2,36 +2,40 @@
 
 A flexible, market-agnostic rule-based reward system supporting global expansion across markets, campaigns, and business models.
 
-## Overview
+## 🎯 New Business-Friendly Event Structure
 
-This system processes reward events and calculates points using configurable JSON rules. It supports market-specific business logic while maintaining a clean, scalable architecture designed for global deployment.
+This system now uses **direct business event types** instead of generic "INTERACTION" events, making it easy for business users to understand and configure rewards.
 
 ## Supported Event Types
 
-The rules engine handles these nine core event types:
+The rules engine handles these core business event types:
 
-1. **Registration Reward** - Welcome points for new member registration
-2. **Campaign Reward** - Time-based promotional rewards and multipliers
-3. **Timed Bonus** - Special multipliers during specific periods (e.g., birth month)
-4. **Threshold Reward** - Rewards for reaching spending thresholds
-5. **Product Multiplier** - Enhanced points for specific products/categories
-6. **Combination Reward** - Fixed rewards for purchasing product combinations
-7. **Tier Multiplier** - Enhanced point rates based on customer tiers
-8. **Manual Adjustments** - Administrative point adjustments
-9. **Activity Reward** - Environmental or social activity rewards (e.g., recycling)
+| Event Type | Purpose | Example Reward |
+|------------|---------|----------------|
+| **REGISTRATION** | New member signup | Welcome bonus: 150 MD |
+| **PURCHASE** | Product purchases | 1 MD per ¥10 (JP), 1 MD per $1 (HK/TW) |
+| **RECYCLE** | Bottle recycling | 50 MD per bottle (max 5/year) |
+| **CONSULTATION** | Skin tests, beauty consultations | 75 MD within 60 days of first purchase |
+| **ADJUSTMENT** | Manual admin changes | Custom amount by admin |
+| **REDEMPTION** | Point redemption events | Transaction tracking |
 
-## Architecture
+## 🏗️ Modular Architecture
 
 ```
-┌─────────────────┐
-│   API Routes    │ ← REST endpoints for events
-├─────────────────┤
-│  Rules Engine   │ ← Core processing logic
-├─────────────────┤
-│  Facts Engine   │ ← Context preparation
-├─────────────────┤
-│   JSON Rules    │ ← Business rule definitions
-└─────────────────┘
+┌─────────────────────┐
+│    API Routes       │ ← REST endpoints for events
+├─────────────────────┤
+│   Rules Engine      │ ← Core processing logic (modularized)
+│  ┌─────────────────┐│
+│  │ Calculation     ││ ← Point calculation helpers
+│  │ Validation      ││ ← Input validation helpers  
+│  │ Formatting      ││ ← Response formatting helpers
+│  └─────────────────┘│
+├─────────────────────┤
+│   Facts Engine      │ ← Simple fact preparation
+├─────────────────────┤
+│   JSON Rules        │ ← Business rule definitions
+└─────────────────────┘
 ```
 
 ## Core Components
@@ -217,7 +221,7 @@ Provides dynamic fact computation for rule evaluation.
 
 **Fact Categories**:
 - **Basic Facts**: `eventType`, `consumerId`, `market`, `timestamp`
-- **Context Facts**: `context.externalId`, `context.storeId`
+- **Context Facts**: `context.storeId`, `context.campaignCode`
 - **Attribute Facts**: `attributes.amount`, `attributes.recycledCount`
 - **Computed Facts**: `isBirthMonth`, `daysSinceFirstPurchase`, `isVIP`
 - **Consumer Facts**: `purchaseCount`, `totalSpent`, `tags`
@@ -445,10 +449,10 @@ Purchase transactions that earn base points.
 ### INTERACTION
 Various customer interactions like registration, recycling, surveys.
 
-**Subtypes** (identified by `context.externalId`):
-- `reg_*`: Registration events
-- `recycle_*`: Bottle recycling events
-- `survey_*`: Survey completion events
+**Event Types** (now directly specified):
+- `REGISTRATION`: User registration events
+- `RECYCLE`: Bottle recycling events
+- `CONSULTATION`: Skin tests and beauty consultations
 
 ### ADJUSTMENT
 Manual point adjustments by administrators.

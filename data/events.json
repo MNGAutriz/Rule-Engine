@@ -1922,5 +1922,1495 @@
         "registrationSource": "LINE"
       }
     }
+  },
+  {
+    "consumerId": "user_002",
+    "eventId": "purchase_hk_001",
+    "eventType": "PURCHASE",
+    "totalPointsAwarded": 1500,
+    "pointBreakdown": [
+      {
+        "ruleId": "ORDER_BASE_POINT",
+        "points": 1200,
+        "description": "Base purchase reward for HK market (+1200 MD)",
+        "ruleCategory": "BASE_PURCHASE"
+      },
+      {
+        "ruleId": "FLEXIBLE_CAMPAIGN_BONUS",
+        "points": 300,
+        "description": "Special campaign bonus for HK (+300 MD)",
+        "ruleCategory": "CAMPAIGN"
+      }
+    ],
+    "errors": [],
+    "resultingBalance": {
+      "total": 38500,
+      "available": 38500,
+      "used": 0,
+      "accountVersion": 5
+    },
+    "timestamp": "2025-07-05T10:14:04.340Z",
+    "originalEvent": {
+      "eventId": "purchase_hk_001",
+      "eventType": "PURCHASE",
+      "timestamp": "2025-07-04T11:00:00Z",
+      "market": "HK",
+      "channel": "LINE",
+      "productLine": "PREMIUM_SERIES",
+      "consumerId": "user_002",
+      "context": {
+        "ruleId": "ORDER_BASE_POINT",
+        "externalId": "txn_hk_001",
+        "storeId": "store_hk_001"
+      },
+      "attributes": {
+        "amount": 1000,
+        "currency": "HKD",
+        "srpAmount": 1200,
+        "skuList": [
+          "SK2_HK_001"
+        ]
+      }
+    }
+  },
+  {
+    "consumerId": "user_008",
+    "eventId": "campaign_purchase_001",
+    "eventType": "PURCHASE",
+    "totalPointsAwarded": 1500,
+    "pointBreakdown": [
+      {
+        "ruleId": "ORDER_BASE_POINT",
+        "points": 1200,
+        "description": "Base purchase reward for HK market (+1200 MD)",
+        "ruleCategory": "BASE_PURCHASE"
+      },
+      {
+        "ruleId": "FLEXIBLE_CAMPAIGN_BONUS",
+        "points": 300,
+        "description": "Special campaign bonus for HK (+300 MD)",
+        "ruleCategory": "CAMPAIGN"
+      }
+    ],
+    "errors": [],
+    "resultingBalance": {
+      "total": 84100,
+      "available": 84100,
+      "used": 0,
+      "accountVersion": 6
+    },
+    "timestamp": "2025-07-05T10:14:11.584Z",
+    "originalEvent": {
+      "eventId": "campaign_purchase_001",
+      "eventType": "PURCHASE",
+      "timestamp": "2025-06-15T14:00:00Z",
+      "market": "HK",
+      "channel": "LINE",
+      "productLine": "PREMIUM_SERIES",
+      "consumerId": "user_008",
+      "context": {
+        "ruleId": "FLEXIBLE_CAMPAIGN_BONUS",
+        "externalId": "txn_campaign_001",
+        "storeId": "store_hk_001"
+      },
+      "attributes": {
+        "amount": 1000,
+        "currency": "HKD",
+        "srpAmount": 1200,
+        "skuList": [
+          "SK2_HK_001"
+        ]
+      }
+    }
+  },
+  {
+    "consumerId": "user_004",
+    "eventId": "registration_001",
+    "eventType": "INTERACTION",
+    "totalPointsAwarded": 0,
+    "pointBreakdown": [],
+    "errors": [],
+    "resultingBalance": {
+      "total": 4900,
+      "available": 4900,
+      "used": 0,
+      "accountVersion": 4
+    },
+    "timestamp": "2025-07-05T10:14:18.199Z",
+    "originalEvent": {
+      "eventId": "registration_001",
+      "eventType": "INTERACTION",
+      "timestamp": "2025-07-04T12:00:00Z",
+      "market": "JP",
+      "channel": "LINE",
+      "productLine": "PREMIUM_SERIES",
+      "consumerId": "user_004",
+      "context": {
+        "ruleId": "REGISTRATION_BONUS",
+        "externalId": "reg_001",
+        "storeId": "online"
+      },
+      "attributes": {
+        "registrationSource": "LINE"
+      }
+    }
+  },
+  {
+    "consumerId": "user_001",
+    "eventId": "campaign_purchase_001",
+    "eventType": "PURCHASE",
+    "totalPointsAwarded": 2700,
+    "pointBreakdown": [
+      {
+        "ruleId": "ORDER_BASE_POINT",
+        "points": 1200,
+        "description": "Base purchase reward for HK market (+1200 MD)",
+        "ruleCategory": "BASE_PURCHASE"
+      },
+      {
+        "ruleId": "FLEXIBLE_CAMPAIGN_BONUS",
+        "points": 300,
+        "description": "Special campaign bonus for HK (+300 MD)",
+        "ruleCategory": "CAMPAIGN"
+      },
+      {
+        "ruleId": "FLEXIBLE_VIP_MULTIPLIER",
+        "points": 1200,
+        "description": "VIP tier multiplier bonus for HK (+1200 MD)",
+        "ruleCategory": "VIP_TIER"
+      }
+    ],
+    "errors": [],
+    "resultingBalance": {
+      "total": 2700,
+      "available": 2700,
+      "used": 0,
+      "accountVersion": 1
+    },
+    "timestamp": "2025-07-05T10:15:23.644Z",
+    "originalEvent": {
+      "eventId": "campaign_purchase_001",
+      "eventType": "PURCHASE",
+      "timestamp": "2025-06-15T14:00:00Z",
+      "market": "HK",
+      "channel": "LINE",
+      "productLine": "PREMIUM_SERIES",
+      "consumerId": "user_001",
+      "context": {
+        "ruleId": "FLEXIBLE_CAMPAIGN_BONUS",
+        "externalId": "txn_campaign_001",
+        "storeId": "store_hk_001"
+      },
+      "attributes": {
+        "amount": 1000,
+        "currency": "HKD",
+        "srpAmount": 1200,
+        "skuList": [
+          "SK2_HK_001"
+        ]
+      }
+    }
+  },
+  {
+    "consumerId": "user_004",
+    "eventId": "registration_001",
+    "eventType": "INTERACTION",
+    "totalPointsAwarded": 0,
+    "pointBreakdown": [],
+    "errors": [],
+    "resultingBalance": {
+      "total": 4900,
+      "available": 4900,
+      "used": 0,
+      "accountVersion": 5
+    },
+    "timestamp": "2025-07-05T10:16:22.699Z",
+    "originalEvent": {
+      "eventId": "registration_001",
+      "eventType": "INTERACTION",
+      "timestamp": "2025-07-04T12:00:00Z",
+      "market": "JP",
+      "channel": "LINE",
+      "productLine": "PREMIUM_SERIES",
+      "consumerId": "user_004",
+      "context": {
+        "ruleId": "REGISTRATION_BONUS",
+        "externalId": "reg_001",
+        "storeId": "online"
+      },
+      "attributes": {
+        "registrationSource": "LINE"
+      }
+    }
+  },
+  {
+    "consumerId": "new_user_123",
+    "eventId": "reg_test_001",
+    "eventType": "INTERACTION",
+    "totalPointsAwarded": 0,
+    "pointBreakdown": [],
+    "errors": [],
+    "resultingBalance": {
+      "total": 0,
+      "available": 0,
+      "used": 0,
+      "accountVersion": 1
+    },
+    "timestamp": "2025-07-05T10:19:05.849Z",
+    "originalEvent": {
+      "eventId": "reg_test_001",
+      "eventType": "INTERACTION",
+      "timestamp": "2025-07-05T10:30:00Z",
+      "market": "JP",
+      "channel": "WEB",
+      "productLine": "SKINCARE",
+      "consumerId": "new_user_123",
+      "context": {
+        "externalId": "reg_new_user_123",
+        "registrationSource": "website",
+        "referralCode": "FRIEND2025"
+      },
+      "attributes": {
+        "email": "newuser@example.com",
+        "firstName": "Akira",
+        "lastName": "Tanaka"
+      }
+    }
+  },
+  {
+    "consumerId": "new_user_registration_001",
+    "eventId": "reg_jp_001",
+    "eventType": "INTERACTION",
+    "totalPointsAwarded": 0,
+    "pointBreakdown": [],
+    "errors": [],
+    "resultingBalance": {
+      "total": 0,
+      "available": 0,
+      "used": 0,
+      "accountVersion": 1
+    },
+    "timestamp": "2025-07-05T10:20:15.685Z",
+    "originalEvent": {
+      "eventId": "reg_jp_001",
+      "eventType": "INTERACTION",
+      "timestamp": "2025-07-05T14:30:00Z",
+      "market": "JP",
+      "channel": "WEB",
+      "productLine": "SKINCARE",
+      "consumerId": "new_user_registration_001",
+      "context": {
+        "externalId": "reg_user_001",
+        "registrationSource": "website",
+        "referralCode": "WELCOME2025"
+      },
+      "attributes": {
+        "email": "newuser@example.com",
+        "firstName": "Akira",
+        "lastName": "Tanaka",
+        "age": 28,
+        "preferredLanguage": "ja"
+      }
+    }
+  },
+  {
+    "consumerId": "user_purchase_test",
+    "eventId": "purchase_jp_002",
+    "eventType": "PURCHASE",
+    "totalPointsAwarded": 2700,
+    "pointBreakdown": [
+      {
+        "ruleId": "ORDER_BASE_POINT",
+        "points": 450,
+        "description": "Base purchase reward for JP market (+450 MD)",
+        "ruleCategory": "BASE_PURCHASE"
+      },
+      {
+        "ruleId": "ORDER_MULTIPLE_POINT_LIMIT",
+        "points": 2250,
+        "description": "Repeat purchase bonus for JP (+2250 MD)",
+        "ruleCategory": "PURCHASE_BONUS"
+      }
+    ],
+    "errors": [],
+    "resultingBalance": {
+      "total": 2700,
+      "available": 2700,
+      "used": 0,
+      "accountVersion": 1
+    },
+    "timestamp": "2025-07-05T10:20:27.108Z",
+    "originalEvent": {
+      "eventId": "purchase_jp_002",
+      "eventType": "PURCHASE",
+      "timestamp": "2025-07-05T15:00:00Z",
+      "market": "JP",
+      "channel": "ONLINE",
+      "productLine": "SKINCARE",
+      "consumerId": "user_purchase_test",
+      "context": {
+        "storeId": "JP_SHIBUYA_001",
+        "orderId": "ORD_JP_20250705_001"
+      },
+      "attributes": {
+        "amount": 5000,
+        "currency": "JPY",
+        "srpAmount": 4500,
+        "skuList": [
+          "SK_SERUM_001",
+          "SK_CREAM_002"
+        ]
+      }
+    }
+  },
+  {
+    "consumerId": "new_user_jp_001",
+    "eventId": "registration_test_001",
+    "eventType": "INTERACTION",
+    "totalPointsAwarded": 0,
+    "pointBreakdown": [],
+    "errors": [],
+    "resultingBalance": {
+      "total": 0,
+      "available": 0,
+      "used": 0,
+      "accountVersion": 1
+    },
+    "timestamp": "2025-07-05T10:25:02.738Z",
+    "originalEvent": {
+      "eventId": "registration_test_001",
+      "eventType": "INTERACTION",
+      "timestamp": "2025-07-05T14:30:00Z",
+      "market": "JP",
+      "channel": "WEB",
+      "productLine": "SKINCARE",
+      "consumerId": "new_user_jp_001",
+      "context": {
+        "externalId": "reg_new_user_jp_001",
+        "registrationSource": "website",
+        "ipAddress": "192.168.1.100"
+      },
+      "attributes": {
+        "email": "testuser@example.com",
+        "firstName": "Taro",
+        "lastName": "Yamada"
+      }
+    }
+  },
+  {
+    "consumerId": "new_user_jp_001",
+    "eventId": "registration_test_001",
+    "eventType": "INTERACTION",
+    "totalPointsAwarded": 0,
+    "pointBreakdown": [],
+    "errors": [],
+    "resultingBalance": {
+      "total": 0,
+      "available": 0,
+      "used": 0,
+      "accountVersion": 2
+    },
+    "timestamp": "2025-07-05T10:27:17.188Z",
+    "originalEvent": {
+      "eventId": "registration_test_001",
+      "eventType": "INTERACTION",
+      "timestamp": "2025-07-05T14:30:00Z",
+      "market": "JP",
+      "channel": "WEB",
+      "productLine": "SKINCARE",
+      "consumerId": "new_user_jp_001",
+      "context": {
+        "externalId": "reg_new_user_jp_001",
+        "registrationSource": "website",
+        "ipAddress": "192.168.1.100"
+      },
+      "attributes": {
+        "email": "testuser@example.com",
+        "firstName": "Taro",
+        "lastName": "Yamada"
+      }
+    }
+  },
+  {
+    "consumerId": "new_user_jp_001",
+    "eventId": "registration_test_001",
+    "eventType": "INTERACTION",
+    "totalPointsAwarded": 0,
+    "pointBreakdown": [],
+    "errors": [],
+    "resultingBalance": {
+      "total": 0,
+      "available": 0,
+      "used": 0,
+      "accountVersion": 3
+    },
+    "timestamp": "2025-07-05T10:27:35.546Z",
+    "originalEvent": {
+      "eventId": "registration_test_001",
+      "eventType": "INTERACTION",
+      "timestamp": "2025-07-05T14:30:00Z",
+      "market": "JP",
+      "channel": "WEB",
+      "productLine": "SKINCARE",
+      "consumerId": "new_user_jp_001",
+      "context": {
+        "externalId": "reg_new_user_jp_001",
+        "registrationSource": "website",
+        "ipAddress": "192.168.1.100"
+      },
+      "attributes": {
+        "email": "testuser@example.com",
+        "firstName": "Taro",
+        "lastName": "Yamada"
+      }
+    }
+  },
+  {
+    "consumerId": "new_user_jp_001",
+    "eventId": "registration_test_001",
+    "eventType": "INTERACTION",
+    "totalPointsAwarded": 0,
+    "pointBreakdown": [],
+    "errors": [],
+    "resultingBalance": {
+      "total": 0,
+      "available": 0,
+      "used": 0,
+      "accountVersion": 4
+    },
+    "timestamp": "2025-07-05T10:28:22.728Z",
+    "originalEvent": {
+      "eventId": "registration_test_001",
+      "eventType": "INTERACTION",
+      "timestamp": "2025-07-05T14:30:00Z",
+      "market": "JP",
+      "channel": "WEB",
+      "productLine": "SKINCARE",
+      "consumerId": "new_user_jp_001",
+      "context": {
+        "externalId": "reg_new_user_jp_001",
+        "registrationSource": "website"
+      },
+      "attributes": {
+        "email": "testuser@example.com",
+        "firstName": "Taro",
+        "lastName": "Yamada"
+      }
+    }
+  },
+  {
+    "consumerId": "new_user_jp_001",
+    "eventId": "registration_test_001",
+    "eventType": "INTERACTION",
+    "totalPointsAwarded": 0,
+    "pointBreakdown": [],
+    "errors": [],
+    "resultingBalance": {
+      "total": 0,
+      "available": 0,
+      "used": 0,
+      "accountVersion": 5
+    },
+    "timestamp": "2025-07-05T10:29:47.825Z",
+    "originalEvent": {
+      "eventId": "registration_test_001",
+      "eventType": "INTERACTION",
+      "timestamp": "2025-07-05T14:30:00Z",
+      "market": "JP",
+      "channel": "WEB",
+      "productLine": "SKINCARE",
+      "consumerId": "new_user_jp_001",
+      "context": {
+        "externalId": "reg_new_user_jp_001",
+        "registrationSource": "website"
+      },
+      "attributes": {
+        "email": "testuser@example.com",
+        "firstName": "Taro",
+        "lastName": "Yamada"
+      }
+    }
+  },
+  {
+    "consumerId": "new_user_jp_001",
+    "eventId": "registration_test_001",
+    "eventType": "INTERACTION",
+    "totalPointsAwarded": 0,
+    "pointBreakdown": [],
+    "errors": [],
+    "resultingBalance": {
+      "total": 0,
+      "available": 0,
+      "used": 0,
+      "accountVersion": 6
+    },
+    "timestamp": "2025-07-05T10:31:01.384Z",
+    "originalEvent": {
+      "eventId": "registration_test_001",
+      "eventType": "INTERACTION",
+      "timestamp": "2025-07-05T14:30:00Z",
+      "market": "JP",
+      "channel": "WEB",
+      "productLine": "SKINCARE",
+      "consumerId": "new_user_jp_001",
+      "context": {
+        "externalId": "reg_new_user_jp_001",
+        "registrationSource": "website"
+      },
+      "attributes": {
+        "email": "testuser@example.com",
+        "firstName": "Taro",
+        "lastName": "Yamada"
+      }
+    }
+  },
+  {
+    "consumerId": "new_user_jp_001",
+    "eventId": "registration_test_001",
+    "eventType": "INTERACTION",
+    "totalPointsAwarded": 0,
+    "pointBreakdown": [],
+    "errors": [],
+    "resultingBalance": {
+      "total": 0,
+      "available": 0,
+      "used": 0,
+      "accountVersion": 7
+    },
+    "timestamp": "2025-07-05T10:34:46.201Z",
+    "originalEvent": {
+      "eventId": "registration_test_001",
+      "eventType": "INTERACTION",
+      "timestamp": "2025-07-05T14:30:00Z",
+      "market": "JP",
+      "channel": "WEB",
+      "productLine": "SKINCARE",
+      "consumerId": "new_user_jp_001",
+      "context": {
+        "externalId": "reg_new_user_jp_001",
+        "registrationSource": "website"
+      },
+      "attributes": {
+        "email": "testuser@example.com",
+        "firstName": "Taro",
+        "lastName": "Yamada"
+      }
+    }
+  },
+  {
+    "consumerId": "new_user_jp_001",
+    "eventId": "registration_test_001",
+    "eventType": "INTERACTION",
+    "totalPointsAwarded": 150,
+    "pointBreakdown": [
+      {
+        "ruleId": "INTERACTION_REGISTRY_POINT",
+        "points": 150,
+        "description": "Welcome bonus for JP registration (+150 MD)",
+        "ruleCategory": "REGISTRATION",
+        "computation": {
+          "calculationType": "FIXED_BONUS",
+          "formula": "registrationBonus = 150",
+          "inputs": {
+            "registrationBonus": 150
+          },
+          "result": 150
+        }
+      }
+    ],
+    "errors": [],
+    "resultingBalance": {
+      "total": 150,
+      "available": 150,
+      "used": 0,
+      "accountVersion": 8
+    },
+    "timestamp": "2025-07-05T10:49:14.149Z",
+    "originalEvent": {
+      "eventId": "registration_test_001",
+      "eventType": "INTERACTION",
+      "timestamp": "2025-07-05T14:30:00Z",
+      "market": "JP",
+      "channel": "WEB",
+      "productLine": "SKINCARE",
+      "consumerId": "new_user_jp_001",
+      "context": {
+        "externalId": "reg_new_user_jp_001",
+        "registrationSource": "website"
+      },
+      "attributes": {
+        "email": "testuser@example.com",
+        "firstName": "Taro",
+        "lastName": "Yamada"
+      }
+    }
+  },
+  {
+    "consumerId": "user_jp_003",
+    "eventId": "skin_test_001",
+    "eventType": "INTERACTION",
+    "totalPointsAwarded": 0,
+    "pointBreakdown": [],
+    "errors": [],
+    "resultingBalance": {
+      "total": 0,
+      "available": 0,
+      "used": 0,
+      "accountVersion": 1
+    },
+    "timestamp": "2025-07-05T10:55:42.221Z",
+    "originalEvent": {
+      "eventId": "skin_test_001",
+      "eventType": "INTERACTION",
+      "timestamp": "2025-07-05T16:00:00Z",
+      "market": "JP",
+      "channel": "STORE",
+      "productLine": "SKINCARE",
+      "consumerId": "user_jp_003",
+      "context": {
+        "interactionType": "TEST",
+        "testLocation": "TOKYO_FLAGSHIP",
+        "consultantId": "consultant_001"
+      },
+      "attributes": {
+        "skinTestDate": "2025-07-05",
+        "skinType": "combination",
+        "recommendedProducts": [
+          "moisturizer",
+          "serum"
+        ],
+        "testDuration": 30
+      }
+    }
+  },
+  {
+    "consumerId": "consumer_12345",
+    "eventId": "evt_reg_001",
+    "eventType": "REGISTRATION",
+    "totalPointsAwarded": 150,
+    "pointBreakdown": [
+      {
+        "ruleId": "INTERACTION_REGISTRY_POINT",
+        "points": 150,
+        "description": "Welcome bonus for JP registration (+150 MD)",
+        "ruleCategory": "REGISTRATION",
+        "computation": {
+          "calculationType": "FIXED_BONUS",
+          "formula": "registrationBonus = 150",
+          "inputs": {
+            "registrationBonus": 150
+          },
+          "result": 150
+        }
+      }
+    ],
+    "errors": [],
+    "resultingBalance": {
+      "total": 150,
+      "available": 150,
+      "used": 0,
+      "accountVersion": 1
+    },
+    "timestamp": "2025-07-05T11:00:58.622Z",
+    "originalEvent": {
+      "eventId": "evt_reg_001",
+      "eventType": "REGISTRATION",
+      "timestamp": "2025-01-15T10:30:00Z",
+      "market": "JP",
+      "channel": "MOBILE_APP",
+      "productLine": "SKINCARE",
+      "consumerId": "consumer_12345",
+      "context": {
+        "storeId": "STORE_TOKYO_001",
+        "campaignCode": "WELCOME2025"
+      },
+      "attributes": {
+        "signupMethod": "EMAIL"
+      }
+    }
+  },
+  {
+    "consumerId": "consumer_12345",
+    "eventId": "evt_recycle_001",
+    "eventType": "RECYCLE",
+    "totalPointsAwarded": 150,
+    "pointBreakdown": [
+      {
+        "ruleId": "INTERACTION_ADJUST_POINT_TIMES_PER_YEAR",
+        "points": 150,
+        "description": "Engagement activity reward (+150 MD)",
+        "ruleCategory": "ENGAGEMENT_ACTIVITY",
+        "computation": {
+          "calculationType": "ACTIVITY_REWARD",
+          "formula": "min(itemCount, 5) × 50",
+          "inputs": {
+            "pointsPerBottle": 50,
+            "maxPerYear": 5
+          },
+          "result": 150
+        }
+      }
+    ],
+    "errors": [],
+    "resultingBalance": {
+      "total": 300,
+      "available": 300,
+      "used": 0,
+      "accountVersion": 2
+    },
+    "timestamp": "2025-07-05T11:00:58.652Z",
+    "originalEvent": {
+      "eventId": "evt_recycle_001",
+      "eventType": "RECYCLE",
+      "timestamp": "2025-01-20T16:45:00Z",
+      "market": "JP",
+      "channel": "IN_STORE",
+      "productLine": "SKINCARE",
+      "consumerId": "consumer_12345",
+      "context": {
+        "storeId": "STORE_TOKYO_001",
+        "activityId": "RECYCLE_001"
+      },
+      "attributes": {
+        "recycledCount": 3,
+        "bottleTypes": [
+          "SERUM",
+          "CREAM",
+          "TONER"
+        ]
+      }
+    }
+  },
+  {
+    "consumerId": "consumer_12345",
+    "eventId": "evt_consultation_001",
+    "eventType": "CONSULTATION",
+    "totalPointsAwarded": 0,
+    "pointBreakdown": [],
+    "errors": [],
+    "resultingBalance": {
+      "total": 300,
+      "available": 300,
+      "used": 0,
+      "accountVersion": 3
+    },
+    "timestamp": "2025-07-05T11:00:58.673Z",
+    "originalEvent": {
+      "eventId": "evt_consultation_001",
+      "eventType": "CONSULTATION",
+      "timestamp": "2025-01-25T11:15:00Z",
+      "market": "JP",
+      "channel": "IN_STORE",
+      "productLine": "SKINCARE",
+      "consumerId": "consumer_12345",
+      "context": {
+        "storeId": "STORE_TOKYO_001",
+        "consultantId": "CONSULTANT_001"
+      },
+      "attributes": {
+        "skinTestDate": "2025-01-25",
+        "consultationType": "SKIN_ANALYSIS",
+        "duration": 30
+      }
+    }
+  },
+  {
+    "consumerId": "consumer_12345",
+    "eventId": "evt_adjustment_001",
+    "eventType": "ADJUSTMENT",
+    "totalPointsAwarded": 200,
+    "pointBreakdown": [
+      {
+        "ruleId": "INTERACTION_ADJUST_POINT_BY_MANAGER",
+        "points": 200,
+        "description": "Manual account adjustment (+200 MD)",
+        "ruleCategory": "MANUAL_ADJUSTMENT",
+        "computation": {
+          "calculationType": "MANUAL_ADJUSTMENT",
+          "formula": "adjustedPoints (manual override)",
+          "inputs": {},
+          "result": 200
+        }
+      }
+    ],
+    "errors": [],
+    "resultingBalance": {
+      "total": 500,
+      "available": 500,
+      "used": 0,
+      "accountVersion": 4
+    },
+    "timestamp": "2025-07-05T11:00:58.700Z",
+    "originalEvent": {
+      "eventId": "evt_adjustment_001",
+      "eventType": "ADJUSTMENT",
+      "timestamp": "2025-01-30T09:00:00Z",
+      "market": "JP",
+      "channel": "ADMIN",
+      "productLine": "GENERAL",
+      "consumerId": "consumer_12345",
+      "context": {
+        "adminId": "ADMIN_001",
+        "reason": "CUSTOMER_SERVICE_COMPENSATION"
+      },
+      "attributes": {
+        "adjustedPoints": 200,
+        "note": "Compensation for service issue"
+      }
+    }
+  },
+  {
+    "consumerId": "consumer_hk_456",
+    "eventId": "evt_purchase_hk_001",
+    "eventType": "PURCHASE",
+    "totalPointsAwarded": 1100,
+    "pointBreakdown": [
+      {
+        "ruleId": "ORDER_BASE_POINT",
+        "points": 800,
+        "description": "Base purchase reward for HK market (+800 MD)",
+        "ruleCategory": "BASE_PURCHASE",
+        "computation": {
+          "calculationType": "RATE_MULTIPLICATION",
+          "formula": "floor(amount × 1)",
+          "inputs": {
+            "rate": 1
+          },
+          "result": 800
+        }
+      },
+      {
+        "ruleId": "FLEXIBLE_CAMPAIGN_BONUS",
+        "points": 300,
+        "description": "Special campaign bonus for HK (+300 MD)",
+        "ruleCategory": "CAMPAIGN",
+        "computation": {
+          "calculationType": "CAMPAIGN_BONUS",
+          "formula": "fixedBonus = 300",
+          "inputs": {
+            "fixedBonus": 300
+          },
+          "result": 300
+        }
+      }
+    ],
+    "errors": [],
+    "resultingBalance": {
+      "total": 1100,
+      "available": 1100,
+      "used": 0,
+      "accountVersion": 1
+    },
+    "timestamp": "2025-07-05T11:00:58.724Z",
+    "originalEvent": {
+      "eventId": "evt_purchase_hk_001",
+      "eventType": "PURCHASE",
+      "timestamp": "2025-01-15T14:20:00Z",
+      "market": "HK",
+      "channel": "ONLINE",
+      "productLine": "SKINCARE",
+      "consumerId": "consumer_hk_456",
+      "context": {
+        "storeId": "STORE_HK_001",
+        "orderId": "ORDER_HK_789"
+      },
+      "attributes": {
+        "amount": 800,
+        "currency": "HKD",
+        "srpAmount": 800,
+        "skuList": [
+          "SKU003",
+          "SKU004"
+        ]
+      }
+    }
+  },
+  {
+    "consumerId": "consumer_12345",
+    "eventId": "evt_reg_001",
+    "eventType": "REGISTRATION",
+    "totalPointsAwarded": 150,
+    "pointBreakdown": [
+      {
+        "ruleId": "INTERACTION_REGISTRY_POINT",
+        "points": 150,
+        "description": "Welcome bonus for JP registration (+150 MD)",
+        "ruleCategory": "REGISTRATION",
+        "computation": {
+          "calculationType": "FIXED_BONUS",
+          "formula": "registrationBonus = 150",
+          "inputs": {
+            "registrationBonus": 150
+          },
+          "result": 150
+        }
+      }
+    ],
+    "errors": [],
+    "resultingBalance": {
+      "total": 650,
+      "available": 650,
+      "used": 0,
+      "accountVersion": 5
+    },
+    "timestamp": "2025-07-05T11:06:55.734Z",
+    "originalEvent": {
+      "eventId": "evt_reg_001",
+      "eventType": "REGISTRATION",
+      "timestamp": "2025-01-15T10:30:00Z",
+      "market": "JP",
+      "channel": "MOBILE_APP",
+      "productLine": "SKINCARE",
+      "consumerId": "consumer_12345",
+      "context": {
+        "storeId": "STORE_TOKYO_001",
+        "campaignCode": "WELCOME2025"
+      },
+      "attributes": {
+        "signupMethod": "EMAIL"
+      }
+    }
+  },
+  {
+    "consumerId": "consumer_12345",
+    "eventId": "evt_purchase_001",
+    "eventType": "PURCHASE",
+    "totalPointsAwarded": 500,
+    "pointBreakdown": [
+      {
+        "ruleId": "ORDER_BASE_POINT",
+        "points": 500,
+        "description": "Base purchase reward for JP market (+500 MD)",
+        "ruleCategory": "BASE_PURCHASE",
+        "computation": {
+          "calculationType": "RATE_MULTIPLICATION",
+          "formula": "floor(amount × 0.1)",
+          "inputs": {
+            "jpRate": 0.1
+          },
+          "result": 500
+        }
+      }
+    ],
+    "errors": [],
+    "resultingBalance": {
+      "total": 1150,
+      "available": 1150,
+      "used": 0,
+      "accountVersion": 6
+    },
+    "timestamp": "2025-07-05T11:06:55.760Z",
+    "originalEvent": {
+      "eventId": "evt_purchase_001",
+      "eventType": "PURCHASE",
+      "timestamp": "2025-01-16T14:20:00Z",
+      "market": "JP",
+      "channel": "ONLINE",
+      "productLine": "SKINCARE",
+      "consumerId": "consumer_12345",
+      "context": {
+        "storeId": "STORE_TOKYO_001",
+        "orderId": "ORDER_789"
+      },
+      "attributes": {
+        "amount": 5000,
+        "currency": "JPY",
+        "srpAmount": 5000,
+        "skuList": [
+          "SKU001",
+          "SKU002"
+        ]
+      }
+    }
+  },
+  {
+    "consumerId": "consumer_12345",
+    "eventId": "evt_recycle_001",
+    "eventType": "RECYCLE",
+    "totalPointsAwarded": 150,
+    "pointBreakdown": [
+      {
+        "ruleId": "INTERACTION_ADJUST_POINT_TIMES_PER_YEAR",
+        "points": 150,
+        "description": "Engagement activity reward (+150 MD)",
+        "ruleCategory": "ENGAGEMENT_ACTIVITY",
+        "computation": {
+          "calculationType": "ACTIVITY_REWARD",
+          "formula": "min(itemCount, 5) × 50",
+          "inputs": {
+            "pointsPerBottle": 50,
+            "maxPerYear": 5
+          },
+          "result": 150
+        }
+      }
+    ],
+    "errors": [],
+    "resultingBalance": {
+      "total": 1300,
+      "available": 1300,
+      "used": 0,
+      "accountVersion": 7
+    },
+    "timestamp": "2025-07-05T11:06:55.786Z",
+    "originalEvent": {
+      "eventId": "evt_recycle_001",
+      "eventType": "RECYCLE",
+      "timestamp": "2025-01-20T16:45:00Z",
+      "market": "JP",
+      "channel": "IN_STORE",
+      "productLine": "SKINCARE",
+      "consumerId": "consumer_12345",
+      "context": {
+        "storeId": "STORE_TOKYO_001",
+        "activityId": "RECYCLE_001"
+      },
+      "attributes": {
+        "recycledCount": 3,
+        "bottleTypes": [
+          "SERUM",
+          "CREAM",
+          "TONER"
+        ]
+      }
+    }
+  },
+  {
+    "consumerId": "consumer_12345",
+    "eventId": "evt_consultation_001",
+    "eventType": "CONSULTATION",
+    "totalPointsAwarded": 0,
+    "pointBreakdown": [],
+    "errors": [],
+    "resultingBalance": {
+      "total": 1300,
+      "available": 1300,
+      "used": 0,
+      "accountVersion": 8
+    },
+    "timestamp": "2025-07-05T11:06:55.813Z",
+    "originalEvent": {
+      "eventId": "evt_consultation_001",
+      "eventType": "CONSULTATION",
+      "timestamp": "2025-01-25T11:15:00Z",
+      "market": "JP",
+      "channel": "IN_STORE",
+      "productLine": "SKINCARE",
+      "consumerId": "consumer_12345",
+      "context": {
+        "storeId": "STORE_TOKYO_001",
+        "consultantId": "CONSULTANT_001"
+      },
+      "attributes": {
+        "skinTestDate": "2025-01-25",
+        "consultationType": "SKIN_ANALYSIS",
+        "duration": 30
+      }
+    }
+  },
+  {
+    "consumerId": "consumer_12345",
+    "eventId": "evt_adjustment_001",
+    "eventType": "ADJUSTMENT",
+    "totalPointsAwarded": 200,
+    "pointBreakdown": [
+      {
+        "ruleId": "INTERACTION_ADJUST_POINT_BY_MANAGER",
+        "points": 200,
+        "description": "Manual account adjustment (+200 MD)",
+        "ruleCategory": "MANUAL_ADJUSTMENT",
+        "computation": {
+          "calculationType": "MANUAL_ADJUSTMENT",
+          "formula": "adjustedPoints (manual override)",
+          "inputs": {},
+          "result": 200
+        }
+      }
+    ],
+    "errors": [],
+    "resultingBalance": {
+      "total": 1500,
+      "available": 1500,
+      "used": 0,
+      "accountVersion": 9
+    },
+    "timestamp": "2025-07-05T11:06:55.840Z",
+    "originalEvent": {
+      "eventId": "evt_adjustment_001",
+      "eventType": "ADJUSTMENT",
+      "timestamp": "2025-01-30T09:00:00Z",
+      "market": "JP",
+      "channel": "ADMIN",
+      "productLine": "GENERAL",
+      "consumerId": "consumer_12345",
+      "context": {
+        "adminId": "ADMIN_001",
+        "reason": "CUSTOMER_SERVICE_COMPENSATION"
+      },
+      "attributes": {
+        "adjustedPoints": 200,
+        "note": "Compensation for service issue"
+      }
+    }
+  },
+  {
+    "consumerId": "consumer_hk_456",
+    "eventId": "evt_purchase_hk_001",
+    "eventType": "PURCHASE",
+    "totalPointsAwarded": 1100,
+    "pointBreakdown": [
+      {
+        "ruleId": "ORDER_BASE_POINT",
+        "points": 800,
+        "description": "Base purchase reward for HK market (+800 MD)",
+        "ruleCategory": "BASE_PURCHASE",
+        "computation": {
+          "calculationType": "RATE_MULTIPLICATION",
+          "formula": "floor(amount × 1)",
+          "inputs": {
+            "rate": 1
+          },
+          "result": 800
+        }
+      },
+      {
+        "ruleId": "FLEXIBLE_CAMPAIGN_BONUS",
+        "points": 300,
+        "description": "Special campaign bonus for HK (+300 MD)",
+        "ruleCategory": "CAMPAIGN",
+        "computation": {
+          "calculationType": "CAMPAIGN_BONUS",
+          "formula": "fixedBonus = 300",
+          "inputs": {
+            "fixedBonus": 300
+          },
+          "result": 300
+        }
+      }
+    ],
+    "errors": [],
+    "resultingBalance": {
+      "total": 2200,
+      "available": 2200,
+      "used": 0,
+      "accountVersion": 2
+    },
+    "timestamp": "2025-07-05T11:06:55.865Z",
+    "originalEvent": {
+      "eventId": "evt_purchase_hk_001",
+      "eventType": "PURCHASE",
+      "timestamp": "2025-01-15T14:20:00Z",
+      "market": "HK",
+      "channel": "ONLINE",
+      "productLine": "SKINCARE",
+      "consumerId": "consumer_hk_456",
+      "context": {
+        "storeId": "STORE_HK_001",
+        "orderId": "ORDER_HK_789"
+      },
+      "attributes": {
+        "amount": 800,
+        "currency": "HKD",
+        "srpAmount": 800,
+        "skuList": [
+          "SKU003",
+          "SKU004"
+        ]
+      }
+    }
+  },
+  {
+    "consumerId": "consumer_12345",
+    "eventId": "evt_reg_001",
+    "eventType": "REGISTRATION",
+    "totalPointsAwarded": 150,
+    "pointBreakdown": [
+      {
+        "ruleId": "INTERACTION_REGISTRY_POINT",
+        "points": 150,
+        "description": "Welcome bonus for JP registration (+150 MD)",
+        "ruleCategory": "REGISTRATION",
+        "computation": {
+          "calculationType": "FIXED_BONUS",
+          "formula": "registrationBonus = 150",
+          "inputs": {
+            "registrationBonus": 150
+          },
+          "result": 150
+        }
+      }
+    ],
+    "errors": [],
+    "resultingBalance": {
+      "total": 1650,
+      "available": 1650,
+      "used": 0,
+      "accountVersion": 10
+    },
+    "timestamp": "2025-07-05T11:07:08.416Z",
+    "originalEvent": {
+      "eventId": "evt_reg_001",
+      "eventType": "REGISTRATION",
+      "timestamp": "2025-01-15T10:30:00Z",
+      "market": "JP",
+      "channel": "MOBILE_APP",
+      "productLine": "SKINCARE",
+      "consumerId": "consumer_12345",
+      "context": {
+        "storeId": "STORE_TOKYO_001",
+        "campaignCode": "WELCOME2025"
+      },
+      "attributes": {
+        "signupMethod": "EMAIL"
+      }
+    }
+  },
+  {
+    "consumerId": "consumer_12345",
+    "eventId": "evt_purchase_001",
+    "eventType": "PURCHASE",
+    "totalPointsAwarded": 500,
+    "pointBreakdown": [
+      {
+        "ruleId": "ORDER_BASE_POINT",
+        "points": 500,
+        "description": "Base purchase reward for JP market (+500 MD)",
+        "ruleCategory": "BASE_PURCHASE",
+        "computation": {
+          "calculationType": "RATE_MULTIPLICATION",
+          "formula": "floor(amount × 0.1)",
+          "inputs": {
+            "jpRate": 0.1
+          },
+          "result": 500
+        }
+      }
+    ],
+    "errors": [],
+    "resultingBalance": {
+      "total": 2150,
+      "available": 2150,
+      "used": 0,
+      "accountVersion": 11
+    },
+    "timestamp": "2025-07-05T11:07:08.445Z",
+    "originalEvent": {
+      "eventId": "evt_purchase_001",
+      "eventType": "PURCHASE",
+      "timestamp": "2025-01-16T14:20:00Z",
+      "market": "JP",
+      "channel": "ONLINE",
+      "productLine": "SKINCARE",
+      "consumerId": "consumer_12345",
+      "context": {
+        "storeId": "STORE_TOKYO_001",
+        "orderId": "ORDER_789"
+      },
+      "attributes": {
+        "amount": 5000,
+        "currency": "JPY",
+        "srpAmount": 5000,
+        "skuList": [
+          "SKU001",
+          "SKU002"
+        ]
+      }
+    }
+  },
+  {
+    "consumerId": "consumer_12345",
+    "eventId": "evt_recycle_001",
+    "eventType": "RECYCLE",
+    "totalPointsAwarded": 150,
+    "pointBreakdown": [
+      {
+        "ruleId": "INTERACTION_ADJUST_POINT_TIMES_PER_YEAR",
+        "points": 150,
+        "description": "Engagement activity reward (+150 MD)",
+        "ruleCategory": "ENGAGEMENT_ACTIVITY",
+        "computation": {
+          "calculationType": "ACTIVITY_REWARD",
+          "formula": "min(itemCount, 5) × 50",
+          "inputs": {
+            "pointsPerBottle": 50,
+            "maxPerYear": 5
+          },
+          "result": 150
+        }
+      }
+    ],
+    "errors": [],
+    "resultingBalance": {
+      "total": 2300,
+      "available": 2300,
+      "used": 0,
+      "accountVersion": 12
+    },
+    "timestamp": "2025-07-05T11:07:08.475Z",
+    "originalEvent": {
+      "eventId": "evt_recycle_001",
+      "eventType": "RECYCLE",
+      "timestamp": "2025-01-20T16:45:00Z",
+      "market": "JP",
+      "channel": "IN_STORE",
+      "productLine": "SKINCARE",
+      "consumerId": "consumer_12345",
+      "context": {
+        "storeId": "STORE_TOKYO_001",
+        "activityId": "RECYCLE_001"
+      },
+      "attributes": {
+        "recycledCount": 3,
+        "bottleTypes": [
+          "SERUM",
+          "CREAM",
+          "TONER"
+        ]
+      }
+    }
+  },
+  {
+    "consumerId": "consumer_12345",
+    "eventId": "evt_consultation_001",
+    "eventType": "CONSULTATION",
+    "totalPointsAwarded": 0,
+    "pointBreakdown": [],
+    "errors": [],
+    "resultingBalance": {
+      "total": 2300,
+      "available": 2300,
+      "used": 0,
+      "accountVersion": 13
+    },
+    "timestamp": "2025-07-05T11:07:08.498Z",
+    "originalEvent": {
+      "eventId": "evt_consultation_001",
+      "eventType": "CONSULTATION",
+      "timestamp": "2025-01-25T11:15:00Z",
+      "market": "JP",
+      "channel": "IN_STORE",
+      "productLine": "SKINCARE",
+      "consumerId": "consumer_12345",
+      "context": {
+        "storeId": "STORE_TOKYO_001",
+        "consultantId": "CONSULTANT_001"
+      },
+      "attributes": {
+        "skinTestDate": "2025-01-25",
+        "consultationType": "SKIN_ANALYSIS",
+        "duration": 30
+      }
+    }
+  },
+  {
+    "consumerId": "consumer_12345",
+    "eventId": "evt_adjustment_001",
+    "eventType": "ADJUSTMENT",
+    "totalPointsAwarded": 200,
+    "pointBreakdown": [
+      {
+        "ruleId": "INTERACTION_ADJUST_POINT_BY_MANAGER",
+        "points": 200,
+        "description": "Manual account adjustment (+200 MD)",
+        "ruleCategory": "MANUAL_ADJUSTMENT",
+        "computation": {
+          "calculationType": "MANUAL_ADJUSTMENT",
+          "formula": "adjustedPoints (manual override)",
+          "inputs": {},
+          "result": 200
+        }
+      }
+    ],
+    "errors": [],
+    "resultingBalance": {
+      "total": 2500,
+      "available": 2500,
+      "used": 0,
+      "accountVersion": 14
+    },
+    "timestamp": "2025-07-05T11:07:08.516Z",
+    "originalEvent": {
+      "eventId": "evt_adjustment_001",
+      "eventType": "ADJUSTMENT",
+      "timestamp": "2025-01-30T09:00:00Z",
+      "market": "JP",
+      "channel": "ADMIN",
+      "productLine": "GENERAL",
+      "consumerId": "consumer_12345",
+      "context": {
+        "adminId": "ADMIN_001",
+        "reason": "CUSTOMER_SERVICE_COMPENSATION"
+      },
+      "attributes": {
+        "adjustedPoints": 200,
+        "note": "Compensation for service issue"
+      }
+    }
+  },
+  {
+    "consumerId": "consumer_hk_456",
+    "eventId": "evt_purchase_hk_001",
+    "eventType": "PURCHASE",
+    "totalPointsAwarded": 1100,
+    "pointBreakdown": [
+      {
+        "ruleId": "ORDER_BASE_POINT",
+        "points": 800,
+        "description": "Base purchase reward for HK market (+800 MD)",
+        "ruleCategory": "BASE_PURCHASE",
+        "computation": {
+          "calculationType": "RATE_MULTIPLICATION",
+          "formula": "floor(amount × 1)",
+          "inputs": {
+            "rate": 1
+          },
+          "result": 800
+        }
+      },
+      {
+        "ruleId": "FLEXIBLE_CAMPAIGN_BONUS",
+        "points": 300,
+        "description": "Special campaign bonus for HK (+300 MD)",
+        "ruleCategory": "CAMPAIGN",
+        "computation": {
+          "calculationType": "CAMPAIGN_BONUS",
+          "formula": "fixedBonus = 300",
+          "inputs": {
+            "fixedBonus": 300
+          },
+          "result": 300
+        }
+      }
+    ],
+    "errors": [],
+    "resultingBalance": {
+      "total": 3300,
+      "available": 3300,
+      "used": 0,
+      "accountVersion": 3
+    },
+    "timestamp": "2025-07-05T11:07:08.536Z",
+    "originalEvent": {
+      "eventId": "evt_purchase_hk_001",
+      "eventType": "PURCHASE",
+      "timestamp": "2025-01-15T14:20:00Z",
+      "market": "HK",
+      "channel": "ONLINE",
+      "productLine": "SKINCARE",
+      "consumerId": "consumer_hk_456",
+      "context": {
+        "storeId": "STORE_HK_001",
+        "orderId": "ORDER_HK_789"
+      },
+      "attributes": {
+        "amount": 800,
+        "currency": "HKD",
+        "srpAmount": 800,
+        "skuList": [
+          "SKU003",
+          "SKU004"
+        ]
+      }
+    }
   }
 ]

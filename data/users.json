@@ -9,14 +9,15 @@
     ],
     "firstOrderDate": "2025-01-15T10:00:00Z",
     "registrationDate": "2025-01-10T10:00:00Z",
-    "market": "JP",
+    "market": "HK",
     "preferredChannel": "LINE",
     "balance": {
-      "total": 2600,
-      "available": 2600,
+      "total": 2700,
+      "available": 2700,
       "used": 0,
-      "version": 16
-    }
+      "accountVersion": 1
+    },
+    "lastOrderDate": "2025-07-05T10:15:23.644Z"
   },
   "user_002": {
     "consumerId": "user_002",
@@ -30,12 +31,12 @@
     "market": "HK",
     "preferredChannel": "WECHAT",
     "balance": {
-      "total": 37000,
-      "available": 37000,
+      "total": 38500,
+      "available": 38500,
       "used": 0,
-      "accountVersion": 4
+      "accountVersion": 5
     },
-    "lastOrderDate": "2025-07-05T06:39:35.617Z"
+    "lastOrderDate": "2025-07-05T10:14:04.340Z"
   },
   "user_003": {
     "consumerId": "user_003",
@@ -71,7 +72,7 @@
       "total": 4900,
       "available": 4900,
       "used": 0,
-      "accountVersion": 3
+      "accountVersion": 5
     },
     "lastOrderDate": "2025-07-03T16:31:51.106Z"
   },
@@ -143,12 +144,12 @@
     "market": "HK",
     "preferredChannel": "WECHAT",
     "balance": {
-      "total": 82600,
-      "available": 82600,
+      "total": 84100,
+      "available": 84100,
       "used": 0,
-      "accountVersion": 5
+      "accountVersion": 6
     },
-    "lastOrderDate": "2025-07-05T06:39:52.070Z"
+    "lastOrderDate": "2025-07-05T10:14:11.584Z"
   },
   "user_009": {
     "consumerId": "user_009",
@@ -375,5 +376,78 @@
       "accountVersion": 1
     },
     "market": "JP"
+  },
+  "new_user_123": {
+    "consumerId": "new_user_123",
+    "balance": {
+      "total": 0,
+      "available": 0,
+      "used": 0,
+      "accountVersion": 1
+    },
+    "market": "JP"
+  },
+  "new_user_registration_001": {
+    "consumerId": "new_user_registration_001",
+    "balance": {
+      "total": 0,
+      "available": 0,
+      "used": 0,
+      "accountVersion": 1
+    },
+    "market": "JP"
+  },
+  "user_purchase_test": {
+    "consumerId": "user_purchase_test",
+    "balance": {
+      "total": 2700,
+      "available": 2700,
+      "used": 0,
+      "accountVersion": 1
+    },
+    "market": "JP",
+    "lastOrderDate": "2025-07-05T10:20:27.108Z"
+  },
+  "new_user_jp_001": {
+    "consumerId": "new_user_jp_001",
+    "balance": {
+      "total": 150,
+      "available": 150,
+      "used": 0,
+      "accountVersion": 8
+    },
+    "market": "JP"
+  },
+  "user_jp_003": {
+    "consumerId": "user_jp_003",
+    "balance": {
+      "total": 0,
+      "available": 0,
+      "used": 0,
+      "accountVersion": 1
+    },
+    "market": "JP"
+  },
+  "consumer_12345": {
+    "consumerId": "consumer_12345",
+    "balance": {
+      "total": 2500,
+      "available": 2500,
+      "used": 0,
+      "accountVersion": 14
+    },
+    "market": "JP",
+    "lastOrderDate": "2025-07-05T11:07:08.445Z"
+  },
+  "consumer_hk_456": {
+    "consumerId": "consumer_hk_456",
+    "balance": {
+      "total": 3300,
+      "available": 3300,
+      "used": 0,
+      "accountVersion": 3
+    },
+    "market": "HK",
+    "lastOrderDate": "2025-07-05T11:07:08.536Z"
   }
 }

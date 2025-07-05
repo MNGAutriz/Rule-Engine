@@ -2,9 +2,8 @@
   {
     "conditions": {
       "all": [
-        { "fact": "eventType", "operator": "equal", "value": "INTERACTION" },
-        { "fact": "market", "operator": "equal", "value": "JP" },
-        { "fact": "context.externalId", "operator": "contains", "value": "reg" }
+        { "fact": "eventType", "operator": "equal", "value": "REGISTRATION" },
+        { "fact": "market", "operator": "equal", "value": "JP" }
       ]
     },
     "event": {
@@ -85,9 +84,8 @@
   {
     "conditions": {
       "all": [
-        { "fact": "eventType", "operator": "equal", "value": "INTERACTION" },
-        { "fact": "attributes.recycledCount", "operator": "greaterThan", "value": 0 },
-        { "fact": "context.externalId", "operator": "contains", "value": "recycle" }
+        { "fact": "eventType", "operator": "equal", "value": "RECYCLE" },
+        { "fact": "attributes.recycledCount", "operator": "greaterThan", "value": 0 }
       ]
     },
     "event": {
@@ -103,9 +101,8 @@
   {
     "conditions": {
       "all": [
-        { "fact": "eventType", "operator": "equal", "value": "INTERACTION" },
-        { "fact": "attributes.skinTestDate", "operator": "notEqual", "value": null },
-        { "fact": "context.externalId", "operator": "contains", "value": "skinTest" }
+        { "fact": "eventType", "operator": "equal", "value": "CONSULTATION" },
+        { "fact": "attributes.skinTestDate", "operator": "notEqual", "value": null }
       ]
     },
     "event": {

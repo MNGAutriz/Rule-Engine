@@ -16,35 +16,61 @@ class FactsEngine {
    * Following json-rules-engine best practices
    */
   initializeFactDefinitions() {
-    // Basic event facts (pure functions)
-    this.factDefinitions.set('eventId', (params) => params.eventId);
-    this.factDefinitions.set('consumerId', (params) => params.consumerId);
-    this.factDefinitions.set('eventType', (params) => params.eventType);
-    this.factDefinitions.set('market', (params) => params.market);
-    this.factDefinitions.set('region', (params) => params.market); // Alias for market
-    this.factDefinitions.set('channel', (params) => params.channel);
-    this.factDefinitions.set('productLine', (params) => params.productLine);
-    this.factDefinitions.set('timestamp', (params) => params.timestamp);
+    // Basic event facts - these are automatically created by json-rules-engine
+    // from the top-level properties of the data passed to engine.run()
+    // We only define them here for documentation and potential transformation
+    // this.factDefinitions.set('eventId', (params) => params.eventId);
+    // this.factDefinitions.set('consumerId', (params) => params.consumerId);
+    // this.factDefinitions.set('eventType', (params) => params.eventType);
+    // this.factDefinitions.set('market', (params) => params.market);
+    // this.factDefinitions.set('channel', (params) => params.channel);
+    // this.factDefinitions.set('productLine', (params) => params.productLine);
+    // this.factDefinitions.set('timestamp', (params) => params.timestamp);
     
-    // Context facts (pure functions)
-    this.factDefinitions.set('context', (params) => params.context || {});
-    this.factDefinitions.set('context.externalId', (params) => params.context?.externalId);
-    this.factDefinitions.set('context.storeId', (params) => params.context?.storeId);
-    this.factDefinitions.set('context.campaignCode', (params) => params.context?.campaignCode);
+    // Context facts - accessing nested properties
+    // Note: json-rules-engine automatically creates facts for top-level properties
+    // We only need to define custom facts for computed or nested values
+    this.factDefinitions.set('context.storeId', (params, almanac) => {
+      return almanac.factValue('context').then(context => context?.storeId);
+    });
+    this.factDefinitions.set('context.campaignCode', (params, almanac) => {
+      return almanac.factValue('context').then(context => context?.campaignCode);
+    });
 
-    // Attributes facts (pure functions)
-    this.factDefinitions.set('attributes', (params) => params.attributes || {});
-    this.factDefinitions.set('attributes.amount', (params) => params.attributes?.amount);
-    this.factDefinitions.set('attributes.currency', (params) => params.attributes?.currency);
-    this.factDefinitions.set('attributes.srpAmount', (params) => params.attributes?.srpAmount);
-    this.factDefinitions.set('attributes.skuList', (params) => params.attributes?.skuList || []);
-    this.factDefinitions.set('attributes.recycledCount', (params) => params.attributes?.recycledCount || 0);
-    this.factDefinitions.set('attributes.skinTestDate', (params) => params.attributes?.skinTestDate);
-    this.factDefinitions.set('attributes.adjustedPoints', (params) => params.attributes?.adjustedPoints || 0);
-    this.factDefinitions.set('attributes.giftValue', (params) => params.attributes?.giftValue || 0);
-    this.factDefinitions.set('attributes.burnAmount', (params) => params.attributes?.burnAmount || 0);
-    this.factDefinitions.set('attributes.comboTag', (params) => params.attributes?.comboTag);
-    this.factDefinitions.set('attributes.note', (params) => params.attributes?.note);
+    // Attributes facts - accessing nested properties
+    this.factDefinitions.set('attributes.amount', (params, almanac) => {
+      return almanac.factValue('attributes').then(attributes => attributes?.amount);
+    });
+    this.factDefinitions.set('attributes.currency', (params, almanac) => {
+      return almanac.factValue('attributes').then(attributes => attributes?.currency);
+    });
+    this.factDefinitions.set('attributes.srpAmount', (params, almanac) => {
+      return almanac.factValue('attributes').then(attributes => attributes?.srpAmount);
+    });
+    this.factDefinitions.set('attributes.skuList', (params, almanac) => {
+      return almanac.factValue('attributes').then(attributes => attributes?.skuList || []);
+    });
+    this.factDefinitions.set('attributes.recycledCount', (params, almanac) => {
+      return almanac.factValue('attributes').then(attributes => attributes?.recycledCount || 0);
+    });
+    this.factDefinitions.set('attributes.skinTestDate', (params, almanac) => {
+      return almanac.factValue('attributes').then(attributes => attributes?.skinTestDate);
+    });
+    this.factDefinitions.set('attributes.adjustedPoints', (params, almanac) => {
+      return almanac.factValue('attributes').then(attributes => attributes?.adjustedPoints || 0);
+    });
+    this.factDefinitions.set('attributes.giftValue', (params, almanac) => {
+      return almanac.factValue('attributes').then(attributes => attributes?.giftValue || 0);
+    });
+    this.factDefinitions.set('attributes.burnAmount', (params, almanac) => {
+      return almanac.factValue('attributes').then(attributes => attributes?.burnAmount || 0);
+    });
+    this.factDefinitions.set('attributes.comboTag', (params, almanac) => {
+      return almanac.factValue('attributes').then(attributes => attributes?.comboTag);
+    });
+    this.factDefinitions.set('attributes.note', (params, almanac) => {
+      return almanac.factValue('attributes').then(attributes => attributes?.note);
+    });
 
     // Computed date/time facts (pure functions)
     this.factDefinitions.set('eventMonth', (params) => {
@@ -234,6 +260,11 @@ class FactsEngine {
     for (const [factName, factFunction] of this.factDefinitions) {
       engine.addFact(factName, factFunction);
     }
+    
+    // DEBUG: Log some key facts to ensure they're working
+    console.log('=== DEBUG: Facts Added ===');
+    console.log('Total facts added:', this.factDefinitions.size);
+    console.log('Key facts:', ['eventType', 'market', 'context.storeId']);
   }
 
   /**

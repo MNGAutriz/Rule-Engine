@@ -48,7 +48,7 @@ class ValidationHelpers {
    */
   static validateEventType(eventType) {
     const validEventTypes = [
-      'PURCHASE', 'INTERACTION', 'ADJUSTMENT', 'REDEMPTION'
+      'PURCHASE', 'REGISTRATION', 'RECYCLE', 'CONSULTATION', 'ADJUSTMENT', 'REDEMPTION'
     ];
     if (!validEventTypes.includes(eventType)) {
       throw new Error(`Invalid event type: ${eventType}. Must be one of: ${validEventTypes.join(', ')}`);
