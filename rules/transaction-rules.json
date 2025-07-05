@@ -1,5 +1,6 @@
 [
   {
+    "name": "JP Registration Bonus",
     "conditions": {
       "all": [
         { "fact": "eventType", "operator": "equal", "value": "REGISTRATION" },
@@ -16,6 +17,7 @@
     "priority": 10
   },
   {
+    "name": "JP Base Purchase Points",
     "conditions": {
       "all": [
         { "fact": "eventType", "operator": "equal", "value": "PURCHASE" },
@@ -32,6 +34,7 @@
     "priority": 10
   },
   {
+    "name": "HK/TW Base Purchase Points",
     "conditions": {
       "all": [
         { "fact": "eventType", "operator": "equal", "value": "PURCHASE" },
@@ -48,6 +51,7 @@
     "priority": 10
   },
   {
+    "name": "JP Campaign Multiplier",
     "conditions": {
       "all": [
         { "fact": "eventType", "operator": "equal", "value": "PURCHASE" },
@@ -66,6 +70,7 @@
     "priority": 5
   },
   {
+    "name": "HK/TW Campaign Bonus",
     "conditions": {
       "all": [
         { "fact": "eventType", "operator": "equal", "value": "PURCHASE" },
@@ -82,6 +87,7 @@
     "priority": 4
   },
   {
+    "name": "Bottle Recycling Reward",
     "conditions": {
       "all": [
         { "fact": "eventType", "operator": "equal", "value": "RECYCLE" },
@@ -99,6 +105,7 @@
     "priority": 8
   },
   {
+    "name": "Skin Consultation Bonus",
     "conditions": {
       "all": [
         { "fact": "eventType", "operator": "equal", "value": "CONSULTATION" },
@@ -106,16 +113,16 @@
       ]
     },
     "event": {
-      "type": "INTERACTION_ADJUST_POINT_BY_FIRST_ORDER_LIMIT_DAYS",
+      "type": "CONSULTATION_BONUS",
       "params": {
-        "skinTestBonus": 75,
-        "maxDaysAfterFirstOrder": 60,
-        "description": "Skin test within 60 days of first purchase - 75 MD"
+        "consultationBonus": 75,
+        "description": "Skin consultation completion - 75 MD"
       }
     },
     "priority": 7
   },
   {
+    "name": "Manual Admin Adjustment",
     "conditions": {
       "all": [
         { "fact": "eventType", "operator": "equal", "value": "ADJUSTMENT" }

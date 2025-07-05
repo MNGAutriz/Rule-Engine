@@ -19,7 +19,7 @@ class FormattingHelpers {
       'FLEXIBLE_PRODUCT_MULTIPLIER': 'PRODUCT_BONUS',
       'FLEXIBLE_COMBO_PRODUCT_MULTIPLIER': 'PRODUCT_COMBO',
       'INTERACTION_ADJUST_POINT_TIMES_PER_YEAR': 'ENGAGEMENT_ACTIVITY',
-      'INTERACTION_ADJUST_POINT_BY_FIRST_ORDER_LIMIT_DAYS': 'ENGAGEMENT_ACTIVITY',
+      'CONSULTATION_BONUS': 'CONSULTATION',
       'FIRST_PURCHASE_BIRTH_MONTH_BONUS': 'PERSONAL_MILESTONE',
       'INTERACTION_ADJUST_POINT_BY_MANAGER': 'MANUAL_ADJUSTMENT'
     };
@@ -41,7 +41,7 @@ class FormattingHelpers {
       'FLEXIBLE_PRODUCT_MULTIPLIER': `Product-specific bonus for ${market} (+${rewardPoints} MD)`,
       'FLEXIBLE_COMBO_PRODUCT_MULTIPLIER': `Product combination bonus (+${rewardPoints} MD)`,
       'INTERACTION_ADJUST_POINT_TIMES_PER_YEAR': `Engagement activity reward (+${rewardPoints} MD)`,
-      'INTERACTION_ADJUST_POINT_BY_FIRST_ORDER_LIMIT_DAYS': `Skin assessment completion bonus (+${rewardPoints} MD)`,
+      'CONSULTATION_BONUS': `Beauty consultation completion bonus (+${rewardPoints} MD)`,
       'FIRST_PURCHASE_BIRTH_MONTH_BONUS': `Birthday month special bonus (+${rewardPoints} MD)`,
       'INTERACTION_ADJUST_POINT_BY_MANAGER': `Manual account adjustment (+${rewardPoints} MD)`
     };
@@ -102,6 +102,7 @@ class FormattingHelpers {
       'FLEXIBLE_PRODUCT_MULTIPLIER': 'PRODUCT_MULTIPLIER',
       'FLEXIBLE_COMBO_PRODUCT_MULTIPLIER': 'COMBO_BONUS',
       'INTERACTION_ADJUST_POINT_TIMES_PER_YEAR': 'ACTIVITY_REWARD',
+      'CONSULTATION_BONUS': 'CONSULTATION_REWARD',
       'FIRST_PURCHASE_BIRTH_MONTH_BONUS': 'TIMED_MULTIPLIER',
       'INTERACTION_ADJUST_POINT_BY_MANAGER': 'MANUAL_ADJUSTMENT'
     };
@@ -157,6 +158,9 @@ class FormattingHelpers {
         const rewardPerItem = params.pointsPerBottle || params.rewardPerItem || params.rewardPerActivity || 0;
         return `min(itemCount, ${maxItems}) × ${rewardPerItem}`;
       
+      case 'CONSULTATION_BONUS':
+        return `consultationBonus = ${params.consultationBonus || 0}`;
+      
       case 'FIRST_PURCHASE_BIRTH_MONTH_BONUS':
         const birthRate = params.baseRate || params.jpRate || params.rate || 1.0;
         const birthMultiplier = params.multiplier || 1.0;
@@ -183,6 +187,7 @@ class FormattingHelpers {
     if (params.threshold !== undefined) inputs.threshold = params.threshold;
     if (params.bonus !== undefined) inputs.bonus = params.bonus;
     if (params.registrationBonus !== undefined) inputs.registrationBonus = params.registrationBonus;
+    if (params.consultationBonus !== undefined) inputs.consultationBonus = params.consultationBonus;
     if (params.fixedBonus !== undefined) inputs.fixedBonus = params.fixedBonus;
     if (params.baseRate !== undefined) inputs.baseRate = params.baseRate;
     if (params.pointsPerBottle !== undefined) inputs.pointsPerBottle = params.pointsPerBottle;

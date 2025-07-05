@@ -1,5 +1,6 @@
 [
   {
+    "name": "FTE SKU Multiplier",
     "conditions": {
       "all": [
         { "fact": "eventType", "operator": "equal", "value": "PURCHASE" },
@@ -16,6 +17,7 @@
     "priority": 4
   },
   {
+    "name": "Essence Series Multiplier",
     "conditions": {
       "all": [
         { "fact": "eventType", "operator": "equal", "value": "PURCHASE" },
@@ -32,6 +34,7 @@
     "priority": 6
   },
   {
+    "name": "Moisture Set Combo Bonus",
     "conditions": {
       "all": [
         { "fact": "eventType", "operator": "equal", "value": "PURCHASE" },
@@ -49,6 +52,7 @@
     "priority": 2
   },
   {
+    "name": "Full Regimen Combo Bonus",
     "conditions": {
       "all": [
         { "fact": "eventType", "operator": "equal", "value": "PURCHASE" },

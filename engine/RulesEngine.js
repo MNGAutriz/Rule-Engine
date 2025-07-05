@@ -83,22 +83,29 @@ class RulesEngine {
   }
 
   /**
-   * Initialize event handlers following json-rules-engine event-driven patterns
-   * Only handlers for the 9 core event types we support
+   * Initialize event handlers for all rule types actually used in JSON files
+   * Only includes handlers for event types that exist in the rule definitions
    */
   initializeEventHandlers() {
-    // Core event handlers for the 9 supported event types
+    // Core transaction event handlers (from transaction-rules.json)
     this.engine.on('INTERACTION_REGISTRY_POINT', this.createDynamicEventHandler('INTERACTION_REGISTRY_POINT'));
     this.engine.on('ORDER_BASE_POINT', this.createDynamicEventHandler('ORDER_BASE_POINT'));
     this.engine.on('ORDER_MULTIPLE_POINT_LIMIT', this.createDynamicEventHandler('ORDER_MULTIPLE_POINT_LIMIT'));
     this.engine.on('FLEXIBLE_CAMPAIGN_BONUS', this.createDynamicEventHandler('FLEXIBLE_CAMPAIGN_BONUS'));
+    this.engine.on('INTERACTION_ADJUST_POINT_TIMES_PER_YEAR', this.createDynamicEventHandler('INTERACTION_ADJUST_POINT_TIMES_PER_YEAR'));
+    this.engine.on('CONSULTATION_BONUS', this.createDynamicEventHandler('CONSULTATION_BONUS'));
+    this.engine.on('INTERACTION_ADJUST_POINT_BY_MANAGER', this.createDynamicEventHandler('INTERACTION_ADJUST_POINT_BY_MANAGER'));
+    
+    // Consumer attribute event handlers (from consumer-attribute-rules.json)
+    this.engine.on('FIRST_PURCHASE_BIRTH_MONTH_BONUS', this.createDynamicEventHandler('FIRST_PURCHASE_BIRTH_MONTH_BONUS'));
     this.engine.on('FLEXIBLE_VIP_MULTIPLIER', this.createDynamicEventHandler('FLEXIBLE_VIP_MULTIPLIER'));
-    this.engine.on('FLEXIBLE_BASKET_AMOUNT', this.createDynamicEventHandler('FLEXIBLE_BASKET_AMOUNT'));
+    
+    // Product multiplier event handlers (from product-multiplier-rules.json)
     this.engine.on('FLEXIBLE_PRODUCT_MULTIPLIER', this.createDynamicEventHandler('FLEXIBLE_PRODUCT_MULTIPLIER'));
     this.engine.on('FLEXIBLE_COMBO_PRODUCT_MULTIPLIER', this.createDynamicEventHandler('FLEXIBLE_COMBO_PRODUCT_MULTIPLIER'));
-    this.engine.on('INTERACTION_ADJUST_POINT_TIMES_PER_YEAR', this.createDynamicEventHandler('INTERACTION_ADJUST_POINT_TIMES_PER_YEAR'));
-    this.engine.on('FIRST_PURCHASE_BIRTH_MONTH_BONUS', this.createDynamicEventHandler('FIRST_PURCHASE_BIRTH_MONTH_BONUS'));
-    this.engine.on('INTERACTION_ADJUST_POINT_BY_MANAGER', this.createDynamicEventHandler('INTERACTION_ADJUST_POINT_BY_MANAGER'));
+    
+    // Basket threshold event handlers (from basket-threshold-rules.json)
+    this.engine.on('FLEXIBLE_BASKET_AMOUNT', this.createDynamicEventHandler('FLEXIBLE_BASKET_AMOUNT'));
 
     // Generic success handler for logging
     this.engine.on('success', (event, almanac, ruleResult) => {
@@ -173,8 +180,8 @@ class RulesEngine {
             rewardPoints = CalculationHelpers.calculateActivityReward(market, itemCount, params);
             break;
             
-          case 'INTERACTION_ADJUST_POINT_BY_FIRST_ORDER_LIMIT_DAYS':
-            rewardPoints = CalculationHelpers.calculateSkinTestReward(market, params);
+          case 'CONSULTATION_BONUS':
+            rewardPoints = CalculationHelpers.calculateConsultationReward(market, params);
             break;
             
           case 'FIRST_PURCHASE_BIRTH_MONTH_BONUS':

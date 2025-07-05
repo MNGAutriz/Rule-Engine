@@ -130,6 +130,13 @@ class CalculationHelpers {
   }
 
   /**
+   * Calculate consultation rewards (simpler than skin test)
+   */
+  static calculateConsultationReward(market, params) {
+    return Math.floor(params.consultationBonus || 0);
+  }
+
+  /**
    * Calculate timed bonuses (birth month, anniversaries)
    */
   static calculateTimedBonus(market, baseAmount, discountedAmount, params) {

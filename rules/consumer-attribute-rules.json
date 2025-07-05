@@ -1,5 +1,6 @@
 [
   {
+    "name": "Birth Month Purchase Bonus",
     "conditions": {
       "all": [
         { "fact": "eventType", "operator": "equal", "value": "PURCHASE" },
@@ -16,6 +17,7 @@
     "priority": 5
   },
   {
+    "name": "VIP Status Multiplier",
     "conditions": {
       "all": [
         { "fact": "eventType", "operator": "equal", "value": "PURCHASE" },
