@@ -39,7 +39,7 @@ class LoyaltyEngine {
     this.initializeEventHandlers();
     
     this.initialized = true;
-    console.log('✅ Loyalty Engine initialized with json-rules-engine patterns');
+    console.log('Loyalty Engine initialized with json-rules-engine patterns');
   }
 
   /**
@@ -66,7 +66,7 @@ class LoyaltyEngine {
           this.engine.addRule(rule);
         }
         
-        console.log(`✅ Loaded rules from ${file}`);
+        console.log(`Loaded rules from ${file}`);
       } catch (error) {
         console.error(`Error loading rules from ${file}:`, error);
       }
@@ -75,29 +75,25 @@ class LoyaltyEngine {
 
   /**
    * Initialize event handlers following json-rules-engine event-driven patterns
-   * Dynamic event handlers that calculate points based on rule parameters
+   * Only handlers for the 9 core event types we support
    */
   initializeEventHandlers() {
-    // Universal event handler for all rule types
-    // This follows the json-rules-engine pattern where events are data-driven
+    // Core event handlers for the 9 supported event types
     this.engine.on('INTERACTION_REGISTRY_POINT', this.createDynamicEventHandler('INTERACTION_REGISTRY_POINT'));
     this.engine.on('ORDER_BASE_POINT', this.createDynamicEventHandler('ORDER_BASE_POINT'));
-    this.engine.on('ORDER_MULTIPLE_POINT', this.createDynamicEventHandler('ORDER_MULTIPLE_POINT'));
+    this.engine.on('ORDER_MULTIPLE_POINT_LIMIT', this.createDynamicEventHandler('ORDER_MULTIPLE_POINT_LIMIT'));
     this.engine.on('FLEXIBLE_CAMPAIGN_BONUS', this.createDynamicEventHandler('FLEXIBLE_CAMPAIGN_BONUS'));
     this.engine.on('FLEXIBLE_VIP_MULTIPLIER', this.createDynamicEventHandler('FLEXIBLE_VIP_MULTIPLIER'));
     this.engine.on('FLEXIBLE_BASKET_AMOUNT', this.createDynamicEventHandler('FLEXIBLE_BASKET_AMOUNT'));
     this.engine.on('FLEXIBLE_PRODUCT_MULTIPLIER', this.createDynamicEventHandler('FLEXIBLE_PRODUCT_MULTIPLIER'));
     this.engine.on('FLEXIBLE_COMBO_PRODUCT_MULTIPLIER', this.createDynamicEventHandler('FLEXIBLE_COMBO_PRODUCT_MULTIPLIER'));
     this.engine.on('INTERACTION_ADJUST_POINT_TIMES_PER_YEAR', this.createDynamicEventHandler('INTERACTION_ADJUST_POINT_TIMES_PER_YEAR'));
-    this.engine.on('INTERACTION_ADJUST_POINT_BY_FIRST_ORDER_LIMIT_DAYS', this.createDynamicEventHandler('INTERACTION_ADJUST_POINT_BY_FIRST_ORDER_LIMIT_DAYS'));
     this.engine.on('FIRST_PURCHASE_BIRTH_MONTH_BONUS', this.createDynamicEventHandler('FIRST_PURCHASE_BIRTH_MONTH_BONUS'));
     this.engine.on('INTERACTION_ADJUST_POINT_BY_MANAGER', this.createDynamicEventHandler('INTERACTION_ADJUST_POINT_BY_MANAGER'));
-    this.engine.on('GIFT_REDEEM', this.createDynamicEventHandler('GIFT_REDEEM'));
-    this.engine.on('LOYALTY_BURN', this.createDynamicEventHandler('LOYALTY_BURN'));
 
     // Generic success handler for logging
     this.engine.on('success', (event, almanac, ruleResult) => {
-      console.log(`✅ Rule triggered: ${event.type}`, {
+      console.log(`Rule triggered: ${event.type}`, {
         params: event.params,
         rule: ruleResult?.rule?.name || ruleResult?.name || 'Unnamed rule'
       });
@@ -111,7 +107,7 @@ class LoyaltyEngine {
 
   /**
    * Create a dynamic event handler that calculates points based on rule parameters
-   * This is the core of the data-driven approach - no hardcoded logic
+   * This is the core of the data-driven approach 
    */
   createDynamicEventHandler(eventType) {
     return async (event, almanac) => {
@@ -142,8 +138,8 @@ class LoyaltyEngine {
             points = this.calculateBasePoints(market, amount, srpAmount, params);
             break;
             
-          case 'ORDER_MULTIPLE_POINT':
-            points = this.calculateMultipleOrderPoints(market, amount, srpAmount, params);
+          case 'ORDER_MULTIPLE_POINT_LIMIT':
+            points = this.calculateCampaignMultiplier(market, amount, srpAmount, params);
             break;
             
           case 'FLEXIBLE_CAMPAIGN_BONUS':
@@ -170,28 +166,12 @@ class LoyaltyEngine {
             points = this.calculateRecyclingPoints(market, recycledCount, params);
             break;
             
-          case 'INTERACTION_ADJUST_POINT_BY_FIRST_ORDER_LIMIT_DAYS':
-            points = this.calculateSkinTestPoints(market, params);
-            break;
-            
-          case 'ADJUSTMENT_MANUAL_POINT':
-            points = this.calculateManualAdjustment(market, params);
-            break;
-            
           case 'FIRST_PURCHASE_BIRTH_MONTH_BONUS':
             points = this.calculateBirthMonthBonus(market, amount, srpAmount, params);
             break;
             
           case 'INTERACTION_ADJUST_POINT_BY_MANAGER':
             points = adjustedPoints;
-            break;
-            
-          case 'GIFT_REDEEM':
-            points = -Math.abs(giftValue);
-            break;
-            
-          case 'LOYALTY_BURN':
-            points = -Math.abs(burnAmount);
             break;
             
           default:
@@ -312,7 +292,7 @@ class LoyaltyEngine {
       throw new Error(`Missing required fields: ${missing.join(', ')}`);
     }
     
-    // Validate market - only accept GitHub format codes
+    // Validate market
     const validMarkets = ['JP', 'HK', 'TW'];
     if (!validMarkets.includes(eventData.market)) {
       throw new Error(`Invalid market: ${eventData.market}. Must be one of: ${validMarkets.join(', ')}`);
@@ -367,13 +347,16 @@ class LoyaltyEngine {
     return 0;
   }
 
-  calculateMultipleOrderPoints(market, amount, srpAmount, params) {
+  calculateCampaignMultiplier(market, amount, srpAmount, params) {
     if (market === 'JP') {
       const basePoints = Math.floor(amount * (params.jpRate || 0.1));
-      const multiplier = params.multiplier || 2.0;
+      const multiplier = params.multiplier || 1.5;
       return Math.floor(basePoints * (multiplier - 1.0));
     } else {
-      return Math.floor(params.multipleOrderBonus || 0);
+      const baseAmount = srpAmount || amount;
+      const multiplier = params.multiplier || 1.5;
+      const basePoints = Math.floor(baseAmount);
+      return Math.floor(basePoints * (multiplier - 1.0));
     }
   }
 
@@ -438,25 +421,16 @@ class LoyaltyEngine {
     }
   }
 
-  calculateSkinTestPoints(market, params) {
-    if (market === 'JP') {
-      return Math.floor(params.skinTestBonus || 75);
-    } else {
-      return Math.floor(params.skinTestBonus || 75);
-    }
-  }
-
-  calculateManualAdjustment(market, params) {
-    const eventData = this.currentEventData;
-    const adjustedPoints = eventData?.attributes?.adjustedPoints || 0;
-    return Math.floor(adjustedPoints);
-  }
-
   calculateBirthMonthBonus(market, amount, srpAmount, params) {
     if (market === 'HK' || market === 'TW') {
       const baseAmount = srpAmount || amount;
-      const bonusPercentage = params.bonusPercentage || 0.1;
-      return Math.floor(baseAmount * bonusPercentage);
+      const multiplier = params.multiplier || 1.1;
+      const basePoints = Math.floor(baseAmount);
+      return Math.floor(basePoints * (multiplier - 1.0));
+    } else if (market === 'JP') {
+      const basePoints = Math.floor(amount * (params.jpRate || 0.1));
+      const multiplier = params.multiplier || 1.1;
+      return Math.floor(basePoints * (multiplier - 1.0));
     }
     return 0;
   }
@@ -496,18 +470,15 @@ class LoyaltyEngine {
     const descriptions = {
       'INTERACTION_REGISTRY_POINT': `Registration bonus for ${market} market`,
       'ORDER_BASE_POINT': `Base purchase points for ${market} market`,
-      'ORDER_MULTIPLE_POINT': `Multiple purchase bonus for ${market} market`,
+      'ORDER_MULTIPLE_POINT_LIMIT': `Campaign multiplier for ${market} market`,
       'FLEXIBLE_CAMPAIGN_BONUS': `Campaign bonus for ${market} market`,
       'FLEXIBLE_VIP_MULTIPLIER': `VIP multiplier for ${market} market`,
       'FLEXIBLE_BASKET_AMOUNT': `Basket threshold bonus for ${market} market`,
       'FLEXIBLE_PRODUCT_MULTIPLIER': `Product multiplier for ${market} market`,
       'FLEXIBLE_COMBO_PRODUCT_MULTIPLIER': `Combo product bonus for ${market} market`,
       'INTERACTION_ADJUST_POINT_TIMES_PER_YEAR': `Recycling bonus for ${market} market`,
-      'INTERACTION_ADJUST_POINT_BY_FIRST_ORDER_LIMIT_DAYS': `Skin test bonus for ${market} market`,
       'FIRST_PURCHASE_BIRTH_MONTH_BONUS': `Birth month bonus for ${market} market`,
-      'INTERACTION_ADJUST_POINT_BY_MANAGER': 'Manual adjustment',
-      'GIFT_REDEEM': 'Gift redemption',
-      'LOYALTY_BURN': 'Points burned'
+      'INTERACTION_ADJUST_POINT_BY_MANAGER': 'Manual adjustment'
     };
 
     return descriptions[ruleId] || `${ruleId} applied`;
@@ -588,7 +559,7 @@ class LoyaltyEngine {
       this.engine.addRule(rule);
     }
 
-    console.log('✅ Created and loaded default rules');
+    console.log('Created and loaded default rules');
   }
 
   /**
@@ -599,7 +570,7 @@ class LoyaltyEngine {
       this.pointCalculationStrategies.set(eventType, {});
     }
     this.pointCalculationStrategies.get(eventType)[market] = strategy;
-    console.log(`✅ Added strategy for ${eventType} in ${market}`);
+    console.log(`Added strategy for ${eventType} in ${market}`);
   }
 
   /**
@@ -609,7 +580,7 @@ class LoyaltyEngine {
     const strategies = this.pointCalculationStrategies.get(eventType);
     if (strategies && strategies[market]) {
       delete strategies[market];
-      console.log(`✅ Removed strategy for ${eventType} in ${market}`);
+      console.log(`Removed strategy for ${eventType} in ${market}`);
     }
   }
 
@@ -695,7 +666,7 @@ class LoyaltyEngine {
   clearState() {
     this.pointBreakdown = [];
     this.errors = [];
-    console.log('✅ Engine state cleared');
+    console.log('Engine state cleared');
   }
 
   /**

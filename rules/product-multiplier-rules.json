@@ -1,6 +1,5 @@
 [
   {
-    "name": "FTE Product Multiplier",
     "conditions": {
       "all": [
         { "fact": "eventType", "operator": "equal", "value": "PURCHASE" },
@@ -11,13 +10,12 @@
       "type": "FLEXIBLE_PRODUCT_MULTIPLIER",
       "params": {
         "multiplier": 1.5,
-        "description": "1.5× multiplier for FTE SKU"
+        "description": "Product multiplier - FTE SKU 1.5x"
       }
     },
     "priority": 4
   },
   {
-    "name": "Essence Series Bonus",
     "conditions": {
       "all": [
         { "fact": "eventType", "operator": "equal", "value": "PURCHASE" },
@@ -28,13 +26,12 @@
       "type": "FLEXIBLE_PRODUCT_MULTIPLIER",
       "params": {
         "multiplier": 1.2,
-        "description": "Essence series 1.2× multiplier"
+        "description": "Product multiplier - Essence series 1.2x"
       }
     },
     "priority": 6
   },
   {
-    "name": "Moisture Combo Set Bonus",
     "conditions": {
       "all": [
         { "fact": "eventType", "operator": "equal", "value": "PURCHASE" },
@@ -46,31 +43,12 @@
       "type": "FLEXIBLE_COMBO_PRODUCT_MULTIPLIER",
       "params": {
         "bonus": 250,
-        "description": "Bonus for combo: COMBO_MOISTURE_SET"
+        "description": "Product combo bonus - Moisture set +250 MD"
       }
     },
     "priority": 2
   },
   {
-    "name": "Treatment Series Premium Bonus",
-    "conditions": {
-      "all": [
-        { "fact": "eventType", "operator": "equal", "value": "PURCHASE" },
-        { "fact": "productLine", "operator": "equal", "value": "TREATMENT_SERIES" },
-        { "fact": "attributes.amount", "operator": "greaterThanInclusive", "value": 3000 }
-      ]
-    },
-    "event": {
-      "type": "FLEXIBLE_PRODUCT_MULTIPLIER",
-      "params": {
-        "multiplier": 1.8,
-        "description": "Treatment series premium bonus 1.8× multiplier"
-      }
-    },
-    "priority": 3
-  },
-  {
-    "name": "Full Regimen Combo Bonus",
     "conditions": {
       "all": [
         { "fact": "eventType", "operator": "equal", "value": "PURCHASE" },
@@ -81,7 +59,7 @@
       "type": "FLEXIBLE_COMBO_PRODUCT_MULTIPLIER",
       "params": {
         "bonus": 400,
-        "description": "Full regimen combo bonus"
+        "description": "Product combo bonus - Full regimen +400 MD"
       }
     },
     "priority": 2

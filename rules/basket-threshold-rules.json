@@ -1,6 +1,5 @@
 [
   {
-    "name": "High Value Basket Bonus - HKD 5000",
     "conditions": {
       "all": [
         { "fact": "eventType", "operator": "equal", "value": "PURCHASE" },
@@ -13,13 +12,12 @@
       "params": {
         "threshold": 5000,
         "bonus": 200,
-        "description": "Bonus for spending over HKD 5000 SRP"
+        "description": "Basket threshold bonus - HKD 5000+ gets +200 MD"
       }
     },
     "priority": 4
   },
   {
-    "name": "Premium Basket Bonus - HKD 10000",
     "conditions": {
       "all": [
         { "fact": "eventType", "operator": "equal", "value": "PURCHASE" },
@@ -32,13 +30,12 @@
       "params": {
         "threshold": 10000,
         "bonus": 500,
-        "description": "Bonus for spending over HKD 10000 SRP"
+        "description": "Basket threshold bonus - HKD 10000+ gets +500 MD"
       }
     },
     "priority": 3
   },
   {
-    "name": "Ultra Premium Basket Bonus - TWD 15000",
     "conditions": {
       "all": [
         { "fact": "eventType", "operator": "equal", "value": "PURCHASE" },
@@ -51,7 +48,7 @@
       "params": {
         "threshold": 15000,
         "bonus": 800,
-        "description": "Bonus for spending over TWD 15000 SRP"
+        "description": "Basket threshold bonus - TWD 15000+ gets +800 MD"
       }
     },
     "priority": 2

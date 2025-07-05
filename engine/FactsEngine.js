@@ -223,19 +223,11 @@ class FactsEngine {
     });
   }
 
-    // Add all facts to the engine
+  // Add all facts to the engine
   async addFactsToEngine(engine, eventData) {
     for (const [factName, factFunction] of this.factDefinitions) {
       engine.addFact(factName, factFunction);
     }
-    
-    // Add debug facts for attributes
-    engine.addFact('debug.srpAmount', (params) => {
-      const value = params.attributes?.srpAmount;
-      console.log(`🔍 DEBUG FACT: srpAmount = ${value} (${typeof value})`);
-      console.log(`🔍 DEBUG FACT: params = ${JSON.stringify(params, null, 2)}`);
-      return value;
-    });
   }
 
   /**

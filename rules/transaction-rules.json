@@ -1,23 +1,22 @@
 [
   {
-    "name": "Registration Bonus - JP",
     "conditions": {
       "all": [
         { "fact": "eventType", "operator": "equal", "value": "INTERACTION" },
-        { "fact": "market", "operator": "equal", "value": "JP" }
+        { "fact": "market", "operator": "equal", "value": "JP" },
+        { "fact": "context.externalId", "operator": "contains", "value": "reg" }
       ]
     },
     "event": {
       "type": "INTERACTION_REGISTRY_POINT",
       "params": {
         "registrationBonus": 150,
-        "description": "Registration bonus for JP market"
+        "description": "JP registration bonus - 150 MD"
       }
     },
     "priority": 10
   },
   {
-    "name": "Base Purchase Points - JP",
     "conditions": {
       "all": [
         { "fact": "eventType", "operator": "equal", "value": "PURCHASE" },
@@ -28,109 +27,67 @@
       "type": "ORDER_BASE_POINT",
       "params": {
         "jpRate": 0.1,
-        "description": "Base purchase points for JP market"
+        "description": "JP base purchase - 1 MD per 10 JPY"
       }
     },
     "priority": 10
   },
   {
-    "name": "Base Purchase Points - HK",
     "conditions": {
       "all": [
         { "fact": "eventType", "operator": "equal", "value": "PURCHASE" },
-        { "fact": "market", "operator": "equal", "value": "HK" }
+        { "fact": "market", "operator": "in", "value": ["HK", "TW"] }
       ]
     },
     "event": {
       "type": "ORDER_BASE_POINT",
       "params": {
         "rate": 1.0,
-        "description": "Base purchase points for HK market"
+        "description": "HK/TW base purchase - 1 MD per 1 HKD/TWD SRP"
       }
     },
     "priority": 10
   },
   {
-    "name": "Base Purchase Points - TW",
     "conditions": {
       "all": [
         { "fact": "eventType", "operator": "equal", "value": "PURCHASE" },
-        { "fact": "market", "operator": "equal", "value": "TW" }
-      ]
-    },
-    "event": {
-      "type": "ORDER_BASE_POINT",
-      "params": {
-        "rate": 1.0,
-        "description": "Base purchase points for TW market"
-      }
-    },
-    "priority": 10
-  },
-  {
-    "name": "Second Purchase Within 60 Days",
-    "conditions": {
-      "all": [
-        { "fact": "eventType", "operator": "equal", "value": "PURCHASE" },
-        { "fact": "daysSinceFirstPurchase", "operator": "lessThanInclusive", "value": 60 },
-        { "fact": "purchaseCount", "operator": "equal", "value": 1 }
-      ]
-    },
-    "event": {
-      "type": "ORDER_MULTIPLE_POINT",
-      "params": {
-        "multiplier": 2.0,
-        "description": "2X Purchase Bonus within 60 days"
-      }
-    },
-    "priority": 6
-  },
-  {
-    "name": "Campaign Period Bonus",
-    "conditions": {
-      "all": [
-        { "fact": "eventType", "operator": "equal", "value": "PURCHASE" },
+        { "fact": "market", "operator": "equal", "value": "JP" },
         { "fact": "eventDate", "operator": "greaterThanInclusive", "value": "2025-06-01" },
-        { "fact": "eventDate", "operator": "lessThanInclusive", "value": "2025-07-15" },
-        { "fact": "market", "operator": "equal", "value": "HK" }
+        { "fact": "eventDate", "operator": "lessThanInclusive", "value": "2025-08-31" }
       ]
     },
     "event": {
-      "type": "FLEXIBLE_CAMPAIGN_BONUS",
+      "type": "ORDER_MULTIPLE_POINT_LIMIT",
       "params": {
-        "fixedBonus": 300,
-        "description": "Campaign bonus: CAMP2025SUMMER",
-        "campaignId": "c0a1b2c3-d4e5-6789-hk01-abcde123456f",
-        "campaignCode": "CAMP2025SUMMER",
-        "campaignStart": "2025-06-01T00:00:00Z",
-        "campaignEnd": "2025-07-15T23:59:59Z"
+        "multiplier": 1.5,
+        "description": "JP campaign multiplier - 1.5x during campaigns"
       }
     },
-    "priority": 3
+    "priority": 5
   },
   {
-    "name": "Frequent Shopper Bonus",
     "conditions": {
       "all": [
         { "fact": "eventType", "operator": "equal", "value": "PURCHASE" },
-        { "fact": "purchaseCount", "operator": "greaterThanInclusive", "value": 5 }
+        { "fact": "market", "operator": "in", "value": ["HK", "TW"] }
       ]
     },
     "event": {
       "type": "FLEXIBLE_CAMPAIGN_BONUS",
       "params": {
         "fixedBonus": 300,
-        "description": "Frequent shopper bonus"
+        "description": "HK/TW campaign bonus - +300 MD"
       }
     },
     "priority": 4
   },
   {
-    "name": "Bottle Recycling Bonus",
     "conditions": {
       "all": [
         { "fact": "eventType", "operator": "equal", "value": "INTERACTION" },
-        { "fact": "attributes.recycledCount", "operator": "greaterThan", "value": 0 }
+        { "fact": "attributes.recycledCount", "operator": "greaterThan", "value": 0 },
+        { "fact": "context.externalId", "operator": "contains", "value": "recycle" }
       ]
     },
     "event": {
@@ -138,43 +95,23 @@
       "params": {
         "pointsPerBottle": 50,
         "maxPerYear": 5,
-        "description": "50 points per bottle recycled"
-      }
-    },
-    "priority": 6
-  },
-  {
-    "name": "Skin Test Completion Bonus",
-    "conditions": {
-      "all": [
-        { "fact": "eventType", "operator": "equal", "value": "INTERACTION" },
-        { "fact": "attributes.skinTestDate", "operator": "notEqual", "value": null },
-        { "fact": "daysSinceFirstPurchase", "operator": "lessThanInclusive", "value": 60 }
-      ]
-    },
-    "event": {
-      "type": "INTERACTION_ADJUST_POINT_BY_FIRST_ORDER_LIMIT_DAYS",
-      "params": {
-        "skinTestBonus": 75,
-        "description": "Skin test within 60 days of first purchase"
-      }
-    },
-    "priority": 7
-  },
-  {
-    "name": "Manual Point Adjustment",
-    "conditions": {
-      "all": [
-        { "fact": "eventType", "operator": "equal", "value": "ADJUSTMENT" },
-        { "fact": "attributes.adjustedPoints", "operator": "notEqual", "value": null }
-      ]
-    },
-    "event": {
-      "type": "ADJUSTMENT_MANUAL_POINT",
-      "params": {
-        "description": "Manual point adjustment"
+        "description": "Bottle recycling - 50 MD per bottle, max 5/year"
       }
     },
     "priority": 8
+  },
+  {
+    "conditions": {
+      "all": [
+        { "fact": "eventType", "operator": "equal", "value": "ADJUSTMENT" }
+      ]
+    },
+    "event": {
+      "type": "INTERACTION_ADJUST_POINT_BY_MANAGER",
+      "params": {
+        "description": "Manual adjustment by admin"
+      }
+    },
+    "priority": 1
   }
 ]
