@@ -1,625 +1,447 @@
 {
-  "user_001": {
-    "consumerId": "user_001",
-    "birthMonth": 6,
-    "isVIP": true,
-    "tags": [
-      "VIP",
-      "PREMIUM"
-    ],
-    "firstOrderDate": "2025-01-15T10:00:00Z",
-    "registrationDate": "2025-01-10T10:00:00Z",
-    "market": "HK",
-    "preferredChannel": "LINE",
-    "balance": {
-      "total": 2700,
-      "available": 2700,
-      "used": 0,
-      "accountVersion": 1
+  "user_hk_vip_birthday": {
+    "consumerId": "user_hk_vip_birthday",
+    "profile": {
+      "birthDate": "1990-07-06",
+      "market": "HK",
+      "preferredChannel": "LINE",
+      "tier": "VIP_PLATINUM",
+      "tierStartDate": "2024-03-01T00:00:00Z"
     },
-    "lastOrderDate": "2025-07-05T10:15:23.644Z"
-  },
-  "user_002": {
-    "consumerId": "user_002",
-    "birthMonth": 12,
-    "isVIP": false,
-    "tags": [
-      "STANDARD"
-    ],
-    "firstOrderDate": "2025-02-20T12:00:00Z",
-    "registrationDate": "2025-02-15T12:00:00Z",
-    "market": "HK",
-    "preferredChannel": "WECHAT",
-    "balance": {
-      "total": 38500,
-      "available": 38500,
-      "used": 0,
-      "accountVersion": 5
+    "engagement": {
+      "registrationDate": "2024-01-15T10:00:00Z",
+      "firstPurchaseDate": "2024-01-20T10:00:00Z",
+      "totalPurchases": 25,
+      "totalSpent": 50000,
+      "lastPurchaseDate": "2025-07-05T17:51:48.830Z",
+      "consultationsCompleted": 5,
+      "lastConsultationDate": "2025-06-15T14:30:00Z",
+      "recyclingActivity": {
+        "totalBottlesRecycled": 15,
+        "thisYearBottlesRecycled": 8,
+        "lastRecyclingDate": "2025-06-25T11:00:00Z"
+      }
     },
-    "lastOrderDate": "2025-07-05T10:14:04.340Z"
-  },
-  "user_003": {
-    "consumerId": "user_003",
-    "birthMonth": 3,
-    "isVIP": false,
-    "tags": [
-      "NEW_CUSTOMER"
-    ],
-    "firstOrderDate": "2025-06-01T15:00:00Z",
-    "registrationDate": "2025-05-30T15:00:00Z",
-    "market": "HK",
-    "preferredChannel": "WECHAT",
-    "balance": {
-      "total": 2950,
-      "available": 2950,
-      "used": 0,
-      "version": 21
+    "preferences": {
+      "productLines": [
+        "PREMIUM_SERIES",
+        "ESSENCE_SERIES"
+      ],
+      "communicationChannels": [
+        "EMAIL",
+        "LINE"
+      ],
+      "skinType": "COMBINATION"
     },
-    "lastOrderDate": "2025-07-03T16:50:01.287Z"
-  },
-  "user_004": {
-    "consumerId": "user_004",
-    "birthMonth": 8,
-    "isVIP": false,
-    "tags": [
-      "STANDARD"
-    ],
-    "firstOrderDate": "2025-03-10T14:00:00Z",
-    "registrationDate": "2025-03-05T14:00:00Z",
-    "market": "JP",
-    "preferredChannel": "LINE",
     "balance": {
-      "total": 4900,
-      "available": 4900,
+      "total": 61100,
+      "available": 61100,
       "used": 0,
-      "accountVersion": 5
-    },
-    "lastOrderDate": "2025-07-03T16:31:51.106Z"
-  },
-  "user_005": {
-    "consumerId": "user_005",
-    "birthMonth": 11,
-    "isVIP": false,
-    "tags": [
-      "ECO_FRIENDLY"
-    ],
-    "firstOrderDate": "2025-04-20T16:00:00Z",
-    "registrationDate": "2025-04-18T16:00:00Z",
-    "market": "JP",
-    "preferredChannel": "WECHAT",
-    "balance": {
-      "total": 1650,
-      "available": 1650,
-      "used": 0,
-      "version": 16
+      "accountVersion": 9
     }
   },
-  "user_006": {
-    "consumerId": "user_006",
-    "birthMonth": 5,
-    "isVIP": true,
-    "tags": [
-      "VIP",
-      "FREQUENT_BUYER"
-    ],
-    "firstOrderDate": "2025-05-15T11:00:00Z",
-    "registrationDate": "2025-05-10T11:00:00Z",
-    "market": "HK",
-    "preferredChannel": "LINE",
+  "user_hk_standard": {
+    "consumerId": "user_hk_standard",
+    "profile": {
+      "birthDate": "1995-03-15",
+      "market": "HK",
+      "preferredChannel": "WECHAT",
+      "tier": "STANDARD",
+      "tierStartDate": "2025-02-10T12:00:00Z"
+    },
+    "engagement": {
+      "registrationDate": "2025-02-10T12:00:00Z",
+      "firstPurchaseDate": "2025-02-15T12:00:00Z",
+      "totalPurchases": 8,
+      "totalSpent": 12000,
+      "lastPurchaseDate": "2025-07-06T05:46:11.693Z",
+      "consultationsCompleted": 2,
+      "lastConsultationDate": "2025-05-10T16:00:00Z",
+      "recyclingActivity": {
+        "totalBottlesRecycled": 3,
+        "thisYearBottlesRecycled": 2,
+        "lastRecyclingDate": "2025-05-20T13:30:00Z"
+      }
+    },
+    "preferences": {
+      "productLines": [
+        "ESSENCE_SERIES"
+      ],
+      "communicationChannels": [
+        "WECHAT"
+      ],
+      "skinType": "DRY"
+    },
     "balance": {
-      "total": 600,
-      "available": 600,
+      "total": 26352,
+      "available": 26352,
       "used": 0,
-      "version": 12
+      "accountVersion": 18
     }
   },
-  "user_007": {
-    "consumerId": "user_007",
-    "birthMonth": 7,
-    "isVIP": false,
-    "tags": [
-      "STANDARD"
-    ],
-    "firstOrderDate": null,
-    "registrationDate": "2025-07-01T10:00:00Z",
-    "market": "TW",
-    "preferredChannel": "WECHAT",
-    "balance": {
-      "total": 3200,
-      "available": 3200,
-      "used": 0,
-      "version": 6
+  "user_tw_vip": {
+    "consumerId": "user_tw_vip",
+    "profile": {
+      "birthDate": "1988-11-22",
+      "market": "TW",
+      "preferredChannel": "INSTAGRAM",
+      "tier": "VIP_GOLD",
+      "tierStartDate": "2024-09-01T00:00:00Z"
     },
-    "lastOrderDate": "2025-07-03T16:31:51.155Z"
-  },
-  "user_008": {
-    "consumerId": "user_008",
-    "birthMonth": 2,
-    "isVIP": false,
-    "tags": [
-      "HIGH_SPENDER"
-    ],
-    "firstOrderDate": "2025-06-25T13:00:00Z",
-    "registrationDate": "2025-06-20T13:00:00Z",
-    "market": "HK",
-    "preferredChannel": "WECHAT",
-    "balance": {
-      "total": 84100,
-      "available": 84100,
-      "used": 0,
-      "accountVersion": 6
+    "engagement": {
+      "registrationDate": "2024-06-01T15:00:00Z",
+      "firstPurchaseDate": "2024-06-05T15:00:00Z",
+      "totalPurchases": 18,
+      "totalSpent": 35000,
+      "lastPurchaseDate": "2025-07-05T17:51:48.949Z",
+      "consultationsCompleted": 3,
+      "lastConsultationDate": "2025-06-01T14:00:00Z",
+      "recyclingActivity": {
+        "totalBottlesRecycled": 10,
+        "thisYearBottlesRecycled": 5,
+        "lastRecyclingDate": "2025-06-10T09:30:00Z"
+      }
     },
-    "lastOrderDate": "2025-07-05T10:14:11.584Z"
-  },
-  "user_009": {
-    "consumerId": "user_009",
-    "birthMonth": 10,
-    "isVIP": false,
-    "tags": [
-      "ECO_FRIENDLY"
-    ],
-    "firstOrderDate": "2025-06-30T17:00:00Z",
-    "registrationDate": "2025-06-28T17:00:00Z",
-    "market": "TW",
-    "preferredChannel": "LINE",
-    "balance": {
-      "total": 4000,
-      "available": 4000,
-      "used": 0,
-      "version": 6
+    "preferences": {
+      "productLines": [
+        "PREMIUM_SERIES"
+      ],
+      "communicationChannels": [
+        "EMAIL",
+        "INSTAGRAM"
+      ],
+      "skinType": "OILY"
     },
-    "lastOrderDate": "2025-07-03T16:31:51.187Z"
-  },
-  "user_010": {
-    "consumerId": "user_010",
-    "birthMonth": 9,
-    "isVIP": true,
-    "tags": [
-      "VIP",
-      "RETURNING_CUSTOMER"
-    ],
-    "firstOrderDate": "2025-07-02T09:00:00Z",
-    "registrationDate": "2025-07-01T09:00:00Z",
-    "market": "HK",
-    "preferredChannel": "LINE",
     "balance": {
-      "total": 3600,
-      "available": 3600,
-      "used": 0,
-      "version": 11
-    },
-    "lastOrderDate": "2025-07-03T16:31:51.207Z"
-  },
-  "user_011": {
-    "consumerId": "user_011",
-    "balance": {
-      "total": 8000,
-      "available": 8000,
-      "used": 0,
-      "version": 6
-    },
-    "market": "TW",
-    "lastOrderDate": "2025-07-03T16:31:51.223Z"
-  },
-  "user_012": {
-    "consumerId": "user_012",
-    "balance": {
-      "total": 0,
-      "available": 0,
-      "used": 0,
-      "version": 6
-    },
-    "market": "HK"
-  },
-  "user_test": {
-    "consumerId": "user_test",
-    "balance": {
-      "total": 11000,
-      "available": 11000,
-      "used": 0,
-      "version": 3
-    }
-  },
-  "test-expiration-user": {
-    "consumerId": "test-expiration-user",
-    "balance": {
-      "total": 0,
-      "available": 0,
-      "used": 0,
-      "version": 5
-    },
-    "market": "JP",
-    "lastOrderDate": "2025-07-03T15:57:54.065Z"
-  },
-  "test-hk-user": {
-    "consumerId": "test-hk-user",
-    "balance": {
-      "total": 600,
-      "available": 600,
-      "used": 0,
-      "version": 3
-    },
-    "market": "HK",
-    "lastOrderDate": "2025-07-03T15:57:54.098Z"
-  },
-  "test-tw-user": {
-    "consumerId": "test-tw-user",
-    "balance": {
-      "total": 0,
-      "available": 0,
-      "used": 0,
-      "version": 3
-    },
-    "market": "TW",
-    "lastOrderDate": "2025-07-03T15:57:54.124Z"
-  },
-  "test_jp_user": {
-    "consumerId": "test_jp_user",
-    "balance": {
-      "total": 0,
-      "available": 0,
-      "used": 0,
-      "version": 1
-    },
-    "market": "JP"
-  },
-  "test_hk_user": {
-    "consumerId": "test_hk_user",
-    "balance": {
-      "total": 0,
-      "available": 0,
-      "used": 0,
-      "version": 1
-    },
-    "market": "HK"
-  },
-  "test_tw_user": {
-    "consumerId": "test_tw_user",
-    "balance": {
-      "total": 0,
-      "available": 0,
-      "used": 0,
-      "version": 1
-    },
-    "market": "TW"
-  },
-  "demo-jp-consumer": {
-    "consumerId": "demo-jp-consumer",
-    "balance": {
-      "total": 0,
-      "available": 0,
-      "used": 0,
-      "version": 3
-    },
-    "market": "JP"
-  },
-  "demo-hk-consumer": {
-    "consumerId": "demo-hk-consumer",
-    "balance": {
-      "total": 3000,
-      "available": 3000,
-      "used": 0,
-      "version": 3
-    },
-    "market": "HK",
-    "lastOrderDate": "2025-07-03T16:07:34.225Z"
-  },
-  "demo-tw-consumer": {
-    "consumerId": "demo-tw-consumer",
-    "balance": {
-      "total": 0,
-      "available": 0,
-      "used": 0,
-      "version": 3
-    },
-    "market": "TW"
-  },
-  "user_postman_001": {
-    "consumerId": "user_postman_001",
-    "balance": {
-      "total": 0,
-      "available": 0,
-      "used": 0,
-      "version": 2
-    },
-    "market": "HK"
-  },
-  "user_postman_002": {
-    "consumerId": "user_postman_002",
-    "balance": {
-      "total": 1600,
-      "available": 1600,
-      "used": 0,
-      "version": 3
-    },
-    "market": "JP",
-    "lastOrderDate": "2025-07-03T16:13:34.064Z"
-  },
-  "user_postman_003": {
-    "consumerId": "user_postman_003",
-    "balance": {
-      "total": 0,
-      "available": 0,
-      "used": 0,
-      "version": 3
-    },
-    "market": "TW"
-  },
-  "user_test_001": {
-    "consumerId": "user_test_001",
-    "balance": {
-      "total": 1100,
-      "available": 1100,
-      "used": 0,
-      "accountVersion": 1
-    },
-    "market": "HK",
-    "lastOrderDate": "2025-07-05T06:38:07.512Z"
-  },
-  "user_test_002": {
-    "consumerId": "user_test_002",
-    "balance": {
-      "total": 1100,
-      "available": 1100,
-      "used": 0,
-      "accountVersion": 1
-    },
-    "market": "HK",
-    "lastOrderDate": "2025-07-05T06:38:15.209Z"
-  },
-  "user_test_003": {
-    "consumerId": "user_test_003",
-    "balance": {
-      "total": 0,
-      "available": 0,
-      "used": 0,
-      "accountVersion": 1
-    },
-    "market": "JP"
-  },
-  "new_user_123": {
-    "consumerId": "new_user_123",
-    "balance": {
-      "total": 0,
-      "available": 0,
-      "used": 0,
-      "accountVersion": 1
-    },
-    "market": "JP"
-  },
-  "new_user_registration_001": {
-    "consumerId": "new_user_registration_001",
-    "balance": {
-      "total": 0,
-      "available": 0,
-      "used": 0,
-      "accountVersion": 1
-    },
-    "market": "JP"
-  },
-  "user_purchase_test": {
-    "consumerId": "user_purchase_test",
-    "balance": {
-      "total": 2700,
-      "available": 2700,
-      "used": 0,
-      "accountVersion": 1
-    },
-    "market": "JP",
-    "lastOrderDate": "2025-07-05T10:20:27.108Z"
-  },
-  "new_user_jp_001": {
-    "consumerId": "new_user_jp_001",
-    "balance": {
-      "total": 150,
-      "available": 150,
+      "total": 39000,
+      "available": 39000,
       "used": 0,
       "accountVersion": 8
-    },
-    "market": "JP"
+    }
   },
-  "user_jp_003": {
-    "consumerId": "user_jp_003",
+  "user_tw_standard_birthday": {
+    "consumerId": "user_tw_standard_birthday",
+    "profile": {
+      "birthDate": "1992-07-06",
+      "market": "TW",
+      "preferredChannel": "WECHAT",
+      "tier": "STANDARD",
+      "tierStartDate": "2025-04-20T16:00:00Z"
+    },
+    "engagement": {
+      "registrationDate": "2025-04-20T16:00:00Z",
+      "firstPurchaseDate": "2025-04-25T16:00:00Z",
+      "totalPurchases": 5,
+      "totalSpent": 8000,
+      "lastPurchaseDate": "2025-07-05T17:51:48.987Z",
+      "consultationsCompleted": 1,
+      "lastConsultationDate": "2025-05-15T11:30:00Z",
+      "recyclingActivity": {
+        "totalBottlesRecycled": 2,
+        "thisYearBottlesRecycled": 2,
+        "lastRecyclingDate": "2025-06-05T14:20:00Z"
+      }
+    },
+    "preferences": {
+      "productLines": [
+        "ESSENCE_SERIES"
+      ],
+      "communicationChannels": [
+        "WECHAT"
+      ],
+      "skinType": "SENSITIVE"
+    },
     "balance": {
-      "total": 0,
-      "available": 0,
+      "total": 17593,
+      "available": 17593,
+      "used": 0,
+      "accountVersion": 8
+    }
+  },
+  "user_jp_vip": {
+    "consumerId": "user_jp_vip",
+    "profile": {
+      "birthDate": "1985-09-10",
+      "market": "JP",
+      "preferredChannel": "LINE",
+      "tier": "VIP_DIAMOND",
+      "tierStartDate": "2024-08-01T00:00:00Z"
+    },
+    "engagement": {
+      "registrationDate": "2024-03-10T14:00:00Z",
+      "firstPurchaseDate": "2024-03-15T14:00:00Z",
+      "totalPurchases": 32,
+      "totalSpent": 75000,
+      "lastPurchaseDate": "2025-07-05T17:51:49.018Z",
+      "consultationsCompleted": 8,
+      "lastConsultationDate": "2025-06-20T15:45:00Z",
+      "recyclingActivity": {
+        "totalBottlesRecycled": 20,
+        "thisYearBottlesRecycled": 12,
+        "lastRecyclingDate": "2025-07-01T10:15:00Z"
+      }
+    },
+    "preferences": {
+      "productLines": [
+        "PREMIUM_SERIES",
+        "ESSENCE_SERIES"
+      ],
+      "communicationChannels": [
+        "EMAIL",
+        "LINE"
+      ],
+      "skinType": "NORMAL"
+    },
+    "balance": {
+      "total": 19100,
+      "available": 19100,
+      "used": 0,
+      "accountVersion": 8
+    }
+  },
+  "user_jp_standard": {
+    "consumerId": "user_jp_standard",
+    "profile": {
+      "birthDate": "1998-12-03",
+      "market": "JP",
+      "preferredChannel": "INSTAGRAM",
+      "tier": "STANDARD",
+      "tierStartDate": "2025-05-15T09:30:00Z"
+    },
+    "engagement": {
+      "registrationDate": "2025-05-15T09:30:00Z",
+      "firstPurchaseDate": "2025-05-20T09:30:00Z",
+      "totalPurchases": 4,
+      "totalSpent": 6500,
+      "lastPurchaseDate": "2025-06-30T16:10:00Z",
+      "consultationsCompleted": 0,
+      "lastConsultationDate": null,
+      "recyclingActivity": {
+        "totalBottlesRecycled": 1,
+        "thisYearBottlesRecycled": 1,
+        "lastRecyclingDate": "2025-06-15T11:45:00Z"
+      }
+    },
+    "preferences": {
+      "productLines": [
+        "ESSENCE_SERIES"
+      ],
+      "communicationChannels": [
+        "EMAIL",
+        "INSTAGRAM"
+      ],
+      "skinType": "OILY"
+    },
+    "balance": {
+      "total": 950,
+      "available": 950,
       "used": 0,
       "accountVersion": 1
-    },
-    "market": "JP"
+    }
   },
-  "consumer_12345": {
-    "consumerId": "consumer_12345",
+  "user_jp_new_registration": {
+    "consumerId": "user_jp_new_registration",
+    "profile": {
+      "birthDate": "2000-04-18",
+      "market": "JP",
+      "preferredChannel": "INSTAGRAM",
+      "tier": "STANDARD",
+      "tierStartDate": "2025-07-05T14:00:00Z"
+    },
+    "engagement": {
+      "registrationDate": "2025-07-05T14:00:00Z",
+      "firstPurchaseDate": null,
+      "totalPurchases": 0,
+      "totalSpent": 0,
+      "lastPurchaseDate": null,
+      "consultationsCompleted": 0,
+      "lastConsultationDate": null,
+      "recyclingActivity": {
+        "totalBottlesRecycled": 0,
+        "thisYearBottlesRecycled": 0,
+        "lastRecyclingDate": null
+      }
+    },
+    "preferences": {
+      "productLines": [],
+      "communicationChannels": [
+        "EMAIL",
+        "INSTAGRAM"
+      ],
+      "skinType": null
+    },
     "balance": {
-      "total": 4575,
-      "available": 4575,
+      "total": 3350,
+      "available": 3350,
       "used": 0,
-      "accountVersion": 24
-    },
-    "market": "JP",
-    "lastOrderDate": "2025-07-05T11:16:37.602Z"
+      "accountVersion": 12
+    }
   },
-  "consumer_hk_456": {
-    "consumerId": "consumer_hk_456",
+  "user_hk_high_spender": {
+    "consumerId": "user_hk_high_spender",
+    "profile": {
+      "birthDate": "1987-08-25",
+      "market": "HK",
+      "preferredChannel": "EMAIL",
+      "tier": "VIP_PLATINUM",
+      "tierStartDate": "2024-02-01T00:00:00Z"
+    },
+    "engagement": {
+      "registrationDate": "2024-01-01T10:00:00Z",
+      "firstPurchaseDate": "2024-01-05T10:00:00Z",
+      "totalPurchases": 45,
+      "totalSpent": 120000,
+      "lastPurchaseDate": "2025-07-05T17:51:48.909Z",
+      "consultationsCompleted": 12,
+      "lastConsultationDate": "2025-06-28T16:30:00Z",
+      "recyclingActivity": {
+        "totalBottlesRecycled": 35,
+        "thisYearBottlesRecycled": 15,
+        "lastRecyclingDate": "2025-06-30T12:00:00Z"
+      }
+    },
+    "preferences": {
+      "productLines": [
+        "PREMIUM_SERIES"
+      ],
+      "communicationChannels": [
+        "EMAIL",
+        "LINE"
+      ],
+      "skinType": "MATURE"
+    },
+    "balance": {
+      "total": 201400,
+      "available": 201400,
+      "used": 0,
+      "accountVersion": 9
+    }
+  },
+  "user_tw_essence_lover": {
+    "consumerId": "user_tw_essence_lover",
+    "profile": {
+      "birthDate": "1993-05-14",
+      "market": "TW",
+      "preferredChannel": "LINE",
+      "tier": "STANDARD",
+      "tierStartDate": "2024-11-10T11:00:00Z"
+    },
+    "engagement": {
+      "registrationDate": "2024-11-10T11:00:00Z",
+      "firstPurchaseDate": "2024-11-15T11:00:00Z",
+      "totalPurchases": 12,
+      "totalSpent": 18000,
+      "lastPurchaseDate": "2025-07-01T17:40:00Z",
+      "consultationsCompleted": 4,
+      "lastConsultationDate": "2025-06-12T14:15:00Z",
+      "recyclingActivity": {
+        "totalBottlesRecycled": 8,
+        "thisYearBottlesRecycled": 6,
+        "lastRecyclingDate": "2025-06-22T15:30:00Z"
+      }
+    },
+    "preferences": {
+      "productLines": [
+        "ESSENCE_SERIES"
+      ],
+      "communicationChannels": [
+        "LINE"
+      ],
+      "skinType": "DRY"
+    },
     "balance": {
       "total": 5500,
       "available": 5500,
       "used": 0,
-      "accountVersion": 5
-    },
-    "market": "HK",
-    "lastOrderDate": "2025-07-05T11:16:37.689Z"
+      "accountVersion": 11
+    }
   },
-  "consumer_debug": {
-    "consumerId": "consumer_debug",
-    "balance": {
-      "total": 225,
-      "available": 225,
-      "used": 0,
-      "accountVersion": 5
+  "user_jp_eco_warrior": {
+    "consumerId": "user_jp_eco_warrior",
+    "profile": {
+      "birthDate": "1991-01-30",
+      "market": "JP",
+      "preferredChannel": "EMAIL",
+      "tier": "STANDARD",
+      "tierStartDate": "2024-08-20T13:20:00Z"
     },
-    "market": "JP"
+    "engagement": {
+      "registrationDate": "2024-08-20T13:20:00Z",
+      "firstPurchaseDate": "2024-08-25T13:20:00Z",
+      "totalPurchases": 15,
+      "totalSpent": 22000,
+      "lastPurchaseDate": "2025-06-25T09:50:00Z",
+      "consultationsCompleted": 6,
+      "lastConsultationDate": "2025-06-18T13:40:00Z",
+      "recyclingActivity": {
+        "totalBottlesRecycled": 25,
+        "thisYearBottlesRecycled": 18,
+        "lastRecyclingDate": "2025-07-03T08:30:00Z"
+      }
+    },
+    "preferences": {
+      "productLines": [
+        "ESSENCE_SERIES",
+        "PREMIUM_SERIES"
+      ],
+      "communicationChannels": [
+        "EMAIL"
+      ],
+      "skinType": "COMBINATION"
+    },
+    "balance": {
+      "total": 8200,
+      "available": 8200,
+      "used": 0,
+      "accountVersion": 9
+    }
   },
-  "CONSUMER_JP_001": {
-    "consumerId": "CONSUMER_JP_001",
-    "balance": {
-      "total": 2850,
-      "available": 2850,
-      "used": 0,
-      "accountVersion": 2
+  "user_jp_new_registration2": {
+    "consumerId": "user_jp_new_registration2",
+    "profile": {
+      "market": "JP"
     },
-    "market": "JP",
-    "lastOrderDate": "2025-07-05T15:40:28.246Z"
+    "balance": {
+      "total": 0,
+      "available": 0,
+      "used": 0,
+      "version": 1
+    }
   },
-  "CONSUMER_HK_001": {
-    "consumerId": "CONSUMER_HK_001",
-    "balance": {
-      "total": 1250,
-      "available": 1250,
-      "used": 0,
-      "accountVersion": 1
+  "user_jp_premium": {
+    "consumerId": "user_jp_premium",
+    "profile": {
+      "market": "JP"
     },
-    "market": "HK",
-    "lastOrderDate": "2025-07-05T15:41:44.014Z"
+    "balance": {
+      "total": 0,
+      "available": 0,
+      "used": 0,
+      "version": 1
+    }
   },
-  "CONSUMER_JP_002": {
-    "consumerId": "CONSUMER_JP_002",
-    "balance": {
-      "total": 5700,
-      "available": 5700,
-      "used": 0,
-      "accountVersion": 1
+  "user_hk_vip": {
+    "consumerId": "user_hk_vip",
+    "profile": {
+      "market": "HK"
     },
-    "market": "JP",
-    "lastOrderDate": "2025-07-05T15:43:39.264Z"
+    "balance": {
+      "total": 0,
+      "available": 0,
+      "used": 0,
+      "version": 1
+    }
   },
-  "CONSUMER_HK_002": {
-    "consumerId": "CONSUMER_HK_002",
-    "balance": {
-      "total": 2100,
-      "available": 2100,
-      "used": 0,
-      "accountVersion": 1
+  "user_jp_birth_month": {
+    "consumerId": "user_jp_birth_month",
+    "profile": {
+      "market": "JP"
     },
-    "market": "HK",
-    "lastOrderDate": "2025-07-05T15:44:53.861Z"
-  },
-  "CONSUMER_JP_003": {
-    "consumerId": "CONSUMER_JP_003",
     "balance": {
-      "total": 150,
-      "available": 150,
+      "total": 0,
+      "available": 0,
       "used": 0,
-      "accountVersion": 1
-    },
-    "market": "JP"
-  },
-  "CONSUMER_HK_003": {
-    "consumerId": "CONSUMER_HK_003",
-    "balance": {
-      "total": 75,
-      "available": 75,
-      "used": 0,
-      "accountVersion": 1
-    },
-    "market": "HK"
-  },
-  "CONSUMER_JP_004": {
-    "consumerId": "CONSUMER_JP_004",
-    "balance": {
-      "total": 500,
-      "available": 500,
-      "used": 0,
-      "accountVersion": 1
-    },
-    "market": "JP"
-  },
-  "CONSUMER_BIRTHDAY_001": {
-    "consumerId": "CONSUMER_BIRTHDAY_001",
-    "balance": {
-      "total": 1680,
-      "available": 1680,
-      "used": 0,
-      "accountVersion": 1
-    },
-    "market": "JP",
-    "lastOrderDate": "2025-07-05T15:53:25.064Z"
-  },
-  "CONSUMER_VIP_001": {
-    "consumerId": "CONSUMER_VIP_001",
-    "balance": {
-      "total": 1700,
-      "available": 1700,
-      "used": 0,
-      "accountVersion": 1
-    },
-    "market": "HK",
-    "lastOrderDate": "2025-07-05T15:54:48.053Z"
-  },
-  "CONSUMER_SKU_001": {
-    "consumerId": "CONSUMER_SKU_001",
-    "balance": {
-      "total": 4180,
-      "available": 4180,
-      "used": 0,
-      "accountVersion": 1
-    },
-    "market": "JP",
-    "lastOrderDate": "2025-07-05T15:56:17.661Z"
-  },
-  "CONSUMER_ESSENCE_001": {
-    "consumerId": "CONSUMER_ESSENCE_001",
-    "balance": {
-      "total": 2579,
-      "available": 2579,
-      "used": 0,
-      "accountVersion": 1
-    },
-    "market": "HK",
-    "lastOrderDate": "2025-07-05T15:57:09.180Z"
-  },
-  "CONSUMER_COMBO_001": {
-    "consumerId": "CONSUMER_COMBO_001",
-    "balance": {
-      "total": 3550,
-      "available": 3550,
-      "used": 0,
-      "accountVersion": 1
-    },
-    "market": "JP",
-    "lastOrderDate": "2025-07-05T15:58:11.444Z"
-  },
-  "CONSUMER_THRESHOLD_001": {
-    "consumerId": "CONSUMER_THRESHOLD_001",
-    "balance": {
-      "total": 12000,
-      "available": 12000,
-      "used": 0,
-      "accountVersion": 2
-    },
-    "market": "HK",
-    "lastOrderDate": "2025-07-05T15:59:40.254Z"
-  },
-  "CONSUMER_MEGA_001": {
-    "consumerId": "CONSUMER_MEGA_001",
-    "balance": {
-      "total": 17600,
-      "available": 17600,
-      "used": 0,
-      "accountVersion": 1
-    },
-    "market": "TW",
-    "lastOrderDate": "2025-07-05T16:00:37.082Z"
-  },
-  "CONSUMER_COMPLEX_001": {
-    "consumerId": "CONSUMER_COMPLEX_001",
-    "balance": {
-      "total": 9749,
-      "available": 9749,
-      "used": 0,
-      "accountVersion": 1
-    },
-    "market": "JP",
-    "lastOrderDate": "2025-07-05T16:01:19.998Z"
+      "version": 1
+    }
   }
 }

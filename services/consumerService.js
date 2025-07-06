@@ -73,7 +73,7 @@ function logEvent(event) {
 function getConsumerPoints(consumerId) {
   const balance = getBalance(consumerId);
   const consumer = getConsumerById(consumerId);
-  const market = consumer?.market || 'JP'; // Default to JP if no market specified
+  const market = consumer?.profile?.market || 'JP'; // Default to JP if no market specified
   
   // Get consumer's point history to calculate expiration
   const history = getConsumerHistory(consumerId, { limit: 100 });
@@ -81,10 +81,10 @@ function getConsumerPoints(consumerId) {
   // Calculate next expiration based on market rules
   const expirationDetails = expirationService.getExpirationDetails(consumerId, market, {
     history,
-    lastOrderDate: consumer?.lastOrderDate,
+    lastOrderDate: consumer?.engagement?.lastPurchaseDate,
     balance,
-    firstOrderDate: consumer?.firstOrderDate,
-    registrationDate: consumer?.registrationDate
+    firstOrderDate: consumer?.engagement?.firstPurchaseDate,
+    registrationDate: consumer?.engagement?.registrationDate
   });
   
   return {
@@ -163,6 +163,13 @@ function hasPurchaseWithinDays(consumerId, days) {
 
 // Helper method to count purchases for a consumer
 function getPurchaseCount(consumerId) {
+  // First try to get from user profile (authoritative source)
+  const user = getConsumerById(consumerId);
+  if (user && user.engagement && typeof user.engagement.totalPurchases === 'number') {
+    return user.engagement.totalPurchases;
+  }
+  
+  // Fallback to counting events (for backward compatibility)
   const events = db.load('events.json');
   return events.filter(event => 
     event.consumerId === consumerId && 
@@ -172,12 +179,12 @@ function getPurchaseCount(consumerId) {
 
 // Helper method to get days since first purchase
 function getDaysSinceFirstPurchase(consumerId) {
-  const profile = getConsumerById(consumerId);
-  if (!profile || !profile.firstOrderDate) {
+  const user = getConsumerById(consumerId);
+  if (!user || !user.engagement || !user.engagement.firstPurchaseDate) {
     return null;
   }
   
-  const firstPurchase = new Date(profile.firstOrderDate);
+  const firstPurchase = new Date(user.engagement.firstPurchaseDate);
   const now = new Date();
   const diffTime = Math.abs(now - firstPurchase);
   const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
@@ -223,16 +230,24 @@ function updateLastOrderDate(consumerId, eventType, timestamp) {
     if (!users[consumerId]) {
       users[consumerId] = {
         consumerId: consumerId,
+        profile: {},
+        engagement: {},
         balance: { total: 0, available: 0, used: 0, version: 1 }
       };
     }
     
-    // Update last order date
-    users[consumerId].lastOrderDate = timestamp;
+    // Ensure engagement section exists
+    if (!users[consumerId].engagement) {
+      users[consumerId].engagement = {};
+    }
+    
+    // Update last purchase date in engagement section
+    users[consumerId].engagement.lastPurchaseDate = timestamp;
     
     // Determine market if not set (can be enhanced with more logic)
-    if (!users[consumerId].market) {
-      users[consumerId].market = 'JP'; // Default market
+    if (!users[consumerId].profile?.market) {
+      if (!users[consumerId].profile) users[consumerId].profile = {};
+      users[consumerId].profile.market = 'JP'; // Default market
     }
     
     db.save('users.json', users);
@@ -247,11 +262,16 @@ function setConsumerMarket(consumerId, market) {
   if (!users[consumerId]) {
     users[consumerId] = {
       consumerId: consumerId,
+      profile: {},
       balance: { total: 0, available: 0, used: 0, version: 1 }
     };
   }
   
-  users[consumerId].market = market;
+  if (!users[consumerId].profile) {
+    users[consumerId].profile = {};
+  }
+  
+  users[consumerId].profile.market = market;
   db.save('users.json', users);
   console.log(`Set market for ${consumerId}: ${market}`);
   return users[consumerId];
@@ -260,17 +280,55 @@ function setConsumerMarket(consumerId, market) {
 // Helper method to get expiration details for a consumer
 function getExpirationDetails(consumerId, market = null) {
   const consumer = getConsumerById(consumerId);
-  const actualMarket = market || consumer?.market || 'JP';
+  const actualMarket = market || consumer?.profile?.market || 'JP';
   const history = getConsumerHistory(consumerId, { limit: 100 });
   const balance = getBalance(consumerId);
   
   return expirationService.getExpirationDetails(consumerId, actualMarket, {
     history,
-    lastOrderDate: consumer?.lastOrderDate,
+    lastOrderDate: consumer?.engagement?.lastPurchaseDate,
     balance,
-    firstOrderDate: consumer?.firstOrderDate,
-    registrationDate: consumer?.registrationDate
+    firstOrderDate: consumer?.engagement?.firstPurchaseDate,
+    registrationDate: consumer?.engagement?.registrationDate
   });
+}
+
+// Helper method to get consumer attributes from CDP
+function getConsumerAttributes(consumerId) {
+  const consumer = getConsumerById(consumerId);
+  if (!consumer) {
+    console.log(`Consumer ${consumerId} not found in CDP, using default attributes`);
+    return {
+      isVIP: false,
+      isBirthMonth: false,
+      birthMonth: null,
+      tags: [],
+      tierLevel: 'STANDARD'
+    };
+  }
+
+  // Extract birthMonth from nested birthDate
+  const birthDate = consumer.profile?.birthDate;
+  const birthMonth = birthDate ? new Date(birthDate).getMonth() + 1 : null;
+  
+  // Calculate if current month is birth month
+  const currentMonth = new Date().getMonth() + 1; // getMonth() returns 0-11, we need 1-12
+  const isBirthMonth = birthMonth === currentMonth;
+  
+  // Determine if VIP based on tier
+  const tier = consumer.profile?.tier || 'STANDARD';
+  const isVIP = tier.includes('VIP') || tier.includes('PLATINUM');
+
+  return {
+    isVIP: isVIP,
+    isBirthMonth: isBirthMonth,
+    birthMonth: birthMonth,
+    tags: [], // No tags in the new user structure - this field is deprecated
+    tierLevel: isVIP ? 'VIP' : 'STANDARD',
+    registrationDate: consumer.engagement?.registrationDate,
+    firstOrderDate: consumer.engagement?.firstPurchaseDate,
+    market: consumer.profile?.market || 'JP'
+  };
 }
 
 module.exports = { 
@@ -282,12 +340,10 @@ module.exports = {
   getConsumerHistory,
   getConsumerProfile,
   updateConsumerProfile,
-  hasPurchaseWithinDays,
   getPurchaseCount,
   getDaysSinceFirstPurchase,
-  resetPurchaseCount,
-  resetBalance,
   updateLastOrderDate,
   setConsumerMarket,
-  getExpirationDetails
+  getExpirationDetails,
+  getConsumerAttributes
 };

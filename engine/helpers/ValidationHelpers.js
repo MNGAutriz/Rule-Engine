@@ -6,13 +6,20 @@ class ValidationHelpers {
 
   /**
    * Validate event data according to the generalized input template
+   * Market can be optional if consumerId is provided (will be fetched from CDP)
    */
   static validateEventData(eventData) {
     // Required fields from generalized input template
     const requiredFields = [
-      'eventId', 'eventType', 'timestamp', 'market', 
-      'channel', 'productLine', 'consumerId'
+      'eventId', 'eventType', 'timestamp', 
+      'channel', 'consumerId'
     ];
+    
+    // ProductLine is not required for all event types
+    const eventTypesRequiringProductLine = ['PURCHASE'];
+    if (eventTypesRequiringProductLine.includes(eventData.eventType) && !eventData.productLine) {
+      requiredFields.push('productLine');
+    }
     
     const missing = requiredFields.filter(field => !eventData[field]);
     
@@ -20,8 +27,13 @@ class ValidationHelpers {
       throw new Error(`Missing required fields: ${missing.join(', ')}`);
     }
     
-    // Validate market
-    this.validateMarket(eventData.market);
+    // Market is optional if consumerId is provided (will be fetched from CDP)
+    if (eventData.market) {
+      // Validate market if provided
+      this.validateMarket(eventData.market);
+    } else if (!eventData.consumerId) {
+      throw new Error('Either market or consumerId must be provided');
+    }
     
     // Validate event type
     this.validateEventType(eventData.eventType);

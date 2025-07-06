@@ -27,7 +27,7 @@
     "event": {
       "type": "ORDER_BASE_POINT",
       "params": {
-        "jpRate": 0.1,
+        "conversionRate": 0.1,
         "description": "JP base purchase - 1 MD per 10 JPY"
       }
     },
@@ -44,7 +44,7 @@
     "event": {
       "type": "ORDER_BASE_POINT",
       "params": {
-        "rate": 1.0,
+        "standardRate": 1.0,
         "description": "HK/TW base purchase - 1 MD per 1 HKD/TWD SRP"
       }
     },

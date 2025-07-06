@@ -155,7 +155,8 @@ class FactsEngine {
         consumerId = await almanac.factValue('consumerId');
       }
       const consumer = await consumerService.getConsumerById(consumerId);
-      return consumer?.isVIP || false;
+      const tier = consumer?.profile?.tier || 'STANDARD';
+      return tier.includes('VIP') || tier.includes('PLATINUM');
     });
 
     this.factDefinitions.set('birthMonth', async (params, almanac) => {
@@ -164,7 +165,8 @@ class FactsEngine {
         consumerId = await almanac.factValue('consumerId');
       }
       const consumer = await consumerService.getConsumerById(consumerId);
-      return consumer?.birthMonth;
+      const birthDate = consumer?.profile?.birthDate;
+      return birthDate ? new Date(birthDate).getMonth() + 1 : null;
     });
 
     this.factDefinitions.set('isBirthMonth', async (params, almanac) => {
@@ -173,17 +175,16 @@ class FactsEngine {
         consumerId = await almanac.factValue('consumerId');
       }
       const consumer = await consumerService.getConsumerById(consumerId);
+      const birthDate = consumer?.profile?.birthDate;
+      const birthMonth = birthDate ? new Date(birthDate).getMonth() + 1 : null;
       const eventMonth = new Date(params.timestamp).getMonth() + 1;
-      return consumer?.birthMonth === eventMonth;
+      return birthMonth === eventMonth;
     });
 
+    // Note: tags system removed from user structure - facts kept for backward compatibility
     this.factDefinitions.set('tags', async (params, almanac) => {
-      let consumerId = params?.consumerId;
-      if (!consumerId && almanac) {
-        consumerId = await almanac.factValue('consumerId');
-      }
-      const consumer = await consumerService.getConsumerById(consumerId);
-      return consumer?.tags || [];
+      // Tags are no longer part of the user structure - return empty array
+      return [];
     });
 
     this.factDefinitions.set('isFirstPurchase', async (params, almanac) => {
@@ -196,16 +197,8 @@ class FactsEngine {
     });
 
     this.factDefinitions.set('hasTag', async (params, almanac) => {
-      // This is a parameterized fact that can be used like: 
-      // { "fact": "hasTag", "params": { "tag": "PREMIUM" }, "operator": "equal", "value": true }
-      let consumerId = params?.consumerId;
-      if (!consumerId && almanac) {
-        consumerId = await almanac.factValue('consumerId');
-      }
-      const consumer = await consumerService.getConsumerById(consumerId);
-      const tags = consumer?.tags || [];
-      const requiredTag = params.tag || almanac.factValue('ruleParams.tag');
-      return tags.includes(requiredTag);
+      // Tags system removed - this fact always returns false for backward compatibility
+      return false;
     });
 
     // SKU-based facts (pure functions)

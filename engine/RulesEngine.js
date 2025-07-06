@@ -1,5 +1,6 @@
 const { Engine } = require('json-rules-engine');
 const consumerService = require('../services/consumerService');
+const CDPService = require('../services/CDPService');
 const CampaignService = require('../services/CampaignService');
 const FactsEngine = require('./FactsEngine');
 const CalculationHelpers = require('./helpers/CalculationHelpers');
@@ -22,7 +23,7 @@ class RulesEngine {
     this.engine = new Engine();
     this.rewardBreakdown = [];
     this.errors = [];
-    this.currentEventData = null; // Store current event data for handlers
+    this.currentEnrichedEventData = null; // Store current enriched event data for handlers
     this.initialized = false; // Track initialization state
   }
 
@@ -126,16 +127,19 @@ class RulesEngine {
    * This is the core of the flexible, market-agnostic approach 
    */
   createDynamicEventHandler(eventType) {
+    // Use arrow function to preserve 'this' context
     return async (event, almanac) => {
       try {
         const market = await almanac.factValue('market');
         
-        // Get data from the current event data stored during processing
-        const eventData = this.currentEventData || {};
-        const baseAmount = eventData.attributes?.amount || 0;
-        const discountedAmount = eventData.attributes?.srpAmount || 0;
-        const itemCount = eventData.attributes?.recycledCount || 0;
-        const adjustmentValue = eventData.attributes?.adjustedPoints || 0;
+        // Get transaction amounts from facts (more reliable for async handlers)
+        const baseAmount = await almanac.factValue('transactionAmount');
+        const discountedAmount = await almanac.factValue('discountedAmount');
+        
+        // Get data from the current enriched event data stored during processing (for other attributes)
+        const enrichedEventData = (this && this.currentEnrichedEventData) || {};
+        const itemCount = enrichedEventData.attributes?.recycledCount || 0;
+        const adjustmentValue = enrichedEventData.attributes?.adjustedPoints || enrichedEventData.attributes?.adjustmentAmount || 0;
         
         console.log(`Processing ${eventType} - market: ${market}, baseAmount: ${baseAmount}, discountedAmount: ${discountedAmount}`);
         
@@ -210,7 +214,7 @@ class RulesEngine {
   }
 
   /**
-   * Process an event through the rules engine
+   * Process an event through the rules engine with CDP enrichment
    * Follows the generalized input/output template exactly
    */
   async processEvent(eventData) {
@@ -230,21 +234,66 @@ class RulesEngine {
         await consumerService.setConsumerMarket(eventData.consumerId, eventData.market);
       }
       
+      // Fetch enriched consumer data from CDP with calculated attributes
+      console.log('Fetching enriched consumer data from CDP...');
+      const cdpData = await CDPService.getConsumerAttributesForRules(eventData.consumerId);
+      console.log('CDP enriched attributes:', cdpData);
+      
+      // Merge CDP data with event data (CDP takes precedence for consumer attributes)
+      const enrichedEventData = {
+        ...eventData,
+        // Consumer attributes from CDP (calculated, not hardcoded)
+        isVIP: cdpData.isVIP,
+        isBirthMonth: cdpData.isBirthMonth,
+        tier: cdpData.tier,
+        tierLevel: cdpData.tierLevel,
+        loyaltySegment: cdpData.loyaltySegment,
+        // Use market from CDP if not provided in event
+        market: eventData.market || cdpData.market,
+        // Set transaction amounts from attributes for purchase calculations
+        transactionAmount: eventData.attributes?.amount || 0,
+        discountedAmount: eventData.attributes?.srpAmount || eventData.attributes?.amount || 0,
+        // Merge recycling data for RECYCLE events
+        attributes: {
+          ...eventData.attributes,
+          recycledCount: cdpData.recycledCount,
+          recyclingEligible: cdpData.recyclingEligible
+        }
+      };
+      
+      console.log('Enriched event data with CDP:', {
+        consumerId: enrichedEventData.consumerId,
+        eventType: enrichedEventData.eventType,
+        isVIP: enrichedEventData.isVIP,
+        isBirthMonth: enrichedEventData.isBirthMonth,
+        market: enrichedEventData.market,
+        recycledCount: enrichedEventData.attributes.recycledCount
+      });
+      
       // Reset breakdown and errors for this processing
       this.rewardBreakdown = [];
       this.errors = [];
       
-      // Store current event data for use in event handlers
-      this.currentEventData = eventData;
+      // Store enriched event data for use in event handlers
+      this.currentEnrichedEventData = enrichedEventData;
+      
+      // Add transaction amounts as facts for use in handlers
+      this.engine.addFact('transactionAmount', enrichedEventData.transactionAmount || 0);
+      this.engine.addFact('discountedAmount', enrichedEventData.discountedAmount || enrichedEventData.transactionAmount || 0);
+      
+      // Add productLine as a fact with default value to prevent "Undefined fact" errors
+      this.engine.addFact('productLine', enrichedEventData.productLine || 'NONE');
       
       // DEBUG: Log facts for debugging
-      console.log('=== DEBUG: Event Data ===');
-      console.log('EventType:', eventData.eventType);
-      console.log('Market:', eventData.market);
-      console.log('Full Event:', JSON.stringify(eventData, null, 2));
+      console.log('=== DEBUG: Enriched Event Data ===');
+      console.log('EventType:', enrichedEventData.eventType);
+      console.log('Market:', enrichedEventData.market);
+      console.log('IsVIP:', enrichedEventData.isVIP);
+      console.log('IsBirthMonth:', enrichedEventData.isBirthMonth);
+      console.log('Full Event:', JSON.stringify(enrichedEventData, null, 2));
       
-      // Run the engine with the event data - strictly following json-rules-engine patterns
-      const engineResults = await this.engine.run(eventData);
+      // Run the engine with the enriched event data - strictly following json-rules-engine patterns
+      const engineResults = await this.engine.run(enrichedEventData);
       console.log('Engine run completed. Events triggered:', engineResults.events.length);
       console.log('Triggered events:', engineResults.events.map(e => ({type: e.type, params: e.params})));
       
@@ -297,7 +346,7 @@ class RulesEngine {
       throw new Error(`Event processing failed: ${error.message}`);
     } finally {
       // Clear current event data
-      this.currentEventData = null;
+      this.currentEnrichedEventData = null;
     }
   }
 

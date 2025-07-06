@@ -17,14 +17,14 @@ class CalculationHelpers {
   static calculateBaseReward(market, baseAmount, discountedAmount, params) {
     const calculationAmount = discountedAmount || baseAmount;
     
-    // JP market uses a different rate structure
+    // Some markets use lower conversion rates (e.g., 1 MD per 10 currency units)
     if (market === 'JP') {
-      const jpRate = params.jpRate || params.rate || 0.1;
-      return Math.floor(calculationAmount * jpRate);
+      const conversionRate = params.conversionRate || params.tenthsRate || params.rate || 0.1;
+      return Math.floor(calculationAmount * conversionRate);
     }
     
-    // HK/TW markets typically use 1:1 ratio on SRP
-    const rate = params.rate || 1.0;
+    // Other markets typically use 1:1 ratio on SRP
+    const rate = params.rate || params.standardRate || 1.0;
     return Math.floor(calculationAmount * rate);
   }
 
@@ -33,7 +33,15 @@ class CalculationHelpers {
    */
   static calculateMultiplierReward(market, baseAmount, discountedAmount, params) {
     const calculationAmount = discountedAmount || baseAmount;
-    const baseRate = params.baseRate || params.jpRate || params.rate || 1.0;
+    
+    // Some markets use lower conversion rates (1 MD per 10 currency units), others use 1:1
+    let baseRate;
+    if (market === 'JP') {
+      baseRate = params.conversionRate || params.tenthsRate || params.baseRate || 0.1;
+    } else {
+      baseRate = params.rate || params.standardRate || params.baseRate || 1.0;
+    }
+    
     const multiplier = params.multiplier || 1.0;
     const baseReward = Math.floor(calculationAmount * baseRate);
     
@@ -66,7 +74,15 @@ class CalculationHelpers {
    */
   static calculateTierMultiplier(market, baseAmount, discountedAmount, params) {
     const calculationAmount = discountedAmount || baseAmount;
-    const baseRate = params.baseRate || params.jpRate || params.rate || 1.0;
+    
+    // Some markets use lower conversion rates (1 MD per 10 currency units), others use 1:1
+    let baseRate;
+    if (market === 'JP') {
+      baseRate = params.conversionRate || params.tenthsRate || params.baseRate || 0.1;
+    } else {
+      baseRate = params.rate || params.standardRate || params.baseRate || 1.0;
+    }
+    
     const baseReward = Math.floor(calculationAmount * baseRate);
     const multiplier = params.multiplier || 1.0;
     
@@ -96,7 +112,14 @@ class CalculationHelpers {
     }
     
     // Multiplier-based product rewards
-    const baseRate = params.baseRate || params.jpRate || params.rate || 1.0;
+    // Some markets use lower conversion rates (1 MD per 10 currency units), others use 1:1
+    let baseRate;
+    if (market === 'JP') {
+      baseRate = params.conversionRate || params.tenthsRate || params.baseRate || 0.1;
+    } else {
+      baseRate = params.rate || params.standardRate || params.baseRate || 1.0;
+    }
+    
     const multiplier = params.multiplier || 1.0;
     const baseReward = Math.floor(calculationAmount * baseRate);
     
@@ -141,7 +164,15 @@ class CalculationHelpers {
    */
   static calculateTimedBonus(market, baseAmount, discountedAmount, params) {
     const calculationAmount = discountedAmount || baseAmount;
-    const baseRate = params.baseRate || params.jpRate || params.rate || 1.0;
+    
+    // Some markets use lower conversion rates (1 MD per 10 currency units), others use 1:1
+    let baseRate;
+    if (market === 'JP') {
+      baseRate = params.conversionRate || params.tenthsRate || params.baseRate || 0.1;
+    } else {
+      baseRate = params.rate || params.standardRate || params.baseRate || 1.0;
+    }
+    
     const baseReward = Math.floor(calculationAmount * baseRate);
     const multiplier = params.multiplier || 1.0;
     return Math.floor(baseReward * (multiplier - 1.0));

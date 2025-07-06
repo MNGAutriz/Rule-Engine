@@ -1,7 +1,7 @@
 const express = require('express');
 const router = express.Router();
 const RulesEngine = require('../engine/RulesEngine');
-const { validateEventInput } = require('../utils/validators');
+const ValidationHelpers = require('../engine/helpers/ValidationHelpers');
 
 /**
  * POST /api/events/process
@@ -10,15 +10,10 @@ const { validateEventInput } = require('../utils/validators');
  */
 router.post('/process', async (req, res) => {
   try {
-    // Validate input according to generalized template
-    const { eventId, eventType, timestamp, market, channel, productLine, consumerId, context, attributes } = req.body;
+    // Validate input using the engine's validation logic
+    ValidationHelpers.validateEventData(req.body);
     
-    if (!eventId || !eventType || !timestamp || !consumerId) {
-      return res.status(400).json({
-        error: 'Invalid input',
-        details: 'eventId, eventType, timestamp, and consumerId are required'
-      });
-    }
+    const { eventId, eventType, timestamp, market, channel, productLine, consumerId, context, attributes } = req.body;
 
     // Process event using the exact input format (no transformation needed)
     const eventData = {

@@ -118,11 +118,11 @@ class FormattingHelpers {
         return `registrationBonus = ${params.registrationBonus || 0}`;
       
       case 'ORDER_BASE_POINT':
-        const rate = params.jpRate || params.rate || params.conversionRate || 0;
+        const rate = params.conversionRate || params.tenthsRate || params.standardRate || params.rate || 0;
         return `floor(amount × ${rate})`;
       
       case 'ORDER_MULTIPLE_POINT_LIMIT':
-        const baseRate = params.baseRate || params.jpRate || params.rate || 0;
+        const baseRate = params.conversionRate || params.tenthsRate || params.standardRate || params.baseRate || params.rate || 0;
         const multiplier = params.multiplier || 1.0;
         return `floor(floor(amount × ${baseRate}) × (${multiplier} - 1.0))`;
       
@@ -130,13 +130,13 @@ class FormattingHelpers {
         if (params.fixedBonus !== undefined) {
           return `fixedBonus = ${params.fixedBonus}`;
         } else {
-          const campaignRate = params.baseRate || params.rate || 0;
+          const campaignRate = params.conversionRate || params.tenthsRate || params.standardRate || params.baseRate || params.rate || 0;
           const campaignMultiplier = params.multiplier || 1.0;
           return `floor(floor(amount × ${campaignRate}) × (${campaignMultiplier} - 1.0))`;
         }
       
       case 'FLEXIBLE_VIP_MULTIPLIER':
-        const vipRate = params.baseRate || params.rate || 1.0;
+        const vipRate = params.conversionRate || params.tenthsRate || params.standardRate || params.baseRate || params.rate || 1.0;
         const vipMultiplier = params.multiplier || 1.0;
         return `floor(floor(amount × ${vipRate}) × (${vipMultiplier} - 1.0))`;
       
@@ -146,7 +146,7 @@ class FormattingHelpers {
         return `if amount >= ${threshold} then ${bonus} else 0`;
       
       case 'FLEXIBLE_PRODUCT_MULTIPLIER':
-        const prodRate = params.baseRate || params.rate || 1.0;
+        const prodRate = params.conversionRate || params.tenthsRate || params.standardRate || params.baseRate || params.rate || 1.0;
         const prodMultiplier = params.multiplier || 1.0;
         return `floor(floor(amount × ${prodRate}) × (${prodMultiplier} - 1.0))`;
       
@@ -162,7 +162,7 @@ class FormattingHelpers {
         return `consultationBonus = ${params.consultationBonus || 0}`;
       
       case 'FIRST_PURCHASE_BIRTH_MONTH_BONUS':
-        const birthRate = params.baseRate || params.jpRate || params.rate || 1.0;
+        const birthRate = params.conversionRate || params.tenthsRate || params.standardRate || params.baseRate || params.rate || 1.0;
         const birthMultiplier = params.multiplier || 1.0;
         return `floor(floor(amount × ${birthRate}) × (${birthMultiplier} - 1.0))`;
       
@@ -180,8 +180,10 @@ class FormattingHelpers {
   static getInputValues(ruleId, params) {
     const inputs = {};
 
-    // Add specific input values based on rule type
-    if (params.jpRate !== undefined) inputs.jpRate = params.jpRate;
+    // Add specific input values based on rule type - using generic naming
+    if (params.conversionRate !== undefined) inputs.conversionRate = params.conversionRate;
+    if (params.tenthsRate !== undefined) inputs.tenthsRate = params.tenthsRate;
+    if (params.standardRate !== undefined) inputs.standardRate = params.standardRate;
     if (params.rate !== undefined) inputs.rate = params.rate;
     if (params.multiplier !== undefined) inputs.multiplier = params.multiplier;
     if (params.threshold !== undefined) inputs.threshold = params.threshold;
