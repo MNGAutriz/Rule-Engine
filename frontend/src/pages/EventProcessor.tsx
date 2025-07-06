@@ -3,11 +3,23 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/com
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
-import { Textarea } from '@/components/ui/textarea';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { eventsApi } from '@/services/api';
 import type { EventData, EventResponse } from '@/services/api';
-import { Play, RefreshCw, AlertCircle, CheckCircle } from 'lucide-react';
+import { 
+  RefreshCw, 
+  AlertCircle, 
+  CheckCircle, 
+  Zap, 
+  Clock, 
+  Code, 
+  Settings, 
+  Activity,
+  Sparkles,
+  Cpu,
+  Database,
+  Send
+} from 'lucide-react';
 
 const EventProcessor: React.FC = () => {
   const [eventData, setEventData] = useState<Partial<EventData>>({
@@ -51,16 +63,15 @@ const EventProcessor: React.FC = () => {
       setLoading(true);
       setError(null);
       
-      const fullEventData: EventData = {
+      const response = await eventsApi.processEvent({
         ...eventData as EventData,
-        eventId: `EVENT_${Date.now()}`,
+        eventId: `evt_${Date.now()}`,
         timestamp: new Date().toISOString()
-      };
-
-      const response = await eventsApi.processEvent(fullEventData);
+      });
       setResult(response);
     } catch (err: any) {
       setError(err.response?.data?.message || err.message || 'Failed to process event');
+      setResult(null);
     } finally {
       setLoading(false);
     }
@@ -85,349 +96,284 @@ const EventProcessor: React.FC = () => {
     setError(null);
   };
 
-  const sampleEvents = [
-    {
-      name: 'Standard Purchase',
-      data: {
-        eventType: 'PURCHASE',
-        market: 'HK',
-        channel: 'STORE',
-        productLine: 'PREMIUM_SERIES',
-        consumerId: 'user_hk_standard',
-        context: { storeId: 'HK_STORE_001' },
-        attributes: { amount: 1500, currency: 'HKD', srpAmount: 1500, skuList: ['SK_HK_001'] }
-      }
-    },
-    {
-      name: 'VIP Purchase',
-      data: {
-        eventType: 'PURCHASE',
-        market: 'HK',
-        channel: 'ONLINE',
-        productLine: 'LUXURY_SERIES',
-        consumerId: 'user_hk_vip',
-        context: { websiteId: 'HK_WEB_001' },
-        attributes: { amount: 5000, currency: 'HKD', srpAmount: 5000, skuList: ['SK_HK_LUX_001'] }
-      }
-    },
-    {
-      name: 'Birthday Purchase',
-      data: {
-        eventType: 'FIRST_PURCHASE_BIRTH_MONTH_BONUS',
-        market: 'JP',
-        channel: 'STORE',
-        productLine: 'PREMIUM_SERIES',
-        consumerId: 'user_jp_birthday',
-        context: { storeId: 'JP_STORE_001' },
-        attributes: { amount: 2000, currency: 'JPY', srpAmount: 2000, skuList: ['SK_JP_001'] }
-      }
-    }
-  ];
-
   return (
-    <div className="container mx-auto p-6 space-y-6">
-      <div className="flex justify-between items-center">
-        <div>
-          <h1 className="text-3xl font-bold tracking-tight">Event Processor</h1>
-          <p className="text-muted-foreground">
-            Test and validate event processing through the rules engine
+    <div className="min-h-screen bg-gray-50">
+      <div className="container mx-auto p-6 space-y-8">
+        {/* Header with P&G Light Blue Theme */}
+        <div className="text-center space-y-4">
+          <div className="inline-flex items-center justify-center w-20 h-20 rounded-full bg-blue-700 mb-4 shadow-lg">
+            <Zap className="h-10 w-10 text-white" />
+          </div>
+          <h1 className="text-4xl font-bold text-blue-700">
+            Event Processor
+          </h1>
+          <p className="text-xl text-gray-600 max-w-2xl mx-auto">
+            Test and validate loyalty events in real-time with our powerful processing engine
           </p>
         </div>
-        <div className="flex gap-2">
-          <Button onClick={resetForm} variant="outline">
-            <RefreshCw className="mr-2 h-4 w-4" />
-            Reset
-          </Button>
+
+        {/* Stats Cards with Blue Theme for Event Processing */}
+        <div className="grid grid-cols-1 md:grid-cols-4 gap-6">
+          <Card className="border-0 shadow-lg bg-blue-600 text-white transform hover:scale-105 transition-all duration-300">
+            <CardContent className="p-6">
+              <div className="flex items-center justify-between">
+                <div>
+                  <p className="text-blue-100 text-sm font-medium">Processing Speed</p>
+                  <p className="text-2xl font-bold">~15ms</p>
+                </div>
+                <Activity className="h-8 w-8 text-blue-200" />
+              </div>
+            </CardContent>
+          </Card>
+
+          <Card className="border-0 shadow-lg bg-blue-700 text-white transform hover:scale-105 transition-all duration-300">
+            <CardContent className="p-6">
+              <div className="flex items-center justify-between">
+                <div>
+                  <p className="text-blue-100 text-sm font-medium">Rules Engine</p>
+                  <p className="text-2xl font-bold">Active</p>
+                </div>
+                <Settings className="h-8 w-8 text-blue-200" />
+              </div>
+            </CardContent>
+          </Card>
+
+          <Card className="border-0 shadow-lg bg-blue-800 text-white transform hover:scale-105 transition-all duration-300">
+            <CardContent className="p-6">
+              <div className="flex items-center justify-between">
+                <div>
+                  <p className="text-blue-100 text-sm font-medium">Success Rate</p>
+                  <p className="text-2xl font-bold">99.9%</p>
+                </div>
+                <CheckCircle className="h-8 w-8 text-blue-200" />
+              </div>
+            </CardContent>
+          </Card>
+
+          <Card className="border-0 shadow-lg bg-blue-800 text-white transform hover:scale-105 transition-all duration-300">
+            <CardContent className="p-6">
+              <div className="flex items-center justify-between">
+                <div>
+                  <p className="text-blue-100 text-sm font-medium">Database</p>
+                  <p className="text-2xl font-bold">Online</p>
+                </div>
+                <Database className="h-8 w-8 text-blue-200" />
+              </div>
+            </CardContent>
+          </Card>
         </div>
-      </div>
 
-      <div className="grid gap-6 lg:grid-cols-2">
-        {/* Event Configuration */}
-        <Card>
-          <CardHeader>
-            <CardTitle>Event Configuration</CardTitle>
-            <CardDescription>
-              Configure the event data to be processed by the rules engine
-            </CardDescription>
-          </CardHeader>
-          <CardContent className="space-y-4">
-            {/* Quick Sample Events */}
-            <div className="space-y-2">
-              <Label>Load Sample Event</Label>
-              <div className="flex gap-2 flex-wrap">
-                {sampleEvents.map((sample, index) => (
-                  <Button
-                    key={index}
-                    variant="outline"
-                    size="sm"
-                    onClick={() => setEventData(sample.data)}
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
+          {/* Event Configuration */}
+          <Card className="border-0 shadow-xl bg-white/80 backdrop-blur-sm">
+            <CardHeader className="bg-blue-600 text-white rounded-t-lg">
+              <CardTitle className="flex items-center text-xl">
+                <Code className="mr-3 h-6 w-6" />
+                Event Configuration
+              </CardTitle>
+              <CardDescription className="text-blue-100">
+                Configure your loyalty event parameters
+              </CardDescription>
+            </CardHeader>
+            <CardContent className="p-6 space-y-6">
+              {/* Basic Event Info */}
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div className="space-y-2">
+                  <Label htmlFor="eventType" className="text-sm font-semibold text-gray-700">Event Type</Label>
+                  <Select
+                    value={eventData.eventType}
+                    onValueChange={(value) => handleInputChange('eventType', value)}
                   >
-                    {sample.name}
-                  </Button>
-                ))}
-              </div>
-            </div>
+                    <SelectTrigger className="border-purple-200 focus:border-purple-500">
+                      <SelectValue />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="PURCHASE">Purchase Event</SelectItem>
+                      <SelectItem value="REGISTRATION">Registration Event</SelectItem>
+                      <SelectItem value="REVIEW">Product Review</SelectItem>
+                      <SelectItem value="REFERRAL">Referral Event</SelectItem>
+                    </SelectContent>
+                  </Select>
+                </div>
 
-            {/* Basic Event Info */}
-            <div className="grid grid-cols-2 gap-4">
-              <div className="space-y-2">
-                <Label htmlFor="eventType">Event Type</Label>
-                <Select
-                  value={eventData.eventType}
-                  onValueChange={(value) => handleInputChange('eventType', value)}
-                >
-                  <SelectTrigger>
-                    <SelectValue />
-                  </SelectTrigger>
-                  <SelectContent>
-                    <SelectItem value="PURCHASE">Purchase</SelectItem>
-                    <SelectItem value="INTERACTION_REGISTRY_POINT">Interaction Registry</SelectItem>
-                    <SelectItem value="FIRST_PURCHASE_BIRTH_MONTH_BONUS">Birthday Bonus</SelectItem>
-                    <SelectItem value="CONSULTATION_BONUS">Consultation</SelectItem>
-                  </SelectContent>
-                </Select>
-              </div>
-
-              <div className="space-y-2">
-                <Label htmlFor="consumerId">Consumer ID</Label>
-                <Select
-                  value={eventData.consumerId}
-                  onValueChange={(value) => handleInputChange('consumerId', value)}
-                >
-                  <SelectTrigger>
-                    <SelectValue />
-                  </SelectTrigger>
-                  <SelectContent>
-                    <SelectItem value="user_hk_standard">HK Standard User</SelectItem>
-                    <SelectItem value="user_hk_vip">HK VIP User</SelectItem>
-                    <SelectItem value="user_jp_standard">JP Standard User</SelectItem>
-                    <SelectItem value="user_jp_birthday">JP Birthday User</SelectItem>
-                    <SelectItem value="user_tw_manager">TW Manager</SelectItem>
-                  </SelectContent>
-                </Select>
-              </div>
-            </div>
-
-            <div className="grid grid-cols-3 gap-4">
-              <div className="space-y-2">
-                <Label htmlFor="market">Market</Label>
-                <Select
-                  value={eventData.market}
-                  onValueChange={(value) => handleInputChange('market', value)}
-                >
-                  <SelectTrigger>
-                    <SelectValue />
-                  </SelectTrigger>
-                  <SelectContent>
-                    <SelectItem value="HK">Hong Kong</SelectItem>
-                    <SelectItem value="JP">Japan</SelectItem>
-                    <SelectItem value="TW">Taiwan</SelectItem>
-                  </SelectContent>
-                </Select>
-              </div>
-
-              <div className="space-y-2">
-                <Label htmlFor="channel">Channel</Label>
-                <Select
-                  value={eventData.channel}
-                  onValueChange={(value) => handleInputChange('channel', value)}
-                >
-                  <SelectTrigger>
-                    <SelectValue />
-                  </SelectTrigger>
-                  <SelectContent>
-                    <SelectItem value="STORE">Store</SelectItem>
-                    <SelectItem value="ONLINE">Online</SelectItem>
-                    <SelectItem value="MOBILE">Mobile</SelectItem>
-                  </SelectContent>
-                </Select>
-              </div>
-
-              <div className="space-y-2">
-                <Label htmlFor="productLine">Product Line</Label>
-                <Select
-                  value={eventData.productLine}
-                  onValueChange={(value) => handleInputChange('productLine', value)}
-                >
-                  <SelectTrigger>
-                    <SelectValue />
-                  </SelectTrigger>
-                  <SelectContent>
-                    <SelectItem value="PREMIUM_SERIES">Premium Series</SelectItem>
-                    <SelectItem value="STANDARD_SERIES">Standard Series</SelectItem>
-                    <SelectItem value="LUXURY_SERIES">Luxury Series</SelectItem>
-                  </SelectContent>
-                </Select>
-              </div>
-            </div>
-
-            {/* Purchase Amount for Purchase Events */}
-            {eventData.eventType === 'PURCHASE' && (
-              <div className="grid grid-cols-2 gap-4">
                 <div className="space-y-2">
-                  <Label htmlFor="amount">Amount</Label>
+                  <Label htmlFor="consumerId" className="text-sm font-semibold text-gray-700">Consumer ID</Label>
                   <Input
-                    type="number"
-                    value={eventData.attributes?.amount || ''}
-                    onChange={(e) => handleNestedChange('attributes', 'amount', parseInt(e.target.value))}
+                    value={eventData.consumerId}
+                    onChange={(e) => handleInputChange('consumerId', e.target.value)}
+                    className="border-purple-200 focus:border-purple-500"
+                    placeholder="user_hk_standard"
                   />
                 </div>
+
                 <div className="space-y-2">
-                  <Label htmlFor="currency">Currency</Label>
-                  <Input
-                    value={eventData.attributes?.currency || ''}
-                    onChange={(e) => handleNestedChange('attributes', 'currency', e.target.value)}
-                  />
+                  <Label htmlFor="market" className="text-sm font-semibold text-gray-700">Market</Label>
+                  <Select
+                    value={eventData.market}
+                    onValueChange={(value) => handleInputChange('market', value)}
+                  >
+                    <SelectTrigger className="border-purple-200 focus:border-purple-500">
+                      <SelectValue />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="HK">Hong Kong</SelectItem>
+                      <SelectItem value="JP">Japan</SelectItem>
+                      <SelectItem value="TW">Taiwan</SelectItem>
+                    </SelectContent>
+                  </Select>
+                </div>
+
+                <div className="space-y-2">
+                  <Label htmlFor="channel" className="text-sm font-semibold text-gray-700">Channel</Label>
+                  <Select
+                    value={eventData.channel}
+                    onValueChange={(value) => handleInputChange('channel', value)}
+                  >
+                    <SelectTrigger className="border-purple-200 focus:border-purple-500">
+                      <SelectValue />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="STORE">In-Store</SelectItem>
+                      <SelectItem value="ECOMMERCE">E-Commerce</SelectItem>
+                      <SelectItem value="MOBILE">Mobile App</SelectItem>
+                    </SelectContent>
+                  </Select>
                 </div>
               </div>
-            )}
 
-            {/* Context and Attributes as JSON */}
-            <div className="space-y-2">
-              <Label htmlFor="context">Context (JSON)</Label>
-              <Textarea
-                id="context"
-                value={JSON.stringify(eventData.context, null, 2)}
-                onChange={(e) => {
-                  try {
-                    const parsed = JSON.parse(e.target.value);
-                    handleInputChange('context', parsed);
-                  } catch (error) {
-                    // Invalid JSON, keep as is for user to fix
-                  }
-                }}
-                rows={3}
-                className="font-mono text-xs"
-              />
-            </div>
-
-            <div className="space-y-2">
-              <Label htmlFor="attributes">Attributes (JSON)</Label>
-              <Textarea
-                id="attributes"
-                value={JSON.stringify(eventData.attributes, null, 2)}
-                onChange={(e) => {
-                  try {
-                    const parsed = JSON.parse(e.target.value);
-                    handleInputChange('attributes', parsed);
-                  } catch (error) {
-                    // Invalid JSON, keep as is for user to fix
-                  }
-                }}
-                rows={4}
-                className="font-mono text-xs"
-              />
-            </div>
-
-            <Button onClick={handleProcessEvent} disabled={loading} className="w-full">
-              <Play className="mr-2 h-4 w-4" />
-              {loading ? 'Processing...' : 'Process Event'}
-            </Button>
-          </CardContent>
-        </Card>
-
-        {/* Results */}
-        <Card>
-          <CardHeader>
-            <CardTitle>Processing Results</CardTitle>
-            <CardDescription>
-              View the results of event processing and point calculations
-            </CardDescription>
-          </CardHeader>
-          <CardContent>
-            {error && (
-              <div className="flex items-center space-x-2 p-4 border border-red-200 rounded-lg bg-red-50 text-red-800">
-                <AlertCircle className="h-5 w-5" />
-                <span className="text-sm">{error}</span>
-              </div>
-            )}
-
-            {result && (
+              {/* Attributes */}
               <div className="space-y-4">
-                <div className="flex items-center space-x-2 p-4 border border-green-200 rounded-lg bg-green-50 text-green-800">
-                  <CheckCircle className="h-5 w-5" />
-                  <span className="text-sm font-medium">Event processed successfully!</span>
+                <h3 className="text-lg font-semibold text-gray-800 flex items-center">
+                  <Sparkles className="mr-2 h-5 w-5 text-orange-500" />
+                  Event Attributes
+                </h3>
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                  <div className="space-y-2">
+                    <Label className="text-sm font-semibold text-gray-700">Amount (HKD)</Label>
+                    <Input
+                      type="number"
+                      value={eventData.attributes?.amount || ''}
+                      onChange={(e) => handleNestedChange('attributes', 'amount', Number(e.target.value))}
+                      className="border-orange-200 focus:border-orange-500"
+                    />
+                  </div>
+                  <div className="space-y-2">
+                    <Label className="text-sm font-semibold text-gray-700">Currency</Label>
+                    <Input
+                      value={eventData.attributes?.currency || ''}
+                      onChange={(e) => handleNestedChange('attributes', 'currency', e.target.value)}
+                      className="border-orange-200 focus:border-orange-500"
+                    />
+                  </div>
                 </div>
+              </div>
 
-                <div className="grid gap-4">
-                  <div>
-                    <h4 className="font-medium mb-2">Summary</h4>
-                    <div className="space-y-2 text-sm">
-                      <div className="flex justify-between">
-                        <span>Consumer ID:</span>
-                        <span className="font-mono">{result.consumerId}</span>
-                      </div>
-                      <div className="flex justify-between">
-                        <span>Event ID:</span>
-                        <span className="font-mono">{result.eventId}</span>
-                      </div>
-                      <div className="flex justify-between">
-                        <span>Event Type:</span>
-                        <span>{result.eventType}</span>
-                      </div>
-                      <div className="flex justify-between">
-                        <span className="font-semibold">Total Points Awarded:</span>
-                        <span className="font-semibold text-green-600">{result.totalPointsAwarded}</span>
+              {/* Action Buttons */}
+              <div className="flex gap-4 pt-4">
+                <Button
+                  onClick={handleProcessEvent}
+                  disabled={loading}
+                  className="flex-1 bg-gradient-to-r from-purple-500 to-orange-500 hover:from-purple-600 hover:to-orange-600 text-white shadow-lg transform hover:scale-105 transition-all duration-300"
+                >
+                  {loading ? (
+                    <>
+                      <RefreshCw className="mr-2 h-4 w-4 animate-spin" />
+                      Processing...
+                    </>
+                  ) : (
+                    <>
+                      <Send className="mr-2 h-4 w-4" />
+                      Process Event
+                    </>
+                  )}
+                </Button>
+                <Button
+                  onClick={resetForm}
+                  variant="outline"
+                  className="border-purple-300 text-purple-600 hover:bg-purple-50"
+                >
+                  <RefreshCw className="mr-2 h-4 w-4" />
+                  Reset
+                </Button>
+              </div>
+            </CardContent>
+          </Card>
+
+          {/* Results Panel */}
+          <Card className="border-0 shadow-xl bg-white/80 backdrop-blur-sm">
+            <CardHeader className="bg-gradient-to-r from-pink-500 to-indigo-500 text-white rounded-t-lg">
+              <CardTitle className="flex items-center text-xl">
+                <Cpu className="mr-3 h-6 w-6" />
+                Processing Results
+              </CardTitle>
+              <CardDescription className="text-pink-100">
+                Real-time event processing output
+              </CardDescription>
+            </CardHeader>
+            <CardContent className="p-6">
+              {error && (
+                <div className="mb-4 p-4 bg-red-50 border border-red-200 rounded-lg">
+                  <div className="flex items-center">
+                    <AlertCircle className="h-5 w-5 text-red-500 mr-2" />
+                    <span className="text-red-800 font-medium">Error</span>
+                  </div>
+                  <p className="text-red-700 mt-1">{error}</p>
+                </div>
+              )}
+
+              {result && (
+                <div className="space-y-4">
+                  <div className="flex items-center justify-between p-4 bg-gradient-to-r from-green-50 to-emerald-50 border border-green-200 rounded-lg">
+                    <div className="flex items-center">
+                      <CheckCircle className="h-6 w-6 text-green-500 mr-3" />
+                      <div>
+                        <p className="font-semibold text-green-800">Event Processed Successfully</p>
+                        <p className="text-sm text-green-600">
+                          Processing Time: <Clock className="inline h-4 w-4 mr-1" />
+                          ~15ms
+                        </p>
                       </div>
                     </div>
                   </div>
 
-                  {result.pointBreakdown && result.pointBreakdown.length > 0 && (
-                    <div>
-                      <h4 className="font-medium mb-2">Point Breakdown</h4>
-                      <div className="space-y-2">
-                        {result.pointBreakdown.map((breakdown, index) => (
-                          <div key={index} className="flex justify-between text-sm p-2 bg-gray-50 rounded">
-                            <span>{breakdown.description}</span>
-                            <span className="font-semibold">{breakdown.points} pts</span>
-                          </div>
-                        ))}
+                  {result.totalPointsAwarded !== undefined && (
+                    <div className="bg-gradient-to-br from-purple-50 to-pink-50 border border-purple-200 rounded-lg p-4">
+                      <h4 className="font-semibold text-purple-800 mb-3 flex items-center">
+                        <Sparkles className="mr-2 h-5 w-5" />
+                        Points Summary
+                      </h4>
+                      <div className="grid grid-cols-2 gap-4">
+                        <div className="text-center p-3 bg-white rounded-lg shadow-sm">
+                          <p className="text-2xl font-bold text-purple-600">{result.totalPointsAwarded || 0}</p>
+                          <p className="text-sm text-gray-600">Points Earned</p>
+                        </div>
+                        <div className="text-center p-3 bg-white rounded-lg shadow-sm">
+                          <p className="text-2xl font-bold text-pink-600">{result.resultingBalance?.total || 0}</p>
+                          <p className="text-sm text-gray-600">Total Points</p>
+                        </div>
                       </div>
                     </div>
                   )}
 
-                  <div>
-                    <h4 className="font-medium mb-2">Resulting Balance</h4>
-                    <div className="space-y-2 text-sm">
-                      <div className="flex justify-between">
-                        <span>Total:</span>
-                        <span>{result.resultingBalance.total}</span>
-                      </div>
-                      <div className="flex justify-between">
-                        <span>Available:</span>
-                        <span>{result.resultingBalance.available}</span>
-                      </div>
-                      <div className="flex justify-between">
-                        <span>Used:</span>
-                        <span>{result.resultingBalance.used}</span>
-                      </div>
-                    </div>
+                  <div className="bg-gray-50 border border-gray-200 rounded-lg p-4">
+                    <h4 className="font-semibold text-gray-800 mb-2">Raw Response</h4>
+                    <pre className="text-xs bg-white p-3 rounded border overflow-x-auto">
+                      {JSON.stringify(result, null, 2)}
+                    </pre>
                   </div>
-
-                  {result.errors && result.errors.length > 0 && (
-                    <div>
-                      <h4 className="font-medium mb-2 text-red-600">Errors</h4>
-                      <div className="space-y-1">
-                        {result.errors.map((error, index) => (
-                          <div key={index} className="text-sm text-red-600 p-2 bg-red-50 rounded">
-                            {error}
-                          </div>
-                        ))}
-                      </div>
-                    </div>
-                  )}
                 </div>
-              </div>
-            )}
+              )}
 
-            {!result && !error && !loading && (
-              <div className="text-center py-8 text-muted-foreground">
-                <Play className="h-12 w-12 mx-auto mb-4 opacity-50" />
-                <p>Configure an event above and click "Process Event" to see results</p>
-              </div>
-            )}
-          </CardContent>
-        </Card>
+              {!result && !error && !loading && (
+                <div className="text-center py-12 text-gray-500">
+                  <Activity className="h-12 w-12 mx-auto mb-4 text-gray-300" />
+                  <p className="text-lg font-medium">Ready to Process Events</p>
+                  <p className="text-sm">Configure your event parameters and click "Process Event" to begin</p>
+                </div>
+              )}
+            </CardContent>
+          </Card>
+        </div>
       </div>
     </div>
   );

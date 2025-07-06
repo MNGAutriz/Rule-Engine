@@ -88,7 +88,7 @@ export interface Consumer {
   };
 }
 
-// Rules Management API
+// Rules Management API - Updated
 export const rulesApi = {
   // Get all rules
   getAllRules: async (): Promise<RuleResponse> => {
@@ -259,4 +259,14 @@ export const handleApiError = (error: any) => {
       status: -1,
     };
   }
+};
+
+// Default export for compatibility
+export default {
+  rulesApi,
+  eventsApi,
+  consumersApi,
+  campaignsApi,
+  api,
+  handleApiError
 };

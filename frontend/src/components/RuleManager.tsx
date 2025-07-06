@@ -487,4 +487,5 @@ const RuleManager: React.FC<RuleManagerProps> = ({ rules, category, onRulesUpdat
   );
 };
 
+// Force module reload
 export default RuleManager;

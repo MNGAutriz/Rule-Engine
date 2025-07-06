@@ -1,5 +1,11 @@
 import * as React from "react"
-import { cn } from "@/lib/utils"
+import { type ClassValue, clsx } from "clsx"
+import { twMerge } from "tailwind-merge"
+
+// Local cn function to avoid import issues
+function cn(...inputs: ClassValue[]) {
+  return twMerge(clsx(inputs))
+}
 
 const Label = React.forwardRef<
   HTMLLabelElement,

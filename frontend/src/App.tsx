@@ -1,15 +1,29 @@
-import React, { useState } from 'react';
-import { Button } from '@/components/ui/button';
+import React, { useState, useEffect } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import Dashboard from '@/pages/Dashboard';
 import EventProcessor from '@/pages/EventProcessor';
 import CampaignManager from '@/pages/CampaignManager';
-import ConsumerAnalytics from '@/pages/ConsumerAnalytics';
-import { Settings, Play, BarChart3, Menu, Users, Calendar } from 'lucide-react';
+import { Settings, Play, BarChart3, Menu, Calendar, X } from 'lucide-react';
 
 const App: React.FC = () => {
-  const [currentPage, setCurrentPage] = useState<'dashboard' | 'events' | 'campaigns' | 'consumers'>('dashboard');
-  const [sidebarOpen, setSidebarOpen] = useState(false);
+  const [currentPage, setCurrentPage] = useState<'dashboard' | 'events' | 'campaigns'>('dashboard');
+  const [sidebarOpen, setSidebarOpen] = useState(true);
+  const [isMobile, setIsMobile] = useState(false);
+
+  // Check if mobile on mount and resize
+  useEffect(() => {
+    const checkMobile = () => {
+      const mobile = window.innerWidth < 1024;
+      setIsMobile(mobile);
+      if (mobile) {
+        setSidebarOpen(false);
+      }
+    };
+
+    checkMobile();
+    window.addEventListener('resize', checkMobile);
+    return () => window.removeEventListener('resize', checkMobile);
+  }, []);
 
   const navigation = [
     {
@@ -29,12 +43,6 @@ const App: React.FC = () => {
       name: 'Campaigns',
       icon: Calendar,
       description: 'Campaign management'
-    },
-    {
-      id: 'consumers',
-      name: 'Consumer Analytics',
-      icon: Users,
-      description: 'Consumer insights'
     }
   ];
 
@@ -46,95 +54,151 @@ const App: React.FC = () => {
         return <EventProcessor />;
       case 'campaigns':
         return <CampaignManager />;
-      case 'consumers':
-        return <ConsumerAnalytics />;
       default:
         return <Dashboard />;
     }
   };
 
-  return (
-    <div className="min-h-screen bg-gray-50">
-      {/* Mobile menu button */}
-      <div className="lg:hidden fixed top-4 left-4 z-50">
-        <Button
-          variant="outline"
-          size="sm"
-          onClick={() => setSidebarOpen(!sidebarOpen)}
-        >
-          <Menu className="h-4 w-4" />
-        </Button>
-      </div>
+  const toggleSidebar = () => {
+    setSidebarOpen(!sidebarOpen);
+  };
 
-      {/* Sidebar */}
-      <div className={`
-        fixed top-0 left-0 h-full w-64 bg-white border-r border-gray-200 z-40 transform transition-transform duration-300 ease-in-out
-        ${sidebarOpen ? 'translate-x-0' : '-translate-x-full lg:translate-x-0'}
-      `}>
-        <div className="p-6">
-          <div className="flex items-center space-x-2 mb-8">
-            <Settings className="h-8 w-8 text-blue-600" />
-            <div>
-              <h1 className="text-xl font-bold text-gray-900">Rules Engine</h1>
-              <p className="text-sm text-gray-500">Loyalty Program</p>
+  const handlePageChange = (pageId: string) => {
+    setCurrentPage(pageId as any);
+    // Auto-close sidebar on mobile after navigation
+    if (isMobile) {
+      setSidebarOpen(false);
+    }
+  };
+
+  return (
+    <div className="min-h-screen bg-gray-100 overflow-hidden">
+      {/* Enhanced Sidebar with smooth transitions */}
+      <div 
+        className={`fixed top-0 left-0 h-full bg-white border-r border-gray-200 z-40 
+        transform transition-all duration-500 ease-in-out shadow-lg
+        ${sidebarOpen 
+          ? 'translate-x-0 w-64' 
+          : isMobile 
+            ? '-translate-x-full w-64' 
+            : 'translate-x-0 w-16'
+        }`}
+      >
+        {/* Sidebar Content */}
+        <div className={`h-full flex flex-col transition-all duration-300 ${!sidebarOpen && !isMobile ? 'items-center' : ''}`}>
+          {/* Header with clickable wrench for toggle */}
+          <div className={`p-6 border-b border-gray-100 ${!sidebarOpen && !isMobile ? 'p-3' : ''}`}>
+            <div className={`flex items-center ${!sidebarOpen && !isMobile ? 'justify-center' : 'space-x-3'}`}>
+              <div className="relative group">
+                <button
+                  onClick={toggleSidebar}
+                  className="p-2 rounded-lg hover:bg-blue-50 transition-all duration-300 transform hover:scale-110 focus:outline-none cursor-pointer"
+                >
+                  <Settings className="h-6 w-6 text-blue-700 drop-shadow-sm group-hover:text-blue-800 transition-colors duration-300" />
+                  <div className="absolute -top-1 -right-1 w-3 h-3 bg-green-500 rounded-full animate-pulse"></div>
+                </button>
+              </div>
+              {(sidebarOpen || isMobile) && (
+                <div className="overflow-hidden transition-all duration-300">
+                  <h1 className="text-xl font-bold text-blue-700 tracking-tight">
+                    Loyalty Engine
+                  </h1>
+                  <p className="text-sm text-blue-600 font-medium">Rules Management</p>
+                </div>
+              )}
             </div>
           </div>
 
-          <nav className="space-y-2">
-            {navigation.map((item) => {
-              const Icon = item.icon;
-              return (
-                <Button
-                  key={item.id}
-                  variant={currentPage === item.id ? 'default' : 'ghost'}
-                  className="w-full justify-start h-auto p-3"
-                  onClick={() => {
-                    setCurrentPage(item.id as any);
-                    setSidebarOpen(false);
-                  }}
-                >
-                  <Icon className="h-4 w-4 mr-3" />
-                  <div className="text-left">
-                    <div className="font-medium">{item.name}</div>
-                    <div className="text-xs text-muted-foreground">{item.description}</div>
+          {/* Navigation */}
+          <div className="flex-1 px-3 pb-4">
+            <nav className="space-y-2">
+              {navigation.map((item) => {
+                const Icon = item.icon;
+                const isActive = currentPage === item.id;
+                return (
+                  <button
+                    key={item.id}
+                    className={`w-full group relative overflow-hidden transition-all duration-300 cursor-pointer mb-2 rounded-lg
+                    ${!sidebarOpen && !isMobile 
+                      ? 'h-12 w-12 p-3 justify-center flex items-center mx-auto' 
+                      : 'h-16 p-4 justify-start flex items-center'
+                    }
+                    ${isActive 
+                      ? 'bg-blue-700 text-white shadow-lg hover:bg-blue-800' 
+                      : 'hover:bg-blue-50 hover:shadow-md text-gray-700 hover:text-blue-700'
+                    }`}
+                    onClick={() => handlePageChange(item.id)}
+                    title={!sidebarOpen && !isMobile ? item.name : undefined}
+                  >
+                    <Icon className={`h-5 w-5 transition-transform duration-300 group-hover:scale-110 ${
+                      sidebarOpen || isMobile ? 'mr-4' : ''
+                    } ${isActive ? 'text-white' : 'text-gray-600 group-hover:text-blue-700'}`} />
+                    {(sidebarOpen || isMobile) && (
+                      <div className="text-left flex-1 min-w-0">
+                        <div className={`font-semibold truncate transition-colors duration-300 ${
+                          isActive ? 'text-white' : 'text-gray-800 group-hover:text-blue-700'
+                        }`}>{item.name}</div>
+                        <div className={`text-xs truncate transition-colors duration-300 ${
+                          isActive ? 'text-blue-100' : 'text-gray-500 group-hover:text-blue-500'
+                        }`}>{item.description}</div>
+                      </div>
+                    )}
+                    {/* Perfect square active indicator for collapsed sidebar */}
+                    {isActive && !sidebarOpen && !isMobile && (
+                      <div className="absolute left-0 top-0 w-1 h-full bg-gray-300 rounded-r-sm"></div>
+                    )}
+                  </button>
+                );
+              })}
+            </nav>
+          </div>
+
+          {/* System Status - Only show when sidebar is open */}
+          {(sidebarOpen || isMobile) && (
+            <div className="p-4">
+              <Card className="bg-blue-50 border-blue-200">
+                <CardHeader className="pb-2">
+                  <CardTitle className="text-sm text-blue-800 flex items-center">
+                    <div className="w-2 h-2 bg-green-500 rounded-full mr-2 animate-pulse"></div>
+                    System Status
+                  </CardTitle>
+                </CardHeader>
+                <CardContent className="space-y-2">
+                  <div className="flex justify-between text-xs">
+                    <span className="text-blue-700">Backend:</span>
+                    <span className="text-green-600 font-semibold">✓ Online</span>
                   </div>
-                </Button>
-              );
-            })}
-          </nav>
+                  <div className="flex justify-between text-xs">
+                    <span className="text-blue-700">Rules Engine:</span>
+                    <span className="text-green-600 font-semibold">✓ Running</span>
+                  </div>
+                  <div className="w-full bg-blue-200 rounded-full h-1 mt-2">
+                    <div className="bg-blue-600 h-1 rounded-full w-full"></div>
+                  </div>
+                </CardContent>
+              </Card>
+            </div>
+          )}
         </div>
+      </div>      {/* Mobile Overlay */}
+      {isMobile && sidebarOpen && (
+        <div
+          className="fixed inset-0 bg-black/50 backdrop-blur-sm z-30 transition-opacity duration-300 cursor-pointer"
+          onClick={() => setSidebarOpen(false)}
+        />
+      )}
 
-        <div className="absolute bottom-0 left-0 right-0 p-6">
-          <Card>
-            <CardHeader className="pb-2">
-              <CardTitle className="text-sm">System Status</CardTitle>
-            </CardHeader>
-            <CardContent className="space-y-1">
-              <div className="flex justify-between text-xs">
-                <span>Backend:</span>
-                <span className="text-green-600">✓ Online</span>
-              </div>
-              <div className="flex justify-between text-xs">
-                <span>Rules Engine:</span>
-                <span className="text-green-600">✓ Running</span>
-              </div>
-            </CardContent>
-          </Card>
-        </div>
-      </div>
-
-      {/* Main content */}
-      <div className="lg:ml-64">
-        {/* Overlay for mobile */}
-        {sidebarOpen && (
-          <div 
-            className="lg:hidden fixed inset-0 bg-black bg-opacity-50 z-30"
-            onClick={() => setSidebarOpen(false)}
-          />
-        )}
-        
-        <main className="min-h-screen">
-          {renderPage()}
+      {/* Main Content with enhanced transitions */}
+      <div 
+        className={`min-h-screen transition-all duration-500 ease-in-out ${
+          sidebarOpen && !isMobile ? 'ml-64' : isMobile ? 'ml-0' : 'ml-16'
+        }`}
+      >
+        <main className="relative">
+          {/* Content wrapper */}
+          <div className="p-6">
+            {renderPage()}
+          </div>
         </main>
       </div>
     </div>
