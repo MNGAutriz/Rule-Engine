@@ -54,7 +54,7 @@
       "firstPurchaseDate": "2025-02-15T12:00:00Z",
       "totalPurchases": 8,
       "totalSpent": 12000,
-      "lastPurchaseDate": "2025-07-06T06:48:36.058Z",
+      "lastPurchaseDate": "2025-07-06T09:31:23.521Z",
       "consultationsCompleted": 2,
       "lastConsultationDate": "2025-05-10T16:00:00Z",
       "recyclingActivity": {
@@ -73,10 +73,10 @@
       "skinType": "DRY"
     },
     "balance": {
-      "total": 58029,
-      "available": 58029,
+      "total": 68788,
+      "available": 68788,
       "used": 0,
-      "accountVersion": 29
+      "accountVersion": 34
     }
   },
   "user_tw_vip": {
@@ -213,7 +213,7 @@
       "firstPurchaseDate": "2025-05-20T09:30:00Z",
       "totalPurchases": 4,
       "totalSpent": 6500,
-      "lastPurchaseDate": "2025-07-06T06:45:09.859Z",
+      "lastPurchaseDate": "2025-07-06T08:47:22.008Z",
       "consultationsCompleted": 0,
       "lastConsultationDate": null,
       "recyclingActivity": {
@@ -233,10 +233,10 @@
       "skinType": "OILY"
     },
     "balance": {
-      "total": 4850,
-      "available": 4850,
+      "total": 6800,
+      "available": 6800,
       "used": 0,
-      "accountVersion": 5
+      "accountVersion": 7
     }
   },
   "user_jp_new_registration": {
@@ -271,10 +271,10 @@
       "skinType": null
     },
     "balance": {
-      "total": 4950,
-      "available": 4950,
+      "total": 5100,
+      "available": 5100,
       "used": 0,
-      "accountVersion": 17
+      "accountVersion": 18
     }
   },
   "user_hk_high_spender": {
@@ -390,10 +390,10 @@
       "skinType": "COMBINATION"
     },
     "balance": {
-      "total": 9200,
-      "available": 9200,
+      "total": 9350,
+      "available": 9350,
       "used": 0,
-      "accountVersion": 15
+      "accountVersion": 16
     }
   },
   "user_jp_new_registration2": {
@@ -434,7 +434,7 @@
       "firstPurchaseDate": "2024-03-10T14:00:00Z",
       "totalPurchases": 18,
       "totalSpent": 45000,
-      "lastPurchaseDate": "2025-07-06T06:47:27.496Z",
+      "lastPurchaseDate": "2025-07-06T08:48:12.444Z",
       "consultationsCompleted": 3,
       "lastConsultationDate": "2025-05-20T11:00:00Z",
       "recyclingActivity": {
@@ -454,10 +454,10 @@
       "skinType": "DRY"
     },
     "balance": {
-      "total": 18500,
-      "available": 18500,
+      "total": 23100,
+      "available": 23100,
       "used": 0,
-      "accountVersion": 4
+      "accountVersion": 5
     }
   },
   "user_jp_birth_month": {
@@ -544,10 +544,10 @@
       "skinType": "NORMAL"
     },
     "balance": {
-      "total": 75,
-      "available": 75,
+      "total": 150,
+      "available": 150,
       "used": 0,
-      "accountVersion": 2
+      "accountVersion": 3
     }
   },
   "user_hk_birth_month": {
@@ -564,7 +564,7 @@
       "firstPurchaseDate": "2024-10-15T12:00:00Z",
       "totalPurchases": 6,
       "totalSpent": 8500,
-      "lastPurchaseDate": "2025-07-06T06:46:51.473Z",
+      "lastPurchaseDate": "2025-07-06T08:48:06.057Z",
       "consultationsCompleted": 1,
       "lastConsultationDate": "2025-05-10T11:00:00Z",
       "recyclingActivity": {
@@ -583,10 +583,10 @@
       "skinType": "DRY"
     },
     "balance": {
-      "total": 3600,
-      "available": 3600,
+      "total": 7200,
+      "available": 7200,
       "used": 0,
-      "accountVersion": 2
+      "accountVersion": 3
     }
   },
   "user_hk_premium": {
@@ -603,7 +603,7 @@
       "firstPurchaseDate": "2024-05-10T10:00:00Z",
       "totalPurchases": 12,
       "totalSpent": 25000,
-      "lastPurchaseDate": "2025-07-06T06:49:01.756Z",
+      "lastPurchaseDate": "2025-07-06T08:48:29.500Z",
       "consultationsCompleted": 3,
       "lastConsultationDate": "2025-06-01T15:30:00Z",
       "recyclingActivity": {
@@ -622,10 +622,10 @@
       "skinType": "MATURE"
     },
     "balance": {
-      "total": 50600,
-      "available": 50600,
+      "total": 75900,
+      "available": 75900,
       "used": 0,
-      "accountVersion": 3
+      "accountVersion": 4
     }
   },
   "user_tw_standard": {
@@ -634,13 +634,73 @@
       "market": "TW"
     },
     "balance": {
-      "total": 1500,
-      "available": 1500,
+      "total": 3000,
+      "available": 3000,
+      "used": 0,
+      "accountVersion": 2
+    },
+    "engagement": {
+      "lastPurchaseDate": "2025-07-06T08:47:26.023Z"
+    }
+  },
+  "CONSUMER_ESSENCE_001": {
+    "consumerId": "CONSUMER_ESSENCE_001",
+    "profile": {
+      "market": "HK"
+    },
+    "balance": {
+      "total": 2579,
+      "available": 2579,
       "used": 0,
       "accountVersion": 1
     },
     "engagement": {
-      "lastPurchaseDate": "2025-07-06T06:45:51.463Z"
+      "lastPurchaseDate": "2025-07-06T08:48:20.648Z"
+    }
+  },
+  "CONSUMER_COMBO_001": {
+    "consumerId": "CONSUMER_COMBO_001",
+    "profile": {
+      "market": "JP"
+    },
+    "balance": {
+      "total": 1075,
+      "available": 1075,
+      "used": 0,
+      "accountVersion": 1
+    },
+    "engagement": {
+      "lastPurchaseDate": "2025-07-06T08:48:25.017Z"
+    }
+  },
+  "CONSUMER_THRESHOLD_001": {
+    "consumerId": "CONSUMER_THRESHOLD_001",
+    "profile": {
+      "market": "HK"
+    },
+    "balance": {
+      "total": 6000,
+      "available": 6000,
+      "used": 0,
+      "accountVersion": 1
+    },
+    "engagement": {
+      "lastPurchaseDate": "2025-07-06T08:48:32.867Z"
+    }
+  },
+  "CONSUMER_MEGA_001": {
+    "consumerId": "CONSUMER_MEGA_001",
+    "profile": {
+      "market": "TW"
+    },
+    "balance": {
+      "total": 17600,
+      "available": 17600,
+      "used": 0,
+      "accountVersion": 1
+    },
+    "engagement": {
+      "lastPurchaseDate": "2025-07-06T08:48:36.606Z"
     }
   }
 }
