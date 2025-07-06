@@ -60,8 +60,9 @@ class CDPService {
    */
   static calculateVIPStatus(consumerData) {
     const tier = consumerData.profile?.tier || 'STANDARD';
-    const totalSpent = consumerData.engagement?.totalSpent || 0;
-    const totalPurchases = consumerData.engagement?.totalPurchases || 0;
+    const engagement = consumerData.engagement || {};
+    const totalSpent = engagement.totalSpent || 0;
+    const totalPurchases = engagement.totalPurchases || 0;
     
     // VIP if explicitly in VIP tier
     if (tier.includes('VIP')) {
@@ -166,10 +167,11 @@ class CDPService {
    * Business logic: Weighted score based on multiple factors
    */
   static calculateLifetimeValue(consumerData) {
-    const totalSpent = consumerData.engagement?.totalSpent || 0;
-    const totalPurchases = consumerData.engagement?.totalPurchases || 0;
-    const consultations = consumerData.engagement?.consultationsCompleted || 0;
-    const recycling = consumerData.engagement?.recyclingActivity?.totalBottlesRecycled || 0;
+    const engagement = consumerData.engagement || {};
+    const totalSpent = engagement.totalSpent || 0;
+    const totalPurchases = engagement.totalPurchases || 0;
+    const consultations = engagement.consultationsCompleted || 0;
+    const recycling = engagement.recyclingActivity?.totalBottlesRecycled || 0;
     
     // Weighted calculation
     const spendingScore = totalSpent * 0.4;
@@ -198,10 +200,10 @@ class CDPService {
       isVIP: enrichedData.calculatedAttributes.isVIP,
       isBirthMonth: enrichedData.calculatedAttributes.isBirthMonth,
       
-      // Engagement metrics
-      totalPurchases: enrichedData.engagement.totalPurchases,
-      totalSpent: enrichedData.engagement.totalSpent,
-      consultationsCompleted: enrichedData.engagement.consultationsCompleted,
+      // Engagement metrics (with safe defaults)
+      totalPurchases: enrichedData.engagement?.totalPurchases || 0,
+      totalSpent: enrichedData.engagement?.totalSpent || 0,
+      consultationsCompleted: enrichedData.engagement?.consultationsCompleted || 0,
       
       // Recycling data
       recycledCount: enrichedData.engagement?.recyclingActivity?.thisYearBottlesRecycled || 0,

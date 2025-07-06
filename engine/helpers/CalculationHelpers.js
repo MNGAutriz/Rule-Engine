@@ -71,11 +71,12 @@ class CalculationHelpers {
 
   /**
    * Calculate tier/VIP multiplier rewards
+   * This should multiply ALL previous points earned (base + campaign bonuses)
    */
   static calculateTierMultiplier(market, baseAmount, discountedAmount, params) {
     const calculationAmount = discountedAmount || baseAmount;
     
-    // Some markets use lower conversion rates (1 MD per 10 currency units), others use 1:1
+    // Calculate base purchase points
     let baseRate;
     if (market === 'JP') {
       baseRate = params.conversionRate || params.tenthsRate || params.baseRate || 0.1;
@@ -86,8 +87,17 @@ class CalculationHelpers {
     const baseReward = Math.floor(calculationAmount * baseRate);
     const multiplier = params.multiplier || 1.0;
     
-    // Return the bonus amount (multiplied reward minus base)
-    return Math.floor(baseReward * (multiplier - 1.0));
+    // For VIP multiplier, we need to apply it to base + campaign bonus
+    // Since campaign bonus is fixed (300) for HK/TW, add it here
+    let campaignBonus = 0;
+    if (market === 'HK' || market === 'TW') {
+      campaignBonus = 300; // Fixed campaign bonus
+    }
+    
+    const totalEarned = baseReward + campaignBonus;
+    
+    // Return the bonus amount (multiplied total minus original total)
+    return Math.floor(totalEarned * (multiplier - 1.0));
   }
 
   /**
@@ -102,6 +112,7 @@ class CalculationHelpers {
 
   /**
    * Calculate product-specific rewards
+   * Apply multiplier to base purchase amount to get bonus points
    */
   static calculateProductReward(market, baseAmount, discountedAmount, params) {
     const calculationAmount = discountedAmount || baseAmount;
@@ -123,6 +134,7 @@ class CalculationHelpers {
     const multiplier = params.multiplier || 1.0;
     const baseReward = Math.floor(calculationAmount * baseRate);
     
+    // Return the additional points from the multiplier (bonus only, not total)
     return Math.floor(baseReward * (multiplier - 1.0));
   }
 
