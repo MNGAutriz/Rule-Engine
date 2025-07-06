@@ -253,10 +253,10 @@ class RulesEngine {
         // Set transaction amounts from attributes for purchase calculations
         transactionAmount: eventData.attributes?.amount || 0,
         discountedAmount: eventData.attributes?.srpAmount || eventData.attributes?.amount || 0,
-        // Merge recycling data for RECYCLE events
+        // Merge recycling data - for RECYCLE events, preserve event's recycledCount
         attributes: {
           ...eventData.attributes,
-          recycledCount: cdpData.recycledCount,
+          recycledCount: eventData.eventType === 'RECYCLE' ? eventData.attributes?.recycledCount : cdpData.recycledCount,
           recyclingEligible: cdpData.recyclingEligible
         }
       };

@@ -43,7 +43,7 @@ class CDPService {
         tier: enrichedData.profile.tier,
         isVIP: enrichedData.calculatedAttributes.isVIP,
         isBirthMonth: enrichedData.calculatedAttributes.isBirthMonth,
-        recyclingBottles: enrichedData.engagement.recyclingActivity.thisYearBottlesRecycled
+        recyclingBottles: enrichedData.engagement?.recyclingActivity?.thisYearBottlesRecycled || 0
       });
 
       return enrichedData;
@@ -204,7 +204,7 @@ class CDPService {
       consultationsCompleted: enrichedData.engagement.consultationsCompleted,
       
       // Recycling data
-      recycledCount: enrichedData.engagement.recyclingActivity.thisYearBottlesRecycled,
+      recycledCount: enrichedData.engagement?.recyclingActivity?.thisYearBottlesRecycled || 0,
       recyclingEligible: enrichedData.calculatedAttributes.recyclingEligibility.isEligible,
       
       // Segmentation
