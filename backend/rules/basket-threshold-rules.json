@@ -1,30 +1,81 @@
 [
   {
     "name": "HK High Value Purchase Bonus",
-    "conditions": {
-      "all": [
-        { "fact": "eventType", "operator": "equal", "value": "PURCHASE" },
-        { "fact": "market", "operator": "equal", "value": "HK" },
-        { "fact": "attributes.srpAmount", "operator": "greaterThanInclusive", "value": 5000 }
-      ]
-    },
+    "description": "Basket threshold bonus - HKD 5000+ gets +200 MD",
+    "priority": 4,
+    "active": true,
     "event": {
       "type": "FLEXIBLE_BASKET_AMOUNT",
       "params": {
-        "threshold": 5000,
-        "bonus": 200,
-        "description": "Basket threshold bonus - HKD 5000+ gets +200 MD"
+        "description": "Basket threshold bonus - HKD 5000+ gets +200 MD",
+        "all": [
+          {
+            "fact": "eventType",
+            "operator": "equal",
+            "value": "PURCHASE"
+          },
+          {
+            "fact": "market",
+            "operator": "equal",
+            "value": "HK"
+          },
+          {
+            "fact": "attributes.srpAmount",
+            "operator": "greaterThanInclusive",
+            "value": 5000
+          }
+        ]
       }
     },
-    "priority": 4
+    "conditions": {
+      "all": [
+        {
+          "fact": "eventType",
+          "operator": "equal",
+          "value": "PURCHASE"
+        },
+        {
+          "fact": "market",
+          "operator": "equal",
+          "value": "HK"
+        },
+        {
+          "fact": "attributes.srpAmount",
+          "operator": "greaterThanInclusive",
+          "value": 5000
+        }
+      ]
+    },
+    "actions": {},
+    "markets": [
+      "HK"
+    ],
+    "channels": [
+      "ONLINE"
+    ],
+    "productLines": [
+      "PREMIUM_SERIES"
+    ]
   },
   {
     "name": "HK Premium Purchase Bonus",
     "conditions": {
       "all": [
-        { "fact": "eventType", "operator": "equal", "value": "PURCHASE" },
-        { "fact": "market", "operator": "equal", "value": "HK" },
-        { "fact": "attributes.srpAmount", "operator": "greaterThanInclusive", "value": 10000 }
+        {
+          "fact": "eventType",
+          "operator": "equal",
+          "value": "PURCHASE"
+        },
+        {
+          "fact": "market",
+          "operator": "equal",
+          "value": "HK"
+        },
+        {
+          "fact": "attributes.srpAmount",
+          "operator": "greaterThanInclusive",
+          "value": 10000
+        }
       ]
     },
     "event": {
@@ -41,9 +92,21 @@
     "name": "TW Premium Purchase Bonus",
     "conditions": {
       "all": [
-        { "fact": "eventType", "operator": "equal", "value": "PURCHASE" },
-        { "fact": "market", "operator": "equal", "value": "TW" },
-        { "fact": "attributes.srpAmount", "operator": "greaterThanInclusive", "value": 15000 }
+        {
+          "fact": "eventType",
+          "operator": "equal",
+          "value": "PURCHASE"
+        },
+        {
+          "fact": "market",
+          "operator": "equal",
+          "value": "TW"
+        },
+        {
+          "fact": "attributes.srpAmount",
+          "operator": "greaterThanInclusive",
+          "value": 15000
+        }
       ]
     },
     "event": {

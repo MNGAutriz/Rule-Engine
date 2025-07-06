@@ -5,6 +5,7 @@ const consumerRouter = require('./api/consumerRouter');
 const campaignRouter = require('./api/campaignRouter');
 const rulesRouter = require('./api/rulesRouter');
 const rulesManagementRouter = require('./api/rulesManagementRouter');
+const defaultsRouter = require('./api/defaultsRouter');
 
 const app = express();
 const PORT = process.env.PORT || 3000;
@@ -42,6 +43,7 @@ app.use('/api/consumer', consumerRouter);
 app.use('/api/campaigns', campaignRouter);
 app.use('/api/rules', rulesRouter);
 app.use('/api/rules-management', rulesManagementRouter);
+app.use('/api/defaults', defaultsRouter);
 
 // Health check endpoint
 app.get('/health', (req, res) => {

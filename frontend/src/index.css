@@ -67,3 +67,67 @@
     font-family: 'Poppins', sans-serif;
   }
 }
+
+/* Ensure dropdown visibility and proper z-index stacking */
+[data-radix-select-content] {
+  z-index: 9999 !important;
+  position: fixed !important;
+}
+
+[data-radix-popper-content-wrapper] {
+  z-index: 9999 !important;
+}
+
+/* Ensure parent containers don't clip dropdowns */
+.overflow-hidden {
+  overflow: visible !important;
+}
+
+/* Specific styling for select dropdowns */
+[data-radix-select-content] {
+  background: white !important;
+  border: 1px solid #e5e7eb !important;
+  border-radius: 8px !important;
+  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1) !important;
+  min-width: 200px !important;
+}
+
+/* Ensure form containers allow dropdown overflow */
+.space-y-6 > div:has([data-radix-select-trigger]) {
+  overflow: visible !important;
+  position: relative;
+}
+
+/* Improve select trigger visibility */
+[data-radix-select-trigger] {
+  position: relative;
+  z-index: 1;
+}
+
+/* Remove all focus outlines and rings from form elements */
+input:focus,
+select:focus,
+textarea:focus,
+button:focus,
+[data-radix-select-trigger]:focus,
+[role="combobox"]:focus,
+.focus\:ring-0:focus,
+.focus\:outline-none:focus {
+  outline: none !important;
+  box-shadow: none !important;
+  border-color: #000 !important;
+}
+
+/* Remove focus rings from all elements */
+*:focus {
+  outline: none !important;
+  box-shadow: none !important;
+}
+
+/* Specifically target shadcn/ui select components */
+[data-radix-select-trigger]:focus-visible,
+[data-radix-select-content],
+[data-radix-select-item]:focus {
+  outline: none !important;
+  box-shadow: none !important;
+}

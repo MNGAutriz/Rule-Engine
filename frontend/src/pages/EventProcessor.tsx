@@ -1,11 +1,11 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
-import { eventsApi } from '@/services/api';
-import type { EventData, EventResponse } from '@/services/api';
+import { eventsApi, defaultsApi } from '@/services/api';
+import type { EventData, EventResponse, DefaultsResponse } from '@/services/api';
 import { 
   RefreshCw, 
   AlertCircle, 
@@ -18,17 +18,25 @@ import {
   Sparkles,
   Cpu,
   Database,
-  Send
+  Send,
+  Calendar
 } from 'lucide-react';
 
 const EventProcessor: React.FC = () => {
+  const [defaults, setDefaults] = useState<DefaultsResponse | null>(null);
+  const [loading, setLoading] = useState(false);
+  const [result, setResult] = useState<EventResponse | null>(null);
+  const [error, setError] = useState<string | null>(null);
   const [eventData, setEventData] = useState<Partial<EventData>>({
     eventType: 'PURCHASE',
     market: 'HK',
     channel: 'STORE',
     productLine: 'PREMIUM_SERIES',
     consumerId: 'user_hk_standard',
-    context: { storeId: 'HK_STORE_001' },
+    context: { 
+      storeId: 'STORE_HK_001',
+      campaignCode: ''
+    },
     attributes: {
       amount: 1500,
       currency: 'HKD',
@@ -36,26 +44,190 @@ const EventProcessor: React.FC = () => {
       skuList: ['SK_HK_001']
     }
   });
-  
-  const [result, setResult] = useState<EventResponse | null>(null);
-  const [loading, setLoading] = useState(false);
-  const [error, setError] = useState<string | null>(null);
+
+  // Load defaults from backend on component mount
+  useEffect(() => {
+    loadDefaults();
+  }, []);
+
+  const loadDefaults = async () => {
+    try {
+      const defaultsData = await defaultsApi.getDefaults();
+      setDefaults(defaultsData);
+      
+      // Update initial form data with real backend defaults
+      if (defaultsData.marketDefaults.HK) {
+        const hkDefaults = defaultsData.marketDefaults.HK;
+        setEventData(prev => ({
+          ...prev,
+          consumerId: hkDefaults.consumerIds[0] || prev.consumerId,
+          context: {
+            storeId: hkDefaults.storeIds[0] || 'STORE_HK_001',
+            campaignCode: ''
+          },
+          attributes: {
+            ...prev.attributes,
+            currency: hkDefaults.currency,
+            amount: hkDefaults.defaultAmount,
+            srpAmount: hkDefaults.defaultAmount,
+            skuList: hkDefaults.skus.slice(0, 1) || ['SK_HK_001']
+          }
+        }));
+      }
+    } catch (error) {
+      console.error('Error loading defaults:', error);
+      // Keep the hardcoded defaults if API fails
+    }
+  };
 
   const handleInputChange = (field: keyof EventData, value: any) => {
-    setEventData(prev => ({
-      ...prev,
-      [field]: value
-    }));
+    setEventData(prev => {
+      const updated = { ...prev, [field]: value };
+      
+      // Auto-map related fields based on selections using real backend data
+      if (field === 'market' && defaults?.marketDefaults[value]) {
+        const marketDefaults = defaults.marketDefaults[value];
+        updated.attributes = {
+          ...updated.attributes,
+          currency: marketDefaults.currency
+        };
+        
+        updated.context = {
+          ...updated.context,
+          storeId: marketDefaults.storeIds[0] || `STORE_${value}_001`,
+          campaignCode: ''
+        };
+        
+        updated.consumerId = marketDefaults.consumerIds[0] || `user_${value.toLowerCase()}_standard`;
+        
+        updated.attributes = {
+          ...updated.attributes,
+          skuList: marketDefaults.skus.slice(0, 1) || [`SK_${value}_001`],
+          amount: marketDefaults.defaultAmount,
+          srpAmount: marketDefaults.defaultAmount
+        };
+      }
+      
+      // Auto-set SRP amount when amount changes
+      if (field === 'attributes' && value?.amount) {
+        updated.attributes = {
+          ...updated.attributes,
+          srpAmount: value.amount
+        };
+      }
+      
+      // Auto-populate default values for different event types based on POSTMAN tests
+      if (field === 'eventType') {
+        switch (value) {
+          case 'PURCHASE':
+            updated.attributes = {
+              ...updated.attributes,
+              amount: updated.attributes?.amount || (defaults?.marketDefaults[updated.market || 'HK']?.defaultAmount || 1500),
+              srpAmount: updated.attributes?.srpAmount || (defaults?.marketDefaults[updated.market || 'HK']?.defaultAmount || 1500),
+              currency: updated.attributes?.currency || (defaults?.marketDefaults[updated.market || 'HK']?.currency || 'HKD'),
+              skuList: updated.attributes?.skuList || (defaults?.marketDefaults[updated.market || 'HK']?.skus.slice(0, 1) || ['SK_HK_001'])
+            };
+            // Ensure productLine is set for Purchase events
+            if (!updated.productLine) {
+              updated.productLine = 'PREMIUM_SERIES';
+            }
+            break;
+          case 'CONSULTATION':
+            updated.attributes = {
+              consultationType: defaults?.consultationTypes?.[0] || 'SKIN_ANALYSIS',
+              skinTestDate: new Date().toISOString().split('T')[0] // Today's date
+            };
+            // Remove product line for consultation events
+            updated.productLine = '';
+            break;
+          case 'ADJUSTMENT':
+            updated.attributes = {
+              adjustedPoints: 1000,
+              reason: 'Customer service compensation'
+            };
+            updated.context = {
+              ...updated.context,
+              adminId: 'ADMIN_001'
+            };
+            // Keep default channel as STORE for adjustments
+            break;
+          case 'RECYCLE':
+            updated.attributes = {
+              recycledCount: 3
+            };
+            break;
+          case 'REDEMPTION':
+            updated.attributes = {
+              redemptionPoints: 500
+            };
+            break;
+          case 'REGISTRATION':
+            // Registration events use STORE channel, no product line, empty campaign code and storeId, and empty attributes
+            updated.productLine = ''; // No product line for registration
+            updated.attributes = {}; // Registration events have no attributes
+            updated.context = {
+              storeId: '', // Store ID is optional for registration
+              campaignCode: '' // Empty campaign code for registration
+            };
+            break;
+        }
+        
+        // Set campaign code to blank for all event types (except REGISTRATION which is handled above)
+        if (value !== 'REGISTRATION') {
+          updated.context = {
+            ...updated.context,
+            campaignCode: ''
+          };
+        }
+        
+        // Ensure all event types default to STORE channel
+        updated.channel = 'STORE';
+      }
+      
+      return updated;
+    });
   };
 
   const handleNestedChange = (parent: 'context' | 'attributes', field: string, value: any) => {
-    setEventData(prev => ({
-      ...prev,
-      [parent]: {
-        ...prev[parent],
-        [field]: value
+    setEventData(prev => {
+      const updated = {
+        ...prev,
+        [parent]: {
+          ...prev[parent],
+          [field]: value
+        }
+      };
+      
+      // Auto-map related fields
+      if (parent === 'attributes') {
+        if (field === 'amount' && typeof value === 'number') {
+          // Auto-set SRP amount to match amount (unless manually changed)
+          updated.attributes = {
+            ...updated.attributes,
+            srpAmount: updated.attributes?.srpAmount === prev.attributes?.amount ? value : updated.attributes?.srpAmount || value
+          };
+        }
+        
+        if (field === 'currency') {
+          // Auto-update sample amounts based on currency
+          const amountMap = {
+            'HKD': 1500,
+            'JPY': 150000,
+            'TWD': 45000,
+            'USD': 200,
+            'EUR': 180
+          };
+          const defaultAmount = amountMap[value as keyof typeof amountMap] || 1500;
+          updated.attributes = {
+            ...updated.attributes,
+            amount: updated.attributes?.amount || defaultAmount,
+            srpAmount: updated.attributes?.srpAmount || defaultAmount
+          };
+        }
       }
-    }));
+      
+      return updated;
+    });
   };
 
   const handleProcessEvent = async () => {
@@ -63,8 +235,107 @@ const EventProcessor: React.FC = () => {
       setLoading(true);
       setError(null);
       
+      // Validate required fields based on CORRECTED_POSTMAN_TESTS patterns
+      if (!eventData.eventType || !eventData.consumerId || !eventData.channel) {
+        throw new Error('Please fill in all required fields (Event Type, Consumer ID, Channel)');
+      }
+
+      if (eventData.eventType === 'PURCHASE') {
+        if (!eventData.productLine) {
+          throw new Error('Product Line is required for Purchase events');
+        }
+        if (!eventData.attributes?.amount || eventData.attributes.amount <= 0) {
+          throw new Error('Amount must be greater than 0 for Purchase events');
+        }
+        if (!eventData.attributes?.currency) {
+          throw new Error('Currency is required for Purchase events');
+        }
+        if (!eventData.attributes?.srpAmount) {
+          throw new Error('SRP Amount is required for Purchase events');
+        }
+        if (!eventData.attributes?.skuList || eventData.attributes.skuList.length === 0) {
+          throw new Error('SKU List is required for Purchase events');
+        }
+      }
+
+      if (eventData.eventType === 'CONSULTATION') {
+        if (!eventData.attributes?.consultationType) {
+          throw new Error('Consultation Type is required for Consultation events');
+        }
+        if (!eventData.attributes?.skinTestDate) {
+          throw new Error('Skin Test Date is required for consultation bonus');
+        }
+      }
+
+      if (eventData.eventType === 'ADJUSTMENT') {
+        if (!eventData.attributes?.adjustedPoints || eventData.attributes.adjustedPoints <= 0) {
+          throw new Error('Adjusted Points is required for Adjustment events');
+        }
+        if (!eventData.attributes?.reason) {
+          throw new Error('Reason is required for Adjustment events');
+        }
+      }
+
+      if (eventData.eventType === 'RECYCLE') {
+        if (!eventData.attributes?.recycledCount || eventData.attributes.recycledCount <= 0) {
+          throw new Error('Recycled Count is required for Recycle events');
+        }
+      }
+
+      if (eventData.eventType === 'REDEMPTION') {
+        if (!eventData.attributes?.redemptionPoints || eventData.attributes.redemptionPoints <= 0) {
+          throw new Error('Redemption Points is required for Redemption events');
+        }
+      }
+
+      // Prepare event data based on event type
+      let processEventData = { ...eventData as EventData };
+      
+      // For REGISTRATION events, ensure attributes is empty
+      if (eventData.eventType === 'REGISTRATION') {
+        processEventData.attributes = {};
+      }
+
+      // For CONSULTATION events, only keep consultation-specific attributes
+      if (eventData.eventType === 'CONSULTATION') {
+        processEventData.attributes = {
+          skinTestDate: processEventData.attributes?.skinTestDate,
+          consultationType: processEventData.attributes?.consultationType
+        };
+        // Remove product line for consultation events
+        delete processEventData.productLine;
+      }
+
+      // For RECYCLE events, only keep recycledCount in attributes
+      if (eventData.eventType === 'RECYCLE') {
+        processEventData.attributes = {
+          recycledCount: processEventData.attributes?.recycledCount
+        };
+      }
+
+      // For REDEMPTION events, only keep redemptionPoints in attributes
+      if (eventData.eventType === 'REDEMPTION') {
+        processEventData.attributes = {
+          redemptionPoints: processEventData.attributes?.redemptionPoints
+        };
+      }
+
+      // For ADJUSTMENT events, only keep adjustedPoints and reason in attributes
+      if (eventData.eventType === 'ADJUSTMENT') {
+        processEventData.attributes = {
+          adjustedPoints: processEventData.attributes?.adjustedPoints,
+          reason: processEventData.attributes?.reason
+        };
+        // Remove product line for adjustment events
+        delete processEventData.productLine;
+        // Ensure context has adminId instead of storeId
+        processEventData.context = {
+          adminId: processEventData.context?.adminId || 'ADMIN_001'
+        };
+      }
+
       const response = await eventsApi.processEvent({
-        ...eventData as EventData,
+        ...processEventData,
         eventId: `evt_${Date.now()}`,
         timestamp: new Date().toISOString()
       });
@@ -78,20 +349,24 @@ const EventProcessor: React.FC = () => {
   };
 
   const resetForm = () => {
-    setEventData({
+    const defaultData = {
       eventType: 'PURCHASE',
       market: 'HK',
       channel: 'STORE',
       productLine: 'PREMIUM_SERIES',
       consumerId: 'user_hk_standard',
-      context: { storeId: 'HK_STORE_001' },
+      context: { 
+        storeId: 'HK_STORE_001',
+        campaignCode: ''
+      },
       attributes: {
         amount: 1500,
         currency: 'HKD',
         srpAmount: 1500,
         skuList: ['SK_HK_001']
       }
-    });
+    };
+    setEventData(defaultData);
     setResult(null);
     setError(null);
   };
@@ -165,7 +440,7 @@ const EventProcessor: React.FC = () => {
 
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
           {/* Event Configuration */}
-          <Card className="border-0 shadow-xl bg-white">
+          <Card className="border-0 shadow-xl bg-white" style={{ overflow: 'visible' }}>
             <CardHeader className="bg-blue-600 text-white rounded-t-lg">
               <CardTitle className="flex items-center text-xl cursor-pointer">
                 <Code className="mr-3 h-6 w-6" />
@@ -175,33 +450,46 @@ const EventProcessor: React.FC = () => {
                 Configure your loyalty event parameters
               </CardDescription>
             </CardHeader>
-            <CardContent className="p-6 space-y-6">
+            <CardContent className="p-6 space-y-6" style={{ overflow: 'visible', position: 'relative' }}>
+              {/* Auto-mapping notice */}
+              <div className="bg-blue-50 border border-blue-200 rounded-lg p-4">
+                <div className="flex items-center">
+                  <Sparkles className="h-5 w-5 text-blue-600 mr-2" />
+                  <span className="text-sm font-medium text-blue-800">Smart Auto-Mapping Enabled</span>
+                </div>
+                <p className="text-sm text-blue-600 mt-1">
+                  Related fields are automatically populated when you change Market, Event Type, or Currency for better user experience.
+                </p>
+              </div>
+              
               {/* Basic Event Info */}
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                 <div className="space-y-2">
-                  <Label htmlFor="eventType" className="text-sm font-semibold text-gray-700">Event Type</Label>
+                  <Label htmlFor="eventType" className="text-sm font-semibold text-gray-700">Event Type *</Label>
                   <Select
                     value={eventData.eventType}
                     onValueChange={(value) => handleInputChange('eventType', value)}
                   >
-                    <SelectTrigger className="border-purple-200 focus:border-purple-500">
+                    <SelectTrigger className="border-black focus:border-black focus:ring-0 focus:outline-none">
                       <SelectValue />
                     </SelectTrigger>
                     <SelectContent>
-                      <SelectItem value="PURCHASE">Purchase Event</SelectItem>
-                      <SelectItem value="REGISTRATION">Registration Event</SelectItem>
-                      <SelectItem value="REVIEW">Product Review</SelectItem>
-                      <SelectItem value="REFERRAL">Referral Event</SelectItem>
+                      <SelectItem value="PURCHASE">Purchase</SelectItem>
+                      <SelectItem value="REGISTRATION">Registration</SelectItem>
+                      <SelectItem value="RECYCLE">Recycle</SelectItem>
+                      <SelectItem value="CONSULTATION">Consultation</SelectItem>
+                      <SelectItem value="ADJUSTMENT">Manual Adjustment</SelectItem>
+                      <SelectItem value="REDEMPTION">Redemption</SelectItem>
                     </SelectContent>
                   </Select>
                 </div>
 
                 <div className="space-y-2">
-                  <Label htmlFor="consumerId" className="text-sm font-semibold text-gray-700">Consumer ID</Label>
+                  <Label htmlFor="consumerId" className="text-sm font-semibold text-gray-700">Consumer ID *</Label>
                   <Input
                     value={eventData.consumerId}
                     onChange={(e) => handleInputChange('consumerId', e.target.value)}
-                    className="border-purple-200 focus:border-purple-500"
+                    className="border-black focus:border-black focus:ring-0 focus:outline-none"
                     placeholder="user_hk_standard"
                   />
                 </div>
@@ -212,7 +500,7 @@ const EventProcessor: React.FC = () => {
                     value={eventData.market}
                     onValueChange={(value) => handleInputChange('market', value)}
                   >
-                    <SelectTrigger className="border-purple-200 focus:border-purple-500">
+                    <SelectTrigger className="border-black focus:border-black">
                       <SelectValue />
                     </SelectTrigger>
                     <SelectContent>
@@ -224,56 +512,281 @@ const EventProcessor: React.FC = () => {
                 </div>
 
                 <div className="space-y-2">
-                  <Label htmlFor="channel" className="text-sm font-semibold text-gray-700">Channel</Label>
+                  <Label htmlFor="channel" className="text-sm font-semibold text-gray-700">Channel *</Label>
                   <Select
                     value={eventData.channel}
                     onValueChange={(value) => handleInputChange('channel', value)}
                   >
-                    <SelectTrigger className="border-purple-200 focus:border-purple-500">
+                    <SelectTrigger className="border-black focus:border-black focus:ring-0 focus:outline-none">
                       <SelectValue />
                     </SelectTrigger>
                     <SelectContent>
                       <SelectItem value="STORE">In-Store</SelectItem>
-                      <SelectItem value="ECOMMERCE">E-Commerce</SelectItem>
+                      <SelectItem value="ONLINE">Online</SelectItem>
                       <SelectItem value="MOBILE">Mobile App</SelectItem>
+                      <SelectItem value="ECOMMERCE">E-Commerce</SelectItem>
                     </SelectContent>
                   </Select>
                 </div>
+
+                {/* Product Line - not needed for REGISTRATION, CONSULTATION, RECYCLE, or ADJUSTMENT events */}
+                {eventData.eventType !== 'REGISTRATION' && eventData.eventType !== 'CONSULTATION' && eventData.eventType !== 'RECYCLE' && eventData.eventType !== 'ADJUSTMENT' && (
+                  <div className="space-y-2">
+                    <Label htmlFor="productLine" className="text-sm font-semibold text-gray-700">Product Line</Label>
+                    <Select
+                      value={eventData.productLine}
+                      onValueChange={(value) => handleInputChange('productLine', value)}
+                    >
+                      <SelectTrigger className="border-black focus:border-black">
+                        <SelectValue />
+                      </SelectTrigger>
+                      <SelectContent>
+                        <SelectItem value="PREMIUM_SERIES">Premium Series</SelectItem>
+                        <SelectItem value="STANDARD_SERIES">Standard Series</SelectItem>
+                        <SelectItem value="BASIC_SERIES">Basic Series</SelectItem>
+                        <SelectItem value="LUXURY_SERIES">Luxury Series</SelectItem>
+                        <SelectItem value="ECONOMY_SERIES">Economy Series</SelectItem>
+                      </SelectContent>
+                    </Select>
+                  </div>
+                )}
               </div>
 
-              {/* Attributes */}
+              {/* Context Information */}
               <div className="space-y-4">
                 <h3 className="text-lg font-semibold text-gray-800 flex items-center">
-                  <Sparkles className="mr-2 h-5 w-5 text-orange-500" />
-                  Event Attributes
+                  <Settings className="mr-2 h-5 w-5 text-blue-500" />
+                  Context Information
                 </h3>
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                   <div className="space-y-2">
-                    <Label className="text-sm font-semibold text-gray-700">Amount (HKD)</Label>
-                    <Input
-                      type="number"
-                      value={eventData.attributes?.amount || ''}
-                      onChange={(e) => handleNestedChange('attributes', 'amount', Number(e.target.value))}
-                      className="border-orange-200 focus:border-orange-500"
-                    />
-                  </div>
-                  <div className="space-y-2">
-                    <Label className="text-sm font-semibold text-gray-700">Currency</Label>
-                    <Input
-                      value={eventData.attributes?.currency || ''}
-                      onChange={(e) => handleNestedChange('attributes', 'currency', e.target.value)}
-                      className="border-orange-200 focus:border-orange-500"
-                    />
+                    {eventData.eventType === 'ADJUSTMENT' ? (
+                      <>
+                        <Label className="text-sm font-semibold text-gray-700">Admin ID *</Label>
+                        <Input
+                          value={eventData.context?.adminId || ''}
+                          onChange={(e) => handleNestedChange('context', 'adminId', e.target.value)}
+                          className="border-black focus:border-black"
+                          placeholder="ADMIN_001"
+                        />
+                      </>
+                    ) : (
+                      <>
+                        <Label className="text-sm font-semibold text-gray-700">
+                          Store ID{eventData.eventType !== 'REGISTRATION' ? ' *' : ' (Optional)'}
+                        </Label>
+                        <Input
+                          value={eventData.context?.storeId || ''}
+                          onChange={(e) => handleNestedChange('context', 'storeId', e.target.value)}
+                          className="border-black focus:border-black"
+                          placeholder="HK_STORE_001"
+                        />
+                      </>
+                    )}
                   </div>
                 </div>
               </div>
+
+              {/* Event Attributes Section - Show for events that have attributes */}
+              {eventData.eventType !== 'REGISTRATION' && (
+                <div className="space-y-4">
+                  <h3 className="text-lg font-semibold text-gray-800 flex items-center">
+                    <Sparkles className="mr-2 h-5 w-5 text-orange-500" />
+                    Event Attributes
+                  </h3>
+                
+                {/* General Attributes - Only for PURCHASE events */}
+                {eventData.eventType === 'PURCHASE' && (
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <div className="space-y-2">
+                      <Label className="text-sm font-semibold text-gray-700">Amount *</Label>
+                      <Input
+                        type="number"
+                        value={eventData.attributes?.amount || ''}
+                        onChange={(e) => handleNestedChange('attributes', 'amount', Number(e.target.value))}
+                        className="border-black focus:border-black"
+                        placeholder="1500"
+                      />
+                    </div>
+                    <div className="space-y-2">
+                      <Label className="text-sm font-semibold text-gray-700">Currency *</Label>
+                      <Select
+                        value={eventData.attributes?.currency || 'HKD'}
+                        onValueChange={(value) => handleNestedChange('attributes', 'currency', value)}
+                      >
+                        <SelectTrigger className="border-black focus:border-black">
+                          <SelectValue />
+                        </SelectTrigger>
+                        <SelectContent>
+                          <SelectItem value="HKD">Hong Kong Dollar (HKD)</SelectItem>
+                          <SelectItem value="JPY">Japanese Yen (JPY)</SelectItem>
+                          <SelectItem value="TWD">Taiwan Dollar (TWD)</SelectItem>
+                          <SelectItem value="USD">US Dollar (USD)</SelectItem>
+                          <SelectItem value="EUR">Euro (EUR)</SelectItem>
+                        </SelectContent>
+                      </Select>
+                    </div>
+                    <div className="space-y-2">
+                      <Label className="text-sm font-semibold text-gray-700">SRP Amount</Label>
+                      <Input
+                        type="number"
+                        value={eventData.attributes?.srpAmount || ''}
+                        onChange={(e) => handleNestedChange('attributes', 'srpAmount', Number(e.target.value))}
+                        className="border-black focus:border-black"
+                        placeholder="1500"
+                      />
+                    </div>
+                    <div className="space-y-2">
+                      <Label className="text-sm font-semibold text-gray-700">SKU List</Label>
+                      <Input
+                        value={Array.isArray(eventData.attributes?.skuList) ? eventData.attributes.skuList.join(', ') : ''}
+                        onChange={(e) => handleNestedChange('attributes', 'skuList', e.target.value.split(',').map(s => s.trim()).filter(s => s))}
+                        className="border-black focus:border-black"
+                        placeholder="SK_HK_001, SK_HK_002"
+                      />
+                    </div>
+                  </div>
+                )}
+                
+                {/* Consultation Attributes */}
+                {eventData.eventType === 'CONSULTATION' && (
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <div className="space-y-2">
+                      <Label className="text-sm font-semibold text-gray-700">Consultation Type *</Label>
+                      <Select
+                        value={eventData.attributes?.consultationType || ''}
+                        onValueChange={(value) => handleNestedChange('attributes', 'consultationType', value)}
+                      >
+                        <SelectTrigger className="border-black focus:border-black">
+                          <SelectValue placeholder="Select consultation type" />
+                        </SelectTrigger>
+                        <SelectContent>
+                          <SelectItem value="SKIN_ANALYSIS">Skin Analysis</SelectItem>
+                          <SelectItem value="BEAUTY_CONSULTATION">Beauty Consultation</SelectItem>
+                          <SelectItem value="PRODUCT_RECOMMENDATION">Product Recommendation</SelectItem>
+                          <SelectItem value="VIRTUAL_CONSULTATION">Virtual Consultation</SelectItem>
+                        </SelectContent>
+                      </Select>
+                    </div>
+                    <div className="space-y-2">
+                      <Label className="text-sm font-semibold text-gray-700">Skin Test Date *</Label>
+                      <div className="relative">
+                        <Input
+                          type="date"
+                          value={eventData.attributes?.skinTestDate || ''}
+                          onChange={(e) => handleNestedChange('attributes', 'skinTestDate', e.target.value)}
+                          className="border-black focus:border-black focus:ring-0 focus:outline-none pr-10"
+                          placeholder="Required for consultation bonus"
+                        />
+                        <Calendar className="absolute right-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-gray-500 pointer-events-none" />
+                      </div>
+                    </div>
+                  </div>
+                )}
+                
+                {/* Redemption Attributes */}
+                {eventData.eventType === 'REDEMPTION' && (
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <div className="space-y-2">
+                      <Label className="text-sm font-semibold text-gray-700">Redemption Points *</Label>
+                      <Input
+                        type="number"
+                        value={eventData.attributes?.redemptionPoints || ''}
+                        onChange={(e) => handleNestedChange('attributes', 'redemptionPoints', Number(e.target.value))}
+                        className="border-black focus:border-black"
+                        placeholder="500"
+                      />
+                    </div>
+                  </div>
+                )}
+                
+                {/* Additional Attributes for Recycle Events */}
+                {eventData.eventType === 'RECYCLE' && (
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4 pt-4 border-t border-gray-200">
+                    <div className="space-y-2">
+                      <Label className="text-sm font-semibold text-gray-700">Recycled Count *</Label>
+                      <Input
+                        type="number"
+                        value={eventData.attributes?.recycledCount || ''}
+                        onChange={(e) => handleNestedChange('attributes', 'recycledCount', Number(e.target.value))}
+                        className="border-black focus:border-black"
+                        placeholder="3"
+                      />
+                    </div>
+                    <div className="space-y-2">
+                      <Label className="text-sm font-semibold text-gray-700">Bottle Type</Label>
+                      <Select
+                        value={eventData.attributes?.bottleType || ''}
+                        onValueChange={(value) => handleNestedChange('attributes', 'bottleType', value)}
+                      >
+                        <SelectTrigger className="border-black focus:border-black">
+                          <SelectValue placeholder="Select bottle type" />
+                        </SelectTrigger>
+                        <SelectContent>
+                          <SelectItem value="ESSENCE_BOTTLE">Essence Bottle</SelectItem>
+                          <SelectItem value="CLEANSER_BOTTLE">Cleanser Bottle</SelectItem>
+                          <SelectItem value="MOISTURIZER_JAR">Moisturizer Jar</SelectItem>
+                          <SelectItem value="SERUM_BOTTLE">Serum Bottle</SelectItem>
+                        </SelectContent>
+                      </Select>
+                    </div>
+                  </div>
+                )}
+                
+                {/* Adjustment Events - Only needs adjusted points, reason, and admin ID */}
+                {eventData.eventType === 'ADJUSTMENT' && (
+                  <div className="space-y-4">
+                    <h3 className="text-lg font-semibold text-gray-800 flex items-center">
+                      <Sparkles className="mr-2 h-5 w-5 text-purple-500" />
+                      Adjustment Attributes
+                    </h3>
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                      <div className="space-y-2">
+                        <Label className="text-sm font-semibold text-gray-700">Adjusted Points *</Label>
+                        <Input
+                          type="number"
+                          value={eventData.attributes?.adjustedPoints || ''}
+                          onChange={(e) => handleNestedChange('attributes', 'adjustedPoints', Number(e.target.value))}
+                          className="border-black focus:border-black"
+                          placeholder="1000"
+                        />
+                      </div>
+                      <div className="space-y-2">
+                        <Label className="text-sm font-semibold text-gray-700">Reason *</Label>
+                        <Input
+                          value={eventData.attributes?.reason || ''}
+                          onChange={(e) => handleNestedChange('attributes', 'reason', e.target.value)}
+                          className="border-black focus:border-black"
+                          placeholder="Customer service compensation"
+                        />
+                      </div>
+                    </div>
+                  </div>
+                )}
+                
+                {/* Registration Event - No additional fields needed */}
+                {eventData.eventType === 'REGISTRATION' && (
+                  <div className="pt-4 border-t border-gray-200">
+                    <div className="bg-green-50 border border-green-200 rounded-lg p-4">
+                      <div className="flex items-center">
+                        <CheckCircle className="h-5 w-5 text-green-600 mr-2" />
+                        <span className="text-sm font-medium text-green-800">Registration Event</span>
+                      </div>
+                      <p className="text-sm text-green-600 mt-1">
+                        No additional attributes required. Points will be automatically awarded based on market rules.
+                      </p>
+                    </div>
+                  </div>
+                )}
+              </div>
+              )}
 
               {/* Action Buttons */}
               <div className="flex gap-4 pt-4">
                 <Button
                   onClick={handleProcessEvent}
                   disabled={loading}
-                  className="flex-1 bg-gradient-to-r from-purple-500 to-orange-500 hover:from-purple-600 hover:to-orange-600 text-white shadow-lg transform hover:scale-105 transition-all duration-300 cursor-pointer"
+                  className="flex-1 bg-blue-600 hover:bg-blue-700 text-white shadow-lg transform hover:scale-105 transition-all duration-300 cursor-pointer"
                 >
                   {loading ? (
                     <>
@@ -290,7 +803,7 @@ const EventProcessor: React.FC = () => {
                 <Button
                   onClick={resetForm}
                   variant="outline"
-                  className="border-purple-300 text-purple-600 hover:bg-purple-50 cursor-pointer"
+                  className="border-black text-black hover:bg-gray-100 cursor-pointer"
                 >
                   <RefreshCw className="mr-2 h-4 w-4" />
                   Reset
@@ -300,7 +813,7 @@ const EventProcessor: React.FC = () => {
           </Card>
 
           {/* Results Panel */}
-          <Card className="border-0 shadow-xl bg-white">
+          <Card className="border-0 shadow-xl bg-white" style={{ overflow: 'visible' }}>
             <CardHeader className="bg-blue-600 text-white rounded-t-lg">
               <CardTitle className="flex items-center text-xl cursor-pointer">
                 <Cpu className="mr-3 h-6 w-6" />

@@ -88,6 +88,30 @@ export interface Consumer {
   };
 }
 
+export interface DefaultsResponse {
+  markets: string[];
+  channels: string[];
+  eventTypes: string[];
+  productLines: string[];
+  currencies: Array<{
+    code: string;
+    name: string;
+    symbol: string;
+  }>;
+  marketDefaults: {
+    [market: string]: {
+      consumerIds: string[];
+      storeIds: string[];
+      campaignCodes: string[];
+      skus: string[];
+      currency: string;
+      defaultAmount: number;
+    };
+  };
+  consultationTypes: string[];
+  adjustmentReasons: string[];
+}
+
 // Rules Management API - Updated
 export const rulesApi = {
   // Get all rules
@@ -234,6 +258,15 @@ export const campaignsApi = {
   },
 };
 
+// Defaults API - Get backend configuration data
+export const defaultsApi = {
+  // Get all default configuration values
+  getDefaults: async (): Promise<DefaultsResponse> => {
+    const response = await api.get('/api/defaults');
+    return response.data;
+  },
+};
+
 // Export the configured axios instance for custom requests
 export { api };
 
@@ -267,6 +300,7 @@ export default {
   eventsApi,
   consumersApi,
   campaignsApi,
+  defaultsApi,
   api,
   handleApiError
 };
