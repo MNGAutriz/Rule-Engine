@@ -98,7 +98,7 @@ const EventProcessor: React.FC = () => {
 
   return (
     <div className="min-h-screen bg-gray-50">
-      <div className="container mx-auto p-6 space-y-8">
+      <div className="container mx-auto p-6 space-y-8 bg-white rounded-lg shadow-sm mx-4 my-6">
         {/* Header with P&G Light Blue Theme */}
         <div className="text-center space-y-4">
           <div className="inline-flex items-center justify-center w-20 h-20 rounded-full bg-blue-700 mb-4 shadow-lg">
@@ -112,52 +112,52 @@ const EventProcessor: React.FC = () => {
           </p>
         </div>
 
-        {/* Stats Cards with Blue Theme for Event Processing */}
+        {/* Stats Cards with Same Gradients as Dashboard */}
         <div className="grid grid-cols-1 md:grid-cols-4 gap-6">
-          <Card className="border-0 shadow-lg bg-blue-600 text-white transform hover:scale-105 transition-all duration-300">
+          <Card className="border-0 shadow-lg bg-gradient-to-br from-orange-500 to-orange-600 text-white transform hover:scale-105 transition-all duration-300 cursor-pointer">
             <CardContent className="p-6">
               <div className="flex items-center justify-between">
                 <div>
-                  <p className="text-blue-100 text-sm font-medium">Processing Speed</p>
+                  <p className="text-orange-100 text-sm font-medium">Processing Speed</p>
                   <p className="text-2xl font-bold">~15ms</p>
                 </div>
-                <Activity className="h-8 w-8 text-blue-200" />
+                <Activity className="h-8 w-8 text-orange-200" />
               </div>
             </CardContent>
           </Card>
 
-          <Card className="border-0 shadow-lg bg-blue-700 text-white transform hover:scale-105 transition-all duration-300">
+          <Card className="border-0 shadow-lg bg-gradient-to-br from-emerald-500 to-emerald-600 text-white transform hover:scale-105 transition-all duration-300 cursor-pointer">
             <CardContent className="p-6">
               <div className="flex items-center justify-between">
                 <div>
-                  <p className="text-blue-100 text-sm font-medium">Rules Engine</p>
+                  <p className="text-emerald-100 text-sm font-medium">Rules Engine</p>
                   <p className="text-2xl font-bold">Active</p>
                 </div>
-                <Settings className="h-8 w-8 text-blue-200" />
+                <Settings className="h-8 w-8 text-emerald-200" />
               </div>
             </CardContent>
           </Card>
 
-          <Card className="border-0 shadow-lg bg-blue-800 text-white transform hover:scale-105 transition-all duration-300">
+          <Card className="border-0 shadow-lg bg-gradient-to-br from-purple-500 to-purple-600 text-white transform hover:scale-105 transition-all duration-300 cursor-pointer">
             <CardContent className="p-6">
               <div className="flex items-center justify-between">
                 <div>
-                  <p className="text-blue-100 text-sm font-medium">Success Rate</p>
+                  <p className="text-purple-100 text-sm font-medium">Success Rate</p>
                   <p className="text-2xl font-bold">99.9%</p>
                 </div>
-                <CheckCircle className="h-8 w-8 text-blue-200" />
+                <CheckCircle className="h-8 w-8 text-purple-200" />
               </div>
             </CardContent>
           </Card>
 
-          <Card className="border-0 shadow-lg bg-blue-800 text-white transform hover:scale-105 transition-all duration-300">
+          <Card className="border-0 shadow-lg bg-gradient-to-br from-red-500 to-red-600 text-white transform hover:scale-105 transition-all duration-300 cursor-pointer">
             <CardContent className="p-6">
               <div className="flex items-center justify-between">
                 <div>
-                  <p className="text-blue-100 text-sm font-medium">Database</p>
+                  <p className="text-red-100 text-sm font-medium">Database</p>
                   <p className="text-2xl font-bold">Online</p>
                 </div>
-                <Database className="h-8 w-8 text-blue-200" />
+                <Database className="h-8 w-8 text-red-200" />
               </div>
             </CardContent>
           </Card>
@@ -165,9 +165,9 @@ const EventProcessor: React.FC = () => {
 
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
           {/* Event Configuration */}
-          <Card className="border-0 shadow-xl bg-white/80 backdrop-blur-sm">
+          <Card className="border-0 shadow-xl bg-white">
             <CardHeader className="bg-blue-600 text-white rounded-t-lg">
-              <CardTitle className="flex items-center text-xl">
+              <CardTitle className="flex items-center text-xl cursor-pointer">
                 <Code className="mr-3 h-6 w-6" />
                 Event Configuration
               </CardTitle>
@@ -273,7 +273,7 @@ const EventProcessor: React.FC = () => {
                 <Button
                   onClick={handleProcessEvent}
                   disabled={loading}
-                  className="flex-1 bg-gradient-to-r from-purple-500 to-orange-500 hover:from-purple-600 hover:to-orange-600 text-white shadow-lg transform hover:scale-105 transition-all duration-300"
+                  className="flex-1 bg-gradient-to-r from-purple-500 to-orange-500 hover:from-purple-600 hover:to-orange-600 text-white shadow-lg transform hover:scale-105 transition-all duration-300 cursor-pointer"
                 >
                   {loading ? (
                     <>
@@ -290,7 +290,7 @@ const EventProcessor: React.FC = () => {
                 <Button
                   onClick={resetForm}
                   variant="outline"
-                  className="border-purple-300 text-purple-600 hover:bg-purple-50"
+                  className="border-purple-300 text-purple-600 hover:bg-purple-50 cursor-pointer"
                 >
                   <RefreshCw className="mr-2 h-4 w-4" />
                   Reset
@@ -300,13 +300,13 @@ const EventProcessor: React.FC = () => {
           </Card>
 
           {/* Results Panel */}
-          <Card className="border-0 shadow-xl bg-white/80 backdrop-blur-sm">
-            <CardHeader className="bg-gradient-to-r from-pink-500 to-indigo-500 text-white rounded-t-lg">
-              <CardTitle className="flex items-center text-xl">
+          <Card className="border-0 shadow-xl bg-white">
+            <CardHeader className="bg-blue-600 text-white rounded-t-lg">
+              <CardTitle className="flex items-center text-xl cursor-pointer">
                 <Cpu className="mr-3 h-6 w-6" />
                 Processing Results
               </CardTitle>
-              <CardDescription className="text-pink-100">
+              <CardDescription className="text-blue-100">
                 Real-time event processing output
               </CardDescription>
             </CardHeader>

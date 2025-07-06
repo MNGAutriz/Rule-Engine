@@ -101,7 +101,7 @@ const CampaignManager: React.FC = () => {
 
   return (
     <div className="min-h-screen bg-gray-50">
-      <div className="container mx-auto p-6 space-y-8">
+      <div className="container mx-auto p-6 space-y-8 bg-white rounded-lg shadow-sm mx-4 my-6">
         {/* Header with P&G Light Blue Theme */}
         <div className="text-center space-y-4">
           <div className="inline-flex items-center justify-center w-20 h-20 rounded-full bg-blue-700 mb-4 shadow-lg">
@@ -117,7 +117,7 @@ const CampaignManager: React.FC = () => {
 
         {/* Stats Cards with Different Gradients */}
         <div className="grid grid-cols-1 md:grid-cols-4 gap-6">
-          <Card className="border-0 shadow-lg bg-gradient-to-br from-indigo-500 to-indigo-600 text-white transform hover:scale-105 transition-all duration-300">
+          <Card className="border-0 shadow-lg bg-gradient-to-br from-indigo-500 to-indigo-600 text-white transform hover:scale-105 transition-all duration-300 cursor-pointer">
             <CardContent className="p-6">
               <div className="flex items-center justify-between">
                 <div>
@@ -129,7 +129,7 @@ const CampaignManager: React.FC = () => {
             </CardContent>
           </Card>
 
-          <Card className="border-0 shadow-lg bg-gradient-to-br from-pink-500 to-pink-600 text-white transform hover:scale-105 transition-all duration-300">
+          <Card className="border-0 shadow-lg bg-gradient-to-br from-pink-500 to-pink-600 text-white transform hover:scale-105 transition-all duration-300 cursor-pointer">
             <CardContent className="p-6">
               <div className="flex items-center justify-between">
                 <div>
@@ -141,7 +141,7 @@ const CampaignManager: React.FC = () => {
             </CardContent>
           </Card>
 
-          <Card className="border-0 shadow-lg bg-gradient-to-br from-amber-500 to-amber-600 text-white transform hover:scale-105 transition-all duration-300">
+          <Card className="border-0 shadow-lg bg-gradient-to-br from-amber-500 to-amber-600 text-white transform hover:scale-105 transition-all duration-300 cursor-pointer">
             <CardContent className="p-6">
               <div className="flex items-center justify-between">
                 <div>
@@ -153,7 +153,7 @@ const CampaignManager: React.FC = () => {
             </CardContent>
           </Card>
 
-          <Card className="border-0 shadow-lg bg-gradient-to-br from-red-500 to-red-600 text-white transform hover:scale-105 transition-all duration-300">
+          <Card className="border-0 shadow-lg bg-gradient-to-br from-red-500 to-red-600 text-white transform hover:scale-105 transition-all duration-300 cursor-pointer">
             <CardContent className="p-6">
               <div className="flex items-center justify-between">
                 <div>
@@ -259,7 +259,7 @@ const CampaignManager: React.FC = () => {
             <div className="flex gap-4 mt-6">
               <Button
                 onClick={applyFilters}
-                className="bg-gradient-to-r from-blue-500 to-cyan-500 hover:from-blue-600 hover:to-cyan-600 text-white shadow-lg transform hover:scale-105 transition-all duration-300"
+                className="bg-gradient-to-r from-blue-500 to-cyan-500 hover:from-blue-600 hover:to-cyan-600 text-white shadow-lg transform hover:scale-105 transition-all duration-300 cursor-pointer"
               >
                 <Search className="mr-2 h-4 w-4" />
                 Apply Filters
@@ -267,7 +267,7 @@ const CampaignManager: React.FC = () => {
               <Button
                 onClick={clearFilters}
                 variant="outline"
-                className="border-blue-300 text-blue-600 hover:bg-blue-50"
+                className="border-blue-300 text-blue-600 hover:bg-blue-50 cursor-pointer"
               >
                 <RefreshCw className="mr-2 h-4 w-4" />
                 Clear All
@@ -275,7 +275,7 @@ const CampaignManager: React.FC = () => {
               <Button
                 onClick={() => loadCampaigns()}
                 variant="outline"
-                className="border-cyan-300 text-cyan-600 hover:bg-cyan-50"
+                className="border-cyan-300 text-cyan-600 hover:bg-cyan-50 cursor-pointer"
               >
                 <RefreshCw className="mr-2 h-4 w-4" />
                 Refresh

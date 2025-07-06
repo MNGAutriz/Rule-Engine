@@ -146,7 +146,7 @@ const Dashboard: React.FC = () => {
             <div className="flex gap-4">
               <Button 
                 onClick={handleTestEvent} 
-                className="bg-white text-blue-700 hover:bg-blue-50 border-0 px-8 py-3 text-lg font-semibold rounded-xl transition-all duration-300 hover:scale-105 shadow-lg"
+                className="bg-white text-blue-700 hover:bg-blue-50 border-0 px-8 py-3 text-lg font-semibold rounded-xl transition-all duration-300 hover:scale-105 shadow-lg cursor-pointer"
               >
                 <Play className="mr-3 h-5 w-5" />
                 Test Event
@@ -154,7 +154,7 @@ const Dashboard: React.FC = () => {
               <Button 
                 onClick={loadDashboardData} 
                 variant="outline" 
-                className="bg-transparent border-2 border-white text-white hover:bg-white hover:text-blue-700 px-8 py-3 text-lg font-semibold rounded-xl transition-all duration-300 hover:scale-105"
+                className="bg-transparent border-2 border-white text-white hover:bg-white hover:text-blue-700 px-8 py-3 text-lg font-semibold rounded-xl transition-all duration-300 hover:scale-105 cursor-pointer"
               >
                 <RefreshCw className="mr-3 h-5 w-5" />
                 Refresh
@@ -164,11 +164,11 @@ const Dashboard: React.FC = () => {
         </div>
       </div>
 
-      <div className="container mx-auto px-8 py-10">
+      <div className="container mx-auto px-8 py-10 bg-white rounded-lg shadow-sm mx-4 my-6">
         {/* Beautiful Stats Cards with Different Gradients */}
         <div className="grid gap-8 md:grid-cols-2 lg:grid-cols-4 mb-12">
           {/* Total Rules Card - Orange Gradient */}
-          <Card className="bg-gradient-to-br from-orange-500 to-orange-600 text-white border-0 shadow-lg hover:shadow-xl transition-all duration-300 hover:scale-105">
+          <Card className="bg-gradient-to-br from-orange-500 to-orange-600 text-white border-0 shadow-lg hover:shadow-xl transition-all duration-300 hover:scale-105 cursor-pointer">
             <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-3">
               <CardTitle className="text-sm font-semibold text-orange-100 uppercase tracking-wider">Total Rules</CardTitle>
               <div className="p-3 bg-white/20 rounded-xl">
@@ -184,8 +184,8 @@ const Dashboard: React.FC = () => {
             </CardContent>
           </Card>
 
-          {/* Total Consumers Card - Green Gradient */}
-          <Card className="bg-gradient-to-br from-emerald-500 to-emerald-600 text-white border-0 shadow-lg hover:shadow-xl transition-all duration-300 hover:scale-105">
+          {/* Total Consumers Card - Emerald Gradient */}
+          <Card className="bg-gradient-to-br from-emerald-500 to-emerald-600 text-white border-0 shadow-lg hover:shadow-xl transition-all duration-300 hover:scale-105 cursor-pointer">
             <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-3">
               <CardTitle className="text-sm font-semibold text-emerald-100 uppercase tracking-wider">Total Consumers</CardTitle>
               <div className="p-3 bg-white/20 rounded-xl">
@@ -202,7 +202,7 @@ const Dashboard: React.FC = () => {
           </Card>
 
           {/* Points Awarded Card - Purple Gradient */}
-          <Card className="bg-gradient-to-br from-purple-500 to-purple-600 text-white border-0 shadow-lg hover:shadow-xl transition-all duration-300 hover:scale-105">
+          <Card className="bg-gradient-to-br from-purple-500 to-purple-600 text-white border-0 shadow-lg hover:shadow-xl transition-all duration-300 hover:scale-105 cursor-pointer">
             <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-3">
               <CardTitle className="text-sm font-semibold text-purple-100 uppercase tracking-wider">Points Awarded</CardTitle>
               <div className="p-3 bg-white/20 rounded-xl">
@@ -218,17 +218,17 @@ const Dashboard: React.FC = () => {
             </CardContent>
           </Card>
 
-          {/* Active Markets Card - Teal Gradient */}
-          <Card className="bg-gradient-to-br from-teal-500 to-teal-600 text-white border-0 shadow-lg hover:shadow-xl transition-all duration-300 hover:scale-105">
+          {/* Active Markets Card - Red Gradient */}
+          <Card className="bg-gradient-to-br from-red-500 to-red-600 text-white border-0 shadow-lg hover:shadow-xl transition-all duration-300 hover:scale-105 cursor-pointer">
             <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-3">
-              <CardTitle className="text-sm font-semibold text-teal-100 uppercase tracking-wider">Active Markets</CardTitle>
+              <CardTitle className="text-sm font-semibold text-red-100 uppercase tracking-wider">Active Markets</CardTitle>
               <div className="p-3 bg-white/20 rounded-xl">
                 <Globe className="h-6 w-6 text-white" />
               </div>
             </CardHeader>
             <CardContent>
               <div className="text-4xl font-bold mb-2">{stats.activeMarkets.length}</div>
-              <div className="flex items-center text-teal-100">
+              <div className="flex items-center text-red-100">
                 <Activity className="h-4 w-4 mr-1" />
                 <span className="text-sm">{stats.activeMarkets.join(', ')}</span>
               </div>
@@ -266,8 +266,8 @@ const Dashboard: React.FC = () => {
           </Card>
 
           <Card className="bg-white border-0 shadow-xl hover:shadow-2xl transition-all duration-300">
-            <CardHeader className="border-b border-gray-100 bg-gradient-to-r from-blue-50 to-cyan-50">
-              <CardTitle className="flex items-center text-gray-800">
+            <CardHeader className="border-b border-gray-100 bg-blue-50">
+              <CardTitle className="flex items-center text-blue-800">
                 <Zap className="mr-3 h-6 w-6 text-blue-600" />
                 Performance
               </CardTitle>
@@ -291,10 +291,10 @@ const Dashboard: React.FC = () => {
             </CardContent>
           </Card>
 
-          <Card className="bg-white border-0 shadow-xl hover:shadow-2xl transition-all duration-300">
-            <CardHeader className="border-b border-gray-100 bg-gradient-to-r from-purple-50 to-pink-50">
-              <CardTitle className="flex items-center text-gray-800">
-                <Calendar className="mr-3 h-6 w-6 text-purple-600" />
+          <Card className="bg-white border-0 shadow-xl hover:shadow-2xl transition-all duration-300 cursor-pointer">
+            <CardHeader className="border-b border-blue-100 bg-blue-50">
+              <CardTitle className="flex items-center text-blue-800">
+                <Calendar className="mr-3 h-6 w-6 text-blue-600" />
                 Today's Activity
               </CardTitle>
             </CardHeader>
@@ -302,11 +302,11 @@ const Dashboard: React.FC = () => {
               <div className="space-y-4">
                 <div className="flex justify-between items-center">
                   <span className="text-gray-600 font-medium">Events Processed</span>
-                  <span className="text-2xl font-bold text-purple-600">1,247</span>
+                  <span className="text-2xl font-bold text-blue-600">1,247</span>
                 </div>
                 <div className="flex justify-between items-center">
                   <span className="text-gray-600 font-medium">Points Awarded</span>
-                  <span className="text-lg font-bold text-purple-600">15,638</span>
+                  <span className="text-lg font-bold text-blue-600">15,638</span>
                 </div>
                 <div className="text-sm text-gray-500">Last updated: {new Date().toLocaleTimeString()}</div>
               </div>
@@ -327,8 +327,8 @@ const Dashboard: React.FC = () => {
                   Configure and manage business rules across all categories
                 </CardDescription>
               </div>
-              <div className="bg-gradient-to-r from-blue-100 to-purple-100 px-4 py-2 rounded-xl">
-                <span className="text-sm font-semibold text-gray-700">{rules.length} Total Rules</span>
+              <div className="bg-gradient-to-r from-blue-50 to-blue-100 px-4 py-2 rounded-xl border border-blue-200">
+                <span className="text-sm font-semibold text-blue-700">{rules.length} Total Rules</span>
               </div>
             </div>
           </CardHeader>
