@@ -24,9 +24,20 @@ interface RuleCardProps {
 }
 
 const RuleCard: React.FC<RuleCardProps> = ({ rule, index, categoryColor, categoryIcon: CategoryIcon }) => {
+  // Define stronger border classes for each category
+  const getBorderClass = (color: string) => {
+    switch(color) {
+      case 'emerald': return 'border-2 border-emerald-400 hover:border-emerald-500';
+      case 'purple': return 'border-2 border-purple-400 hover:border-purple-500';
+      case 'orange': return 'border-2 border-orange-400 hover:border-orange-500';
+      case 'red': return 'border-2 border-red-400 hover:border-red-500';
+      default: return 'border-2 border-gray-400 hover:border-gray-500';
+    }
+  };
+
   return (
-    <Card className={`border-2 border-${categoryColor}-100 hover:border-${categoryColor}-300 hover:shadow-lg transition-all duration-300 cursor-pointer`}>
-      <CardHeader className={`bg-${categoryColor}-50 pb-3`}>
+    <Card className={`${getBorderClass(categoryColor)} hover:shadow-lg transition-all duration-300 cursor-pointer`}>
+      <CardHeader className={`bg-${categoryColor}-50 pb-3 rounded-t-lg`}>
         <div className="flex items-center justify-between">
           <div className="flex items-center space-x-3">
             <div className={`p-2 bg-${categoryColor}-200 rounded-lg`}>

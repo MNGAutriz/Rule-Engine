@@ -493,8 +493,8 @@ const Dashboard: React.FC = () => {
 
               <TabsContent value="overview" className="p-8 space-y-8">
                 <div className="grid gap-8 md:grid-cols-2">
-                  <Card className="border-2 border-blue-100 shadow-lg hover:shadow-xl transition-shadow duration-300">
-                    <CardHeader className="bg-blue-50">
+                  <Card className="border-2 border-blue-400 hover:border-blue-500 shadow-lg hover:shadow-xl transition-all duration-300">
+                    <CardHeader className="bg-blue-50 rounded-t-lg">
                       <CardTitle className="flex items-center text-xl text-gray-800">
                         <Target className="mr-3 h-6 w-6 text-cyan-500" />
                         Rules Distribution
@@ -524,8 +524,8 @@ const Dashboard: React.FC = () => {
                     </CardContent>
                   </Card>
 
-                  <Card className="border-2 border-green-100 shadow-lg hover:shadow-xl transition-shadow duration-300">
-                    <CardHeader className="bg-green-50">
+                  <Card className="border-2 border-green-400 hover:border-green-500 shadow-lg hover:shadow-xl transition-all duration-300">
+                    <CardHeader className="bg-green-50 rounded-t-lg">
                       <CardTitle className="flex items-center text-xl text-gray-800">
                         <Zap className="mr-3 h-6 w-6 text-cyan-500" />
                         System Insights

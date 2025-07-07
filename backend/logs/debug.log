@@ -2540,3 +2540,45 @@
 {"timestamp":"2025-07-07T15:39:12.028Z","level":"DEBUG","message":"Calculated reward points","data":{"eventType":"REDEMPTION_DEDUCTION","rewardPoints":-12}}
 {"timestamp":"2025-07-07T15:39:12.029Z","level":"DEBUG","message":"Engine run completed","data":{"eventsTriggered":1,"eventTypes":["REDEMPTION_DEDUCTION"]}}
 {"timestamp":"2025-07-07T15:39:12.030Z","level":"DEBUG","message":"Current balance before update","data":{"total":226,"available":226,"used":0,"transactionCount":3}}
+{"timestamp":"2025-07-07T16:27:50.190Z","level":"DEBUG","message":"Facts engine initialization complete","data":{"totalFacts":38,"keyFacts":["eventType","market","context.storeId"]}}
+{"timestamp":"2025-07-07T16:27:50.205Z","level":"DEBUG","message":"Rule triggered","data":{"eventType":"ORDER_BASE_POINT","params":{"standardRate":1,"description":"HK/TW base purchase - 1 MD per 1 HKD/TWD spent"},"rule":"HK/TW Base Purchase Points"}}
+{"timestamp":"2025-07-07T16:27:50.206Z","level":"DEBUG","message":"Processing rule event","data":{"eventType":"ORDER_BASE_POINT","market":"HK","baseAmount":1500,"discountedAmount":1500,"itemCount":8,"adjustmentValue":0}}
+{"timestamp":"2025-07-07T16:27:50.207Z","level":"DEBUG","message":"Calculated reward points","data":{"eventType":"ORDER_BASE_POINT","rewardPoints":1500}}
+{"timestamp":"2025-07-07T16:27:50.208Z","level":"DEBUG","message":"Rule triggered","data":{"eventType":"FIRST_PURCHASE_BIRTH_MONTH_BONUS","params":{"multiplier":1.1,"description":"Birth month bonus - 1.1x multiplier"},"rule":"Birth Month Purchase Bonus"}}
+{"timestamp":"2025-07-07T16:27:50.209Z","level":"DEBUG","message":"Processing rule event","data":{"eventType":"FIRST_PURCHASE_BIRTH_MONTH_BONUS","market":"HK","baseAmount":1500,"discountedAmount":1500,"itemCount":8,"adjustmentValue":0}}
+{"timestamp":"2025-07-07T16:27:50.210Z","level":"DEBUG","message":"Calculated reward points","data":{"eventType":"FIRST_PURCHASE_BIRTH_MONTH_BONUS","rewardPoints":150}}
+{"timestamp":"2025-07-07T16:27:50.211Z","level":"DEBUG","message":"Rule triggered","data":{"eventType":"FLEXIBLE_VIP_MULTIPLIER","params":{"multiplier":2,"description":"VIP status multiplier - 2x points"},"rule":"VIP Status Multiplier"}}
+{"timestamp":"2025-07-07T16:27:50.211Z","level":"DEBUG","message":"Rule triggered","data":{"eventType":"FLEXIBLE_CAMPAIGN_BONUS","params":{"fixedBonus":300,"description":"HK/TW campaign bonus - +300 MD"},"rule":"HK/TW Campaign Bonus"}}
+{"timestamp":"2025-07-07T16:27:50.212Z","level":"DEBUG","message":"Processing rule event","data":{"eventType":"FLEXIBLE_VIP_MULTIPLIER","market":"HK","baseAmount":1500,"discountedAmount":1500,"itemCount":8,"adjustmentValue":0}}
+{"timestamp":"2025-07-07T16:27:50.213Z","level":"DEBUG","message":"Calculated reward points","data":{"eventType":"FLEXIBLE_VIP_MULTIPLIER","rewardPoints":1800}}
+{"timestamp":"2025-07-07T16:27:50.213Z","level":"DEBUG","message":"Processing rule event","data":{"eventType":"FLEXIBLE_CAMPAIGN_BONUS","market":"HK","baseAmount":1500,"discountedAmount":1500,"itemCount":8,"adjustmentValue":0}}
+{"timestamp":"2025-07-07T16:27:50.214Z","level":"DEBUG","message":"Calculated reward points","data":{"eventType":"FLEXIBLE_CAMPAIGN_BONUS","rewardPoints":300}}
+{"timestamp":"2025-07-07T16:27:50.215Z","level":"DEBUG","message":"Engine run completed","data":{"eventsTriggered":4,"eventTypes":["ORDER_BASE_POINT","FIRST_PURCHASE_BIRTH_MONTH_BONUS","FLEXIBLE_VIP_MULTIPLIER","FLEXIBLE_CAMPAIGN_BONUS"]}}
+{"timestamp":"2025-07-07T16:27:50.217Z","level":"DEBUG","message":"Current balance before update","data":{"total":9974353,"available":9891629,"used":82724,"transactionCount":305}}
+{"timestamp":"2025-07-07T16:27:53.290Z","level":"DEBUG","message":"Facts engine initialization complete","data":{"totalFacts":38,"keyFacts":["eventType","market","context.storeId"]}}
+{"timestamp":"2025-07-07T16:27:53.302Z","level":"DEBUG","message":"Engine run completed","data":{"eventsTriggered":0,"eventTypes":[]}}
+{"timestamp":"2025-07-07T16:27:53.304Z","level":"DEBUG","message":"Current balance before update","data":{"total":9978103,"available":9895379,"used":82724,"transactionCount":306}}
+{"timestamp":"2025-07-07T16:35:39.815Z","level":"DEBUG","message":"Facts engine initialization complete","data":{"totalFacts":38,"keyFacts":["eventType","market","context.storeId"]}}
+{"timestamp":"2025-07-07T16:35:39.832Z","level":"DEBUG","message":"Engine run completed","data":{"eventsTriggered":0,"eventTypes":[]}}
+{"timestamp":"2025-07-07T16:35:39.834Z","level":"DEBUG","message":"Current balance before update","data":{"total":9978103,"available":9895379,"used":82724,"transactionCount":307}}
+{"timestamp":"2025-07-07T16:35:42.712Z","level":"DEBUG","message":"Facts engine initialization complete","data":{"totalFacts":38,"keyFacts":["eventType","market","context.storeId"]}}
+{"timestamp":"2025-07-07T16:35:42.724Z","level":"DEBUG","message":"Rule triggered","data":{"eventType":"INTERACTION_REGISTRY_POINT","params":{"registrationBonus":150,"description":"JP registration bonus - 150 MD"},"rule":"JP Registration Bonus"}}
+{"timestamp":"2025-07-07T16:35:42.725Z","level":"DEBUG","message":"Processing rule event","data":{"eventType":"INTERACTION_REGISTRY_POINT","market":"JP","baseAmount":0,"discountedAmount":0,"itemCount":12,"adjustmentValue":0}}
+{"timestamp":"2025-07-07T16:35:42.726Z","level":"DEBUG","message":"Calculated reward points","data":{"eventType":"INTERACTION_REGISTRY_POINT","rewardPoints":150}}
+{"timestamp":"2025-07-07T16:35:42.729Z","level":"DEBUG","message":"Engine run completed","data":{"eventsTriggered":1,"eventTypes":["INTERACTION_REGISTRY_POINT"]}}
+{"timestamp":"2025-07-07T16:35:42.731Z","level":"DEBUG","message":"Current balance before update","data":{"total":99950,"available":88951,"used":10999,"transactionCount":48}}
+{"timestamp":"2025-07-07T16:49:05.139Z","level":"DEBUG","message":"Facts engine initialization complete","data":{"totalFacts":38,"keyFacts":["eventType","market","context.storeId"]}}
+{"timestamp":"2025-07-07T16:49:05.152Z","level":"DEBUG","message":"Rule triggered","data":{"eventType":"ORDER_BASE_POINT","params":{"standardRate":1,"description":"HK/TW base purchase - 1 MD per 1 HKD/TWD spent"},"rule":"HK/TW Base Purchase Points"}}
+{"timestamp":"2025-07-07T16:49:05.153Z","level":"DEBUG","message":"Processing rule event","data":{"eventType":"ORDER_BASE_POINT","market":"HK","baseAmount":1500,"discountedAmount":1500,"itemCount":8,"adjustmentValue":0}}
+{"timestamp":"2025-07-07T16:49:05.154Z","level":"DEBUG","message":"Calculated reward points","data":{"eventType":"ORDER_BASE_POINT","rewardPoints":1500}}
+{"timestamp":"2025-07-07T16:49:05.155Z","level":"DEBUG","message":"Rule triggered","data":{"eventType":"FIRST_PURCHASE_BIRTH_MONTH_BONUS","params":{"multiplier":1.1,"description":"Birth month bonus - 1.1x multiplier"},"rule":"Birth Month Purchase Bonus"}}
+{"timestamp":"2025-07-07T16:49:05.156Z","level":"DEBUG","message":"Processing rule event","data":{"eventType":"FIRST_PURCHASE_BIRTH_MONTH_BONUS","market":"HK","baseAmount":1500,"discountedAmount":1500,"itemCount":8,"adjustmentValue":0}}
+{"timestamp":"2025-07-07T16:49:05.157Z","level":"DEBUG","message":"Calculated reward points","data":{"eventType":"FIRST_PURCHASE_BIRTH_MONTH_BONUS","rewardPoints":150}}
+{"timestamp":"2025-07-07T16:49:05.158Z","level":"DEBUG","message":"Rule triggered","data":{"eventType":"FLEXIBLE_VIP_MULTIPLIER","params":{"multiplier":2,"description":"VIP status multiplier - 2x points"},"rule":"VIP Status Multiplier"}}
+{"timestamp":"2025-07-07T16:49:05.160Z","level":"DEBUG","message":"Rule triggered","data":{"eventType":"FLEXIBLE_CAMPAIGN_BONUS","params":{"fixedBonus":300,"description":"HK/TW campaign bonus - +300 MD"},"rule":"HK/TW Campaign Bonus"}}
+{"timestamp":"2025-07-07T16:49:05.161Z","level":"DEBUG","message":"Processing rule event","data":{"eventType":"FLEXIBLE_VIP_MULTIPLIER","market":"HK","baseAmount":1500,"discountedAmount":1500,"itemCount":8,"adjustmentValue":0}}
+{"timestamp":"2025-07-07T16:49:05.162Z","level":"DEBUG","message":"Calculated reward points","data":{"eventType":"FLEXIBLE_VIP_MULTIPLIER","rewardPoints":1800}}
+{"timestamp":"2025-07-07T16:49:05.162Z","level":"DEBUG","message":"Processing rule event","data":{"eventType":"FLEXIBLE_CAMPAIGN_BONUS","market":"HK","baseAmount":1500,"discountedAmount":1500,"itemCount":8,"adjustmentValue":0}}
+{"timestamp":"2025-07-07T16:49:05.163Z","level":"DEBUG","message":"Calculated reward points","data":{"eventType":"FLEXIBLE_CAMPAIGN_BONUS","rewardPoints":300}}
+{"timestamp":"2025-07-07T16:49:05.164Z","level":"DEBUG","message":"Engine run completed","data":{"eventsTriggered":4,"eventTypes":["ORDER_BASE_POINT","FIRST_PURCHASE_BIRTH_MONTH_BONUS","FLEXIBLE_VIP_MULTIPLIER","FLEXIBLE_CAMPAIGN_BONUS"]}}
+{"timestamp":"2025-07-07T16:49:05.165Z","level":"DEBUG","message":"Current balance before update","data":{"total":9978103,"available":9895379,"used":82724,"transactionCount":308}}

@@ -30,13 +30,14 @@ class CampaignController {
         name: campaign.name,
         market: campaign.market,
         channel: campaign.channel,
+        brand: campaign.brand || 'P&G',
         startDate: campaign.startDate,
         endDate: campaign.endDate,
         status: campaign.status,
-        rules: campaign.rules || []
+        ruleIds: campaign.ruleIds || []
       }));
       
-      res.json({ campaigns: response });
+      res.json(response);
     } catch (error) {
       logger.error('Error fetching active campaigns', error);
       next(error);

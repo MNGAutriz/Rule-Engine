@@ -40,8 +40,8 @@ const CampaignManager: React.FC = () => {
   const [campaigns, setCampaigns] = useState<Campaign[]>([]);
   const [loading, setLoading] = useState(true);
   const [filters, setFilters] = useState({
-    market: '',
-    channel: '',
+    market: 'all',
+    channel: 'all',
     startDate: '',
     endDate: ''
   });
@@ -55,13 +55,14 @@ const CampaignManager: React.FC = () => {
       setLoading(true);
       const filtersToUse = customFilters || filters;
       
-      // Remove empty filters
+      // Remove empty filters and "all" values
       const cleanFilters = Object.fromEntries(
-        Object.entries(filtersToUse).filter(([_, value]) => value !== '')
+        Object.entries(filtersToUse).filter(([_, value]) => value !== '' && value !== 'all')
       );
       
       const campaignData = await campaignsApi.getActiveCampaigns(cleanFilters);
-      setCampaigns(campaignData);
+      // Ensure we always set an array
+      setCampaigns(Array.isArray(campaignData) ? campaignData : []);
     } catch (error) {
       setCampaigns([]);
     } finally {
@@ -80,8 +81,8 @@ const CampaignManager: React.FC = () => {
 
   const clearFilters = () => {
     const emptyFilters = {
-      market: '',
-      channel: '',
+      market: 'all',
+      channel: 'all',
       startDate: '',
       endDate: ''
     };
@@ -97,6 +98,25 @@ const CampaignManager: React.FC = () => {
     if (now < start) return 'Upcoming';
     if (now > end) return 'Ended';
     return 'Active';
+  };
+
+  const getMarketColor = (market: string) => {
+    const colors = {
+      'HK': { bg: 'bg-red-100', border: 'border-red-400', text: 'text-red-800', light: 'bg-red-50', hoverBorder: 'hover:border-red-500' },
+      'JP': { bg: 'bg-purple-100', border: 'border-purple-400', text: 'text-purple-800', light: 'bg-purple-50', hoverBorder: 'hover:border-purple-500' },
+      'TW': { bg: 'bg-green-100', border: 'border-green-400', text: 'text-green-800', light: 'bg-green-50', hoverBorder: 'hover:border-green-500' },
+      'ALL': { bg: 'bg-gray-100', border: 'border-gray-400', text: 'text-gray-800', light: 'bg-gray-50', hoverBorder: 'hover:border-gray-500' }
+    };
+    return colors[market] || colors['ALL'];
+  };
+
+  const getStatusColor = (status: string) => {
+    const colors = {
+      'Active': { bg: 'bg-green-600', text: 'text-green-800', light: 'bg-green-100' },
+      'Upcoming': { bg: 'bg-blue-600', text: 'text-blue-800', light: 'bg-blue-100' },
+      'Ended': { bg: 'bg-gray-500', text: 'text-gray-800', light: 'bg-gray-100' }
+    };
+    return colors[status] || colors['Ended'];
   };
 
   return (
@@ -120,39 +140,39 @@ const CampaignManager: React.FC = () => {
           stats={[
             {
               title: "Active Campaigns",
-              value: campaigns.filter(c => getStatusText(c) === 'Active').length.toString(),
+              value: (Array.isArray(campaigns) ? campaigns.filter(c => getStatusText(c) === 'Active').length : 0).toString(),
               description: "Currently running",
               icon: PlayCircle,
-              gradientColors: "bg-gradient-to-br from-indigo-500 to-indigo-600",
-              iconBgColor: "indigo",
+              gradientColors: "bg-gradient-to-br from-orange-500 to-orange-600",
+              iconBgColor: "orange",
               descriptionIcon: Activity
             },
             {
               title: "Total Campaigns",
-              value: campaigns.length.toString(),
+              value: (Array.isArray(campaigns) ? campaigns.length : 0).toString(),
               description: "All time campaigns",
               icon: Target,
-              gradientColors: "bg-gradient-to-br from-pink-500 to-pink-600", 
-              iconBgColor: "pink",
+              gradientColors: "bg-gradient-to-br from-emerald-500 to-emerald-600", 
+              iconBgColor: "emerald",
               descriptionIcon: CheckCircle
-            },
-            {
-              title: "Markets",
-              value: "3",
-              description: "Global coverage",
-              icon: Globe,
-              gradientColors: "bg-gradient-to-br from-amber-500 to-amber-600",
-              iconBgColor: "amber",
-              descriptionIcon: Globe
             },
             {
               title: "Performance", 
               value: "98.5%",
               description: "Success rate",
               icon: TrendingUp,
-              gradientColors: "bg-gradient-to-br from-red-500 to-red-600",
-              iconBgColor: "red", 
+              gradientColors: "bg-gradient-to-br from-purple-500 to-purple-600",
+              iconBgColor: "purple", 
               descriptionIcon: TrendingUp
+            },
+            {
+              title: "Markets",
+              value: "3",
+              description: "Global coverage",
+              icon: Globe,
+              gradientColors: "bg-gradient-to-br from-red-500 to-red-600",
+              iconBgColor: "red",
+              descriptionIcon: Globe
             }
           ]}
           columns="4"
@@ -160,7 +180,7 @@ const CampaignManager: React.FC = () => {
 
         {/* Filters */}
         <Card className="border border-gray-200 shadow-lg bg-white">
-          <CardHeader className="bg-blue-700 text-white rounded-t-lg">
+          <CardHeader style={{ backgroundColor: '#0072bb' }} className="text-white rounded-t-lg">
             <CardTitle className="flex items-center text-xl">
               <Filter className="mr-3 h-6 w-6" />
               Campaign Filters
@@ -169,90 +189,103 @@ const CampaignManager: React.FC = () => {
               Filter campaigns by market, channel, date range, and more
             </CardDescription>
           </CardHeader>
-          <CardContent className="p-6">
-            <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-5">
-              <div className="space-y-2">
-                <Label htmlFor="market" className="text-sm font-semibold text-gray-700">Market</Label>
+          <CardContent className="p-8">
+            {/* Filter Grid */}
+            <div className="grid gap-6 lg:grid-cols-4 md:grid-cols-2">
+              {/* Market Filter */}
+              <div className="space-y-3">
+                <Label htmlFor="market" className="text-sm font-semibold text-gray-700 flex items-center">
+                  <MapPin className="h-4 w-4 mr-2 text-blue-600" />
+                  Market Region
+                </Label>
                 <Select
                   value={filters.market}
                   onValueChange={(value) => handleFilterChange('market', value)}
                 >
-                  <SelectTrigger className="border-blue-200 focus:border-blue-500">
+                  <SelectTrigger className="h-11 border-gray-300 focus:border-blue-500 focus:ring-blue-500 shadow-sm">
                     <SelectValue placeholder="All Markets" />
                   </SelectTrigger>
                   <SelectContent>
-                    <SelectItem value="">All Markets</SelectItem>
-                    <SelectItem value="HK">Hong Kong</SelectItem>
-                    <SelectItem value="JP">Japan</SelectItem>
-                    <SelectItem value="TW">Taiwan</SelectItem>
+                    <SelectItem value="all">🌍 All Markets</SelectItem>
+                    <SelectItem value="HK">🇭🇰 Hong Kong</SelectItem>
+                    <SelectItem value="JP">🇯🇵 Japan</SelectItem>
+                    <SelectItem value="TW">🇹🇼 Taiwan</SelectItem>
                   </SelectContent>
                 </Select>
               </div>
 
-              <div className="space-y-2">
-                <Label htmlFor="channel" className="text-sm font-semibold text-gray-700">Channel</Label>
+              {/* Channel Filter */}
+              <div className="space-y-3">
+                <Label htmlFor="channel" className="text-sm font-semibold text-gray-700 flex items-center">
+                  <Globe className="h-4 w-4 mr-2 text-blue-600" />
+                  Sales Channel
+                </Label>
                 <Select
                   value={filters.channel}
                   onValueChange={(value) => handleFilterChange('channel', value)}
                 >
-                  <SelectTrigger className="border-blue-200 focus:border-blue-500">
+                  <SelectTrigger className="h-11 border-gray-300 focus:border-blue-500 focus:ring-blue-500 shadow-sm">
                     <SelectValue placeholder="All Channels" />
                   </SelectTrigger>
                   <SelectContent>
-                    <SelectItem value="">All Channels</SelectItem>
-                    <SelectItem value="STORE">Store</SelectItem>
-                    <SelectItem value="ONLINE">Online</SelectItem>
-                    <SelectItem value="MOBILE">Mobile</SelectItem>
+                    <SelectItem value="all">📱 All Channels</SelectItem>
+                    <SelectItem value="LINE">💬 LINE</SelectItem>
+                    <SelectItem value="COUNTER">🏪 Counter</SelectItem>
+                    <SelectItem value="ALL">🌐 All Channels</SelectItem>
+                    <SelectItem value="STORE">🏬 Store</SelectItem>
+                    <SelectItem value="ONLINE">💻 Online</SelectItem>
                   </SelectContent>
                 </Select>
               </div>
 
-              <div className="space-y-2">
-                <Label htmlFor="startDate" className="text-sm font-semibold text-gray-700">Start Date</Label>
+              {/* Start Date Filter */}
+              <div className="space-y-3">
+                <Label htmlFor="startDate" className="text-sm font-semibold text-gray-700 flex items-center">
+                  <Calendar className="h-4 w-4 mr-2 text-blue-600" />
+                  Start Date
+                </Label>
                 <Input
                   id="startDate"
                   type="date"
                   value={filters.startDate}
                   onChange={(e) => handleFilterChange('startDate', e.target.value)}
-                  className="border-blue-200 focus:border-blue-500"
+                  className="h-11 border-gray-300 focus:border-blue-500 focus:ring-blue-500 shadow-sm"
                 />
               </div>
 
-              <div className="space-y-2">
-                <Label htmlFor="endDate" className="text-sm font-semibold text-gray-700">End Date</Label>
+              {/* End Date Filter */}
+              <div className="space-y-3">
+                <Label htmlFor="endDate" className="text-sm font-semibold text-gray-700 flex items-center">
+                  <Calendar className="h-4 w-4 mr-2 text-blue-600" />
+                  End Date
+                </Label>
                 <Input
                   id="endDate"
                   type="date"
                   value={filters.endDate}
                   onChange={(e) => handleFilterChange('endDate', e.target.value)}
-                  className="border-blue-200 focus:border-blue-500"
+                  className="h-11 border-gray-300 focus:border-blue-500 focus:ring-blue-500 shadow-sm"
                 />
               </div>
             </div>
 
-            <div className="flex gap-4 mt-6">
+            {/* Action Buttons */}
+            <div className="flex gap-4 mt-8 justify-center">
               <Button
                 onClick={applyFilters}
-                className="bg-gradient-to-r from-blue-500 to-cyan-500 hover:from-blue-600 hover:to-cyan-600 text-white shadow-lg transform hover:scale-105 transition-all duration-300 cursor-pointer"
+                style={{ backgroundColor: '#0072bb' }}
+                className="text-white hover:opacity-90 shadow-lg px-8 py-3 h-auto font-semibold"
               >
-                <Search className="mr-2 h-4 w-4" />
+                <Search className="mr-2 h-5 w-5" />
                 Apply Filters
               </Button>
               <Button
                 onClick={clearFilters}
                 variant="outline"
-                className="border-blue-300 text-blue-600 hover:bg-blue-50 cursor-pointer"
+                className="border-gray-300 text-gray-600 hover:bg-gray-50 px-8 py-3 h-auto font-semibold"
               >
-                <RefreshCw className="mr-2 h-4 w-4" />
+                <RefreshCw className="mr-2 h-5 w-5" />
                 Clear All
-              </Button>
-              <Button
-                onClick={() => loadCampaigns()}
-                variant="outline"
-                className="border-cyan-300 text-cyan-600 hover:bg-cyan-50 cursor-pointer"
-              >
-                <RefreshCw className="mr-2 h-4 w-4" />
-                Refresh
               </Button>
             </div>
           </CardContent>
@@ -265,7 +298,7 @@ const CampaignManager: React.FC = () => {
               <RefreshCw className="h-8 w-8 animate-spin text-blue-500" />
               <span className="ml-2 text-lg text-gray-600">Loading campaigns...</span>
             </div>
-          ) : campaigns.length === 0 ? (
+          ) : (Array.isArray(campaigns) && campaigns.length === 0) ? (
             <Card className="border-0 shadow-lg bg-white/80 backdrop-blur-sm">
               <CardContent className="p-12 text-center">
                 <Calendar className="h-16 w-16 mx-auto mb-4 text-gray-300" />
@@ -275,83 +308,114 @@ const CampaignManager: React.FC = () => {
             </Card>
           ) : (
             <div className="grid grid-cols-1 lg:grid-cols-2 xl:grid-cols-3 gap-6">
-              {campaigns.map((campaign) => (
-                <Card key={campaign.campaignCode} className="border-0 shadow-xl bg-white/90 backdrop-blur-sm transform hover:scale-105 transition-all duration-300 overflow-hidden">
-                  <CardHeader className={`text-white ${
-                    getStatusText(campaign) === 'Active' ? 'bg-gradient-to-r from-green-500 to-emerald-500' :
-                    getStatusText(campaign) === 'Upcoming' ? 'bg-gradient-to-r from-blue-500 to-indigo-500' :
-                    'bg-gradient-to-r from-gray-500 to-slate-500'
-                  }`}>
-                    <div className="flex justify-between items-start">
-                      <div>
-                        <CardTitle className="text-lg font-bold truncate">{campaign.name}</CardTitle>
-                        <CardDescription className="text-sm opacity-90">
-                          {campaign.campaignCode}
-                        </CardDescription>
-                      </div>
-                      <div className="flex items-center space-x-1">
-                        {getStatusText(campaign) === 'Active' && <CheckCircle className="h-5 w-5" />}
-                        {getStatusText(campaign) === 'Upcoming' && <Clock className="h-5 w-5" />}
-                        {getStatusText(campaign) === 'Ended' && <XCircle className="h-5 w-5" />}
-                      </div>
-                    </div>
-                  </CardHeader>
-                  <CardContent className="p-6 space-y-4">
-                    <div className="grid grid-cols-2 gap-4">
-                      <div className="space-y-1">
-                        <p className="text-xs font-medium text-gray-500 uppercase tracking-wide">Market</p>
-                        <div className="flex items-center space-x-1">
-                          <MapPin className="h-4 w-4 text-blue-500" />
-                          <span className="font-semibold text-gray-800">{campaign.market}</span>
+              {Array.isArray(campaigns) && campaigns.map((campaign) => {
+                const marketColor = getMarketColor(campaign.market);
+                const statusColor = getStatusColor(getStatusText(campaign));
+                const status = getStatusText(campaign);
+                
+                return (
+                  <Card key={campaign.campaignCode} className={`border-2 ${marketColor.border} ${marketColor.hoverBorder} hover:shadow-lg transition-all duration-300 cursor-pointer overflow-hidden`}>
+                    <CardHeader className={`${marketColor.bg} pb-3 rounded-t-lg`}>
+                      <div className="flex justify-between items-start">
+                        <div className="flex items-center space-x-3">
+                          <div className={`p-2 bg-${campaign.market === 'HK' ? 'red' : campaign.market === 'JP' ? 'purple' : campaign.market === 'TW' ? 'green' : 'gray'}-200 rounded-lg`}>
+                            <Calendar className={`h-5 w-5 text-${campaign.market === 'HK' ? 'red' : campaign.market === 'JP' ? 'purple' : campaign.market === 'TW' ? 'green' : 'gray'}-700`} />
+                          </div>
+                          <div>
+                            <CardTitle className={`text-lg font-bold ${marketColor.text} line-clamp-1`}>{campaign.name}</CardTitle>
+                            <CardDescription className={`text-sm ${marketColor.text} opacity-70`}>
+                              {campaign.campaignCode}
+                            </CardDescription>
+                          </div>
+                        </div>
+                        <div className="flex items-center space-x-2">
+                          <span className={`px-2 py-1 rounded-full text-xs font-semibold ${statusColor.light} ${statusColor.text}`}>
+                            {status}
+                          </span>
+                          {status === 'Active' && <CheckCircle className={`h-5 w-5 text-${campaign.market === 'HK' ? 'red' : campaign.market === 'JP' ? 'purple' : campaign.market === 'TW' ? 'green' : 'gray'}-600`} />}
+                          {status === 'Upcoming' && <Clock className={`h-5 w-5 text-${campaign.market === 'HK' ? 'red' : campaign.market === 'JP' ? 'purple' : campaign.market === 'TW' ? 'green' : 'gray'}-600`} />}
+                          {status === 'Ended' && <XCircle className={`h-5 w-5 text-${campaign.market === 'HK' ? 'red' : campaign.market === 'JP' ? 'purple' : campaign.market === 'TW' ? 'green' : 'gray'}-600`} />}
                         </div>
                       </div>
-                      <div className="space-y-1">
-                        <p className="text-xs font-medium text-gray-500 uppercase tracking-wide">Channel</p>
-                        <div className="flex items-center space-x-1">
-                          <Activity className="h-4 w-4 text-cyan-500" />
-                          <span className="font-semibold text-gray-800">{campaign.channel}</span>
+                    </CardHeader>
+                    <CardContent className="p-6 space-y-5">
+                      {/* Market and Channel Row */}
+                      <div className="grid grid-cols-2 gap-4">
+                        <div className="space-y-2">
+                          <p className="text-xs font-medium text-gray-500 uppercase tracking-wide flex items-center">
+                            <MapPin className="h-3 w-3 mr-1" />
+                            Market
+                          </p>
+                          <div className={`inline-flex items-center px-3 py-1 rounded-full text-sm font-medium bg-${campaign.market === 'HK' ? 'red' : campaign.market === 'JP' ? 'purple' : campaign.market === 'TW' ? 'green' : 'gray'}-100 text-${campaign.market === 'HK' ? 'red' : campaign.market === 'JP' ? 'purple' : campaign.market === 'TW' ? 'green' : 'gray'}-700 border border-${campaign.market === 'HK' ? 'red' : campaign.market === 'JP' ? 'purple' : campaign.market === 'TW' ? 'green' : 'gray'}-300`}>
+                            {campaign.market}
+                          </div>
+                        </div>
+                        <div className="space-y-2">
+                          <p className="text-xs font-medium text-gray-500 uppercase tracking-wide flex items-center">
+                            <Globe className="h-3 w-3 mr-1" />
+                            Channel
+                          </p>
+                          <div className="inline-flex items-center px-3 py-1 rounded-full text-sm font-medium bg-gray-100 text-gray-700 border border-gray-300">
+                            {campaign.channel}
+                          </div>
                         </div>
                       </div>
-                    </div>
-
-                    <div className="space-y-2">
-                      <p className="text-xs font-medium text-gray-500 uppercase tracking-wide">Campaign Period</p>
-                      <div className="flex items-center justify-between text-sm">
-                        <span className="text-gray-600">
-                          {new Date(campaign.startDate).toLocaleDateString()}
-                        </span>
-                        <span className="text-gray-400">→</span>
-                        <span className="text-gray-600">
-                          {new Date(campaign.endDate).toLocaleDateString()}
-                        </span>
-                      </div>
-                    </div>
-
-                    <div className="space-y-2">
-                      <p className="text-xs font-medium text-gray-500 uppercase tracking-wide">Status</p>
-                      <span className={`inline-flex items-center px-3 py-1 rounded-full text-xs font-medium ${
-                        getStatusText(campaign) === 'Active' ? 'bg-green-100 text-green-800' :
-                        getStatusText(campaign) === 'Upcoming' ? 'bg-blue-100 text-blue-800' :
-                        'bg-gray-100 text-gray-800'
-                      }`}>
-                        {getStatusText(campaign)}
-                      </span>
-                    </div>
-
-                    {campaign.ruleIds && campaign.ruleIds.length > 0 && (
-                      <div className="space-y-2">
-                        <p className="text-xs font-medium text-gray-500 uppercase tracking-wide">Associated Rules</p>
-                        <div className="flex items-center space-x-1">
-                          <Zap className="h-4 w-4 text-orange-500" />
-                          <span className="text-sm font-medium text-gray-800">
-                            {campaign.ruleIds.length} rule{campaign.ruleIds.length !== 1 ? 's' : ''}
+                      
+                      {/* Campaign Duration Card */}
+                      <div className="bg-gradient-to-r from-blue-50 to-indigo-50 rounded-lg p-4 border border-blue-200">
+                        <p className="text-xs font-medium text-blue-600 uppercase tracking-wide mb-3 flex items-center">
+                          <Calendar className="h-3 w-3 mr-1" />
+                          Campaign Duration
+                        </p>
+                        <div className="flex items-center justify-between">
+                          <div className="text-center">
+                            <p className="text-xs text-gray-500 mb-1">Start Date</p>
+                            <div className="bg-white px-3 py-2 rounded-lg border border-blue-300 shadow-sm">
+                              <p className="text-sm font-semibold text-gray-800">
+                                {new Date(campaign.startDate).toLocaleDateString('en-US', { 
+                                  month: 'short', 
+                                  day: 'numeric',
+                                  year: 'numeric'
+                                })}
+                              </p>
+                            </div>
+                          </div>
+                          <div className="flex-1 flex justify-center">
+                            <div className="h-0.5 w-8 bg-blue-300 relative">
+                              <div className="absolute -right-1 -top-1 w-2 h-2 bg-blue-500 rounded-full"></div>
+                            </div>
+                          </div>
+                          <div className="text-center">
+                            <p className="text-xs text-gray-500 mb-1">End Date</p>
+                            <div className="bg-white px-3 py-2 rounded-lg border border-blue-300 shadow-sm">
+                              <p className="text-sm font-semibold text-gray-800">
+                                {new Date(campaign.endDate).toLocaleDateString('en-US', { 
+                                  month: 'short', 
+                                  day: 'numeric',
+                                  year: 'numeric'
+                                })}
+                              </p>
+                            </div>
+                          </div>
+                        </div>
+                        {/* Duration calculation */}
+                        <div className="mt-3 text-center">
+                          <span className="text-xs text-blue-600 bg-blue-100 px-2 py-1 rounded-full">
+                            {Math.ceil((new Date(campaign.endDate).getTime() - new Date(campaign.startDate).getTime()) / (1000 * 60 * 60 * 24))} days
                           </span>
                         </div>
                       </div>
-                    )}
-                  </CardContent>
-                </Card>
-              ))}
+                      
+                      <div className="pt-2 border-t border-gray-100">
+                        <div className="flex items-center justify-between">
+                          <span className="text-xs text-gray-500">Rules: {campaign.ruleIds?.length || 0}</span>
+                          <span className="text-xs text-gray-500">ID: {campaign.campaignCode}</span>
+                        </div>
+                      </div>
+                    </CardContent>
+                  </Card>
+                );
+              })}
             </div>
           )}
         </div>

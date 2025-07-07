@@ -1,6 +1,6 @@
 const express = require('express');
 const router = express.Router();
-const { CampaignController } = require('../controllers');
+const CampaignController = require('../controllers/campaignController');
 
 /**
  * GET /api/campaigns/active?startDate={optional}&endDate={optional}

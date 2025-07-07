@@ -472,7 +472,7 @@ const EventProcessor: React.FC = () => {
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
           {/* Event Configuration */}
           <Card className="border-0 shadow-xl bg-white" style={{ overflow: 'visible' }}>
-            <CardHeader className="bg-blue-600 text-white rounded-t-lg">
+            <CardHeader style={{ backgroundColor: '#0072bb' }} className="text-white rounded-t-lg">
               <CardTitle className="flex items-center text-xl cursor-pointer">
                 <Code className="mr-3 h-6 w-6" />
                 Event Configuration
@@ -891,7 +891,7 @@ const EventProcessor: React.FC = () => {
 
           {/* Results Panel */}
           <Card className="border-0 shadow-xl bg-white" style={{ overflow: 'visible' }}>
-            <CardHeader className="bg-gradient-to-r from-blue-600 to-indigo-600 text-white rounded-t-lg">
+            <CardHeader style={{ backgroundColor: '#0072bb' }} className="text-white rounded-t-lg">
               <CardTitle className="flex items-center text-xl cursor-pointer">
                 <Cpu className="mr-3 h-6 w-6" />
                 Processing Results
