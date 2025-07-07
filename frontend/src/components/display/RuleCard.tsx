@@ -1,6 +1,6 @@
 import React from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import StatusBadge from '@/components/StatusBadge';
+import StatusBadge from '@/components/display/StatusBadge';
 import { Eye } from 'lucide-react';
 import type { LucideIcon } from 'lucide-react';
 

@@ -2,9 +2,8 @@ import React, { useState, useEffect } from 'react';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
-import LoadingSpinner from '@/components/LoadingSpinner';
-import RuleCard from '@/components/RuleCard';
-import StatsGrid from '@/components/StatsGrid';
+import { LoadingSpinner } from '@/components/common';
+import { RuleCard, StatsGrid } from '@/components/display';
 import { rulesApi, eventsApi, consumersApi, defaultsApi } from '@/services/api';
 import type { Rule, EventData } from '@/services/api';
 import { 

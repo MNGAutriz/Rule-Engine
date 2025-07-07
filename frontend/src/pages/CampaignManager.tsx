@@ -4,10 +4,9 @@ import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
-import LoadingSpinner from '@/components/LoadingSpinner';
-import PageHeader from '@/components/PageHeader';
-import StatusBadge from '@/components/StatusBadge';
-import StatsGrid from '@/components/StatsGrid';
+import { LoadingSpinner } from '@/components/common';
+import { PageHeader } from '@/components/layout';
+import { StatusBadge, StatsGrid } from '@/components/display';
 import { campaignsApi } from '@/services/api';
 import { 
   Calendar, 
