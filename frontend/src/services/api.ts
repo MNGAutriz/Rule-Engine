@@ -112,6 +112,16 @@ export interface DefaultsResponse {
   adjustmentReasons: string[];
 }
 
+export interface RedemptionValidationResponse {
+  valid: boolean;
+  availablePoints: number;
+  requestedPoints: number;
+  shortfall?: number;
+  remainingAfterRedemption?: number;
+  message: string;
+  error?: string;
+}
+
 // Rules Management API - Updated
 export const rulesApi = {
   // Get all rules
@@ -179,6 +189,15 @@ export const consumersApi = {
   // Get consumer history
   getConsumerHistory: async (consumerId: string) => {
     const response = await api.get(`/api/consumer/history?consumerId=${consumerId}`);
+    return response.data;
+  },
+
+  // Validate redemption
+  validateRedemption: async (consumerId: string, redemptionPoints: number): Promise<RedemptionValidationResponse> => {
+    const response = await api.post('/api/consumer/validate-redemption', {
+      consumerId,
+      redemptionPoints
+    });
     return response.data;
   },
 

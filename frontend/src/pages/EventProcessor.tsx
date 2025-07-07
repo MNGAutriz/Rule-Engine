@@ -4,8 +4,8 @@ import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
-import { eventsApi, defaultsApi } from '@/services/api';
-import type { EventData, EventResponse, DefaultsResponse } from '@/services/api';
+import { eventsApi, defaultsApi, consumersApi } from '@/services/api';
+import type { EventData, EventResponse, DefaultsResponse, RedemptionValidationResponse } from '@/services/api';
 import { 
   RefreshCw, 
   AlertCircle, 
@@ -33,6 +33,8 @@ const EventProcessor: React.FC = () => {
   const [loading, setLoading] = useState(false);
   const [result, setResult] = useState<EventResponse | null>(null);
   const [error, setError] = useState<string | null>(null);
+  const [validationMessage, setValidationMessage] = useState<string | null>(null);
+  const [validationLoading, setValidationLoading] = useState(false);
   const [eventData, setEventData] = useState<Partial<EventData>>({
     eventType: 'PURCHASE',
     market: 'HK',
@@ -222,6 +224,29 @@ const EventProcessor: React.FC = () => {
     });
   };
 
+  const validateRedemptionPoints = async (consumerId: string, redemptionPoints: number) => {
+    try {
+      setValidationLoading(true);
+      setValidationMessage(null);
+      
+      const validationResult = await consumersApi.validateRedemption(consumerId, redemptionPoints);
+      
+      if (validationResult.valid) {
+        setValidationMessage(`✅ ${validationResult.message}. You will have ${validationResult.remainingAfterRedemption} points remaining.`);
+      } else {
+        setValidationMessage(`❌ ${validationResult.message}`);
+      }
+      
+      return validationResult.valid;
+    } catch (error) {
+      console.error('Error validating redemption:', error);
+      setValidationMessage('❌ Error validating redemption. Please try again.');
+      return false;
+    } finally {
+      setValidationLoading(false);
+    }
+  };
+
   const handleProcessEvent = async () => {
     try {
       setLoading(true);
@@ -274,6 +299,12 @@ const EventProcessor: React.FC = () => {
       if (eventData.eventType === 'REDEMPTION') {
         if (!eventData.attributes?.redemptionPoints || eventData.attributes.redemptionPoints <= 0) {
           throw new Error('Redemption Points is required for Redemption events');
+        }
+        
+        // Validate redemption points against user's balance
+        const isValidRedemption = await validateRedemptionPoints(eventData.consumerId, eventData.attributes.redemptionPoints);
+        if (!isValidRedemption) {
+          throw new Error('Cannot proceed with redemption - insufficient points available');
         }
       }
 
@@ -664,17 +695,54 @@ const EventProcessor: React.FC = () => {
                 
                 {/* Redemption Attributes */}
                 {eventData.eventType === 'REDEMPTION' && (
-                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                    <div className="space-y-2">
-                      <Label className="text-sm font-semibold text-gray-700">Redemption Points *</Label>
-                      <Input
-                        type="number"
-                        value={eventData.attributes?.redemptionPoints || ''}
-                        onChange={(e) => handleNestedChange('attributes', 'redemptionPoints', Number(e.target.value))}
-                        className="border-black focus:border-black"
-                        placeholder="500"
-                      />
+                  <div className="space-y-4">
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                      <div className="space-y-2">
+                        <Label className="text-sm font-semibold text-gray-700">Redemption Points *</Label>
+                        <Input
+                          type="number"
+                          value={eventData.attributes?.redemptionPoints || ''}
+                          onChange={(e) => {
+                            handleNestedChange('attributes', 'redemptionPoints', Number(e.target.value));
+                            setValidationMessage(null); // Clear validation message when value changes
+                          }}
+                          className="border-black focus:border-black"
+                          placeholder="500"
+                        />
+                      </div>
+                      <div className="space-y-2 flex flex-col justify-end">
+                        <Button
+                          type="button"
+                          onClick={() => {
+                            if (eventData.consumerId && eventData.attributes?.redemptionPoints) {
+                              validateRedemptionPoints(eventData.consumerId, eventData.attributes.redemptionPoints);
+                            }
+                          }}
+                          disabled={!eventData.consumerId || !eventData.attributes?.redemptionPoints || validationLoading}
+                          className="bg-blue-600 hover:bg-blue-700 text-white h-10"
+                        >
+                          {validationLoading ? (
+                            <>
+                              <RefreshCw className="mr-2 h-4 w-4 animate-spin" />
+                              Validating...
+                            </>
+                          ) : (
+                            'Validate Redemption'
+                          )}
+                        </Button>
+                      </div>
                     </div>
+                    
+                    {/* Validation Message */}
+                    {validationMessage && (
+                      <div className={`p-3 rounded-md text-sm ${
+                        validationMessage.includes('✅') 
+                          ? 'bg-green-50 text-green-800 border border-green-200' 
+                          : 'bg-red-50 text-red-800 border border-red-200'
+                      }`}>
+                        {validationMessage}
+                      </div>
+                    )}
                   </div>
                 )}
                 

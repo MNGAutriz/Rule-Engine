@@ -202,4 +202,56 @@ router.get('/expiration', async (req, res) => {
   }
 });
 
+/**
+ * POST /api/consumer/validate-redemption
+ * Validates if a redemption amount is possible based on available points
+ */
+router.post('/validate-redemption', async (req, res) => {
+  try {
+    const { consumerId, redemptionPoints } = req.body;
+    
+    if (!consumerId || !redemptionPoints) {
+      return res.status(400).json({
+        error: 'Missing required parameters',
+        details: 'consumerId and redemptionPoints are required'
+      });
+    }
+
+    if (redemptionPoints <= 0) {
+      return res.status(400).json({
+        valid: false,
+        error: 'Redemption points must be greater than 0'
+      });
+    }
+
+    // Get current balance
+    const balance = consumerService.getBalance(consumerId);
+    
+    if (balance.available < redemptionPoints) {
+      return res.json({
+        valid: false,
+        availablePoints: balance.available,
+        requestedPoints: redemptionPoints,
+        shortfall: redemptionPoints - balance.available,
+        message: `Insufficient points. You have ${balance.available} available points, but are trying to redeem ${redemptionPoints} points.`
+      });
+    }
+
+    return res.json({
+      valid: true,
+      availablePoints: balance.available,
+      requestedPoints: redemptionPoints,
+      remainingAfterRedemption: balance.available - redemptionPoints,
+      message: 'Redemption is valid'
+    });
+
+  } catch (error) {
+    console.error('Error validating redemption:', error);
+    res.status(500).json({
+      error: 'Failed to validate redemption',
+      message: error.message
+    });
+  }
+});
+
 module.exports = router;

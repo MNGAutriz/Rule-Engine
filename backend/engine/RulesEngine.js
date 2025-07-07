@@ -320,9 +320,28 @@ class RulesEngine {
       console.log(`Is redemption (< 0): ${totalRewardsAwarded < 0}`);
       
       if (totalRewardsAwarded < 0) {
-        // Redemption: deduct from available, add to used, keep total unchanged
+        // Redemption: validate sufficient points before processing
         const redemptionAmount = Math.abs(totalRewardsAwarded);
         console.log(`REDEMPTION PATH - redemptionAmount: ${redemptionAmount}`);
+        
+        // Validate sufficient available points
+        if (currentBalance.available < redemptionAmount) {
+          const errorMessage = `Insufficient points for redemption. Available: ${currentBalance.available}, Requested: ${redemptionAmount}`;
+          console.error(errorMessage);
+          this.errors.push(errorMessage);
+          
+          // Return error response instead of processing
+          return {
+            consumerId: eventData.consumerId,
+            eventId: eventData.eventId,
+            eventType: eventData.eventType,
+            totalPointsAwarded: 0,
+            pointBreakdown: [],
+            errors: this.errors,
+            resultingBalance: currentBalance // Return current balance unchanged
+          };
+        }
+        
         newTotal = currentBalance.total; // Total earned doesn't change
         newAvailable = Math.max(0, currentBalance.available - redemptionAmount);
         newUsed = currentBalance.used + redemptionAmount;

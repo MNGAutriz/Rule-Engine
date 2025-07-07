@@ -39863,5 +39863,1825 @@
       },
       "attributes": {}
     }
+  },
+  {
+    "consumerId": "user_hk_vip_birthday",
+    "eventId": "evt_1751881160965",
+    "eventType": "PURCHASE",
+    "totalPointsAwarded": 3750,
+    "pointBreakdown": [
+      {
+        "ruleId": "ORDER_BASE_POINT",
+        "points": 1500,
+        "description": "Base purchase reward for HK market (+1500 MD)",
+        "ruleCategory": "BASE_PURCHASE",
+        "computation": {
+          "calculationType": "RATE_MULTIPLICATION",
+          "formula": "floor(amount × 1)",
+          "inputs": {
+            "standardRate": 1
+          },
+          "result": 1500
+        }
+      },
+      {
+        "ruleId": "FIRST_PURCHASE_BIRTH_MONTH_BONUS",
+        "points": 150,
+        "description": "Birthday month special bonus (+150 MD)",
+        "ruleCategory": "PERSONAL_MILESTONE",
+        "computation": {
+          "calculationType": "TIMED_MULTIPLIER",
+          "formula": "floor(floor(amount × 1) × (1.1 - 1.0))",
+          "inputs": {
+            "multiplier": 1.1
+          },
+          "result": 150
+        }
+      },
+      {
+        "ruleId": "FLEXIBLE_VIP_MULTIPLIER",
+        "points": 1800,
+        "description": "VIP tier multiplier bonus for HK (+1800 MD)",
+        "ruleCategory": "VIP_TIER",
+        "computation": {
+          "calculationType": "TIER_MULTIPLIER",
+          "formula": "floor(floor(amount × 1) × (2 - 1.0))",
+          "inputs": {
+            "multiplier": 2
+          },
+          "result": 1800
+        }
+      },
+      {
+        "ruleId": "FLEXIBLE_CAMPAIGN_BONUS",
+        "points": 300,
+        "description": "Special campaign bonus for HK (+300 MD)",
+        "ruleCategory": "CAMPAIGN",
+        "computation": {
+          "calculationType": "CAMPAIGN_BONUS",
+          "formula": "fixedBonus = 300",
+          "inputs": {
+            "fixedBonus": 300
+          },
+          "result": 300
+        }
+      }
+    ],
+    "errors": [],
+    "resultingBalance": {
+      "total": 9635623,
+      "available": 9571499,
+      "used": 64124,
+      "transactionCount": 147
+    },
+    "timestamp": "2025-07-07T09:39:21.029Z",
+    "originalEvent": {
+      "eventId": "evt_1751881160965",
+      "eventType": "PURCHASE",
+      "timestamp": "2025-07-07T09:39:20.965Z",
+      "market": "HK",
+      "channel": "STORE",
+      "productLine": "PREMIUM_SERIES",
+      "consumerId": "user_hk_vip_birthday",
+      "context": {
+        "storeId": "STORE_HK_001",
+        "campaignCode": ""
+      },
+      "attributes": {
+        "amount": 1500,
+        "currency": "HKD",
+        "skuList": [
+          "SKU_HK_059"
+        ]
+      }
+    }
+  },
+  {
+    "consumerId": "user_hk_vip_birthday",
+    "eventId": "evt_1751881165906",
+    "eventType": "REGISTRATION",
+    "totalPointsAwarded": 0,
+    "pointBreakdown": [],
+    "errors": [],
+    "resultingBalance": {
+      "total": 9635623,
+      "available": 9571499,
+      "used": 64124,
+      "transactionCount": 148
+    },
+    "timestamp": "2025-07-07T09:39:25.932Z",
+    "originalEvent": {
+      "eventId": "evt_1751881165906",
+      "eventType": "REGISTRATION",
+      "timestamp": "2025-07-07T09:39:25.906Z",
+      "market": "HK",
+      "channel": "STORE",
+      "productLine": "PREMIUM_SERIES",
+      "consumerId": "user_hk_vip_birthday",
+      "context": {
+        "storeId": "",
+        "campaignCode": ""
+      },
+      "attributes": {}
+    }
+  },
+  {
+    "consumerId": "user_hk_standard",
+    "eventId": "evt_1751881172192",
+    "eventType": "PURCHASE",
+    "totalPointsAwarded": 1800,
+    "pointBreakdown": [
+      {
+        "ruleId": "ORDER_BASE_POINT",
+        "points": 1500,
+        "description": "Base purchase reward for HK market (+1500 MD)",
+        "ruleCategory": "BASE_PURCHASE",
+        "computation": {
+          "calculationType": "RATE_MULTIPLICATION",
+          "formula": "floor(amount × 1)",
+          "inputs": {
+            "standardRate": 1
+          },
+          "result": 1500
+        }
+      },
+      {
+        "ruleId": "FLEXIBLE_CAMPAIGN_BONUS",
+        "points": 300,
+        "description": "Special campaign bonus for HK (+300 MD)",
+        "ruleCategory": "CAMPAIGN",
+        "computation": {
+          "calculationType": "CAMPAIGN_BONUS",
+          "formula": "fixedBonus = 300",
+          "inputs": {
+            "fixedBonus": 300
+          },
+          "result": 300
+        }
+      }
+    ],
+    "errors": [],
+    "resultingBalance": {
+      "total": 152400,
+      "available": 149900,
+      "used": 2500,
+      "transactionCount": 13
+    },
+    "timestamp": "2025-07-07T09:39:32.222Z",
+    "originalEvent": {
+      "eventId": "evt_1751881172192",
+      "eventType": "PURCHASE",
+      "timestamp": "2025-07-07T09:39:32.192Z",
+      "market": "HK",
+      "channel": "STORE",
+      "productLine": "PREMIUM_SERIES",
+      "consumerId": "user_hk_standard",
+      "context": {
+        "storeId": "HK_STORE_001",
+        "campaignCode": ""
+      },
+      "attributes": {
+        "amount": 1500,
+        "currency": "HKD",
+        "skuList": [
+          "SK_HK_001"
+        ]
+      }
+    }
+  },
+  {
+    "consumerId": "user_hk_standard",
+    "eventId": "evt_1751881174750",
+    "eventType": "RECYCLE",
+    "totalPointsAwarded": 150,
+    "pointBreakdown": [
+      {
+        "ruleId": "INTERACTION_ADJUST_POINT_TIMES_PER_YEAR",
+        "points": 150,
+        "description": "Engagement activity reward (+150 MD)",
+        "ruleCategory": "ENGAGEMENT_ACTIVITY",
+        "computation": {
+          "calculationType": "ACTIVITY_REWARD",
+          "formula": "min(itemCount, 5) × 50",
+          "inputs": {
+            "pointsPerBottle": 50,
+            "maxPerYear": 5
+          },
+          "result": 150
+        }
+      }
+    ],
+    "errors": [],
+    "resultingBalance": {
+      "total": 152550,
+      "available": 150050,
+      "used": 2500,
+      "transactionCount": 14
+    },
+    "timestamp": "2025-07-07T09:39:34.779Z",
+    "originalEvent": {
+      "eventId": "evt_1751881174750",
+      "eventType": "RECYCLE",
+      "timestamp": "2025-07-07T09:39:34.750Z",
+      "market": "HK",
+      "channel": "STORE",
+      "productLine": "PREMIUM_SERIES",
+      "consumerId": "user_hk_standard",
+      "context": {
+        "storeId": "HK_STORE_001",
+        "campaignCode": ""
+      },
+      "attributes": {
+        "recycledCount": 3
+      }
+    }
+  },
+  {
+    "consumerId": "user_hk_standard",
+    "eventId": "evt_1751881179017",
+    "eventType": "RECYCLE",
+    "totalPointsAwarded": 50,
+    "pointBreakdown": [
+      {
+        "ruleId": "INTERACTION_ADJUST_POINT_TIMES_PER_YEAR",
+        "points": 50,
+        "description": "Engagement activity reward (+50 MD)",
+        "ruleCategory": "ENGAGEMENT_ACTIVITY",
+        "computation": {
+          "calculationType": "ACTIVITY_REWARD",
+          "formula": "min(itemCount, 5) × 50",
+          "inputs": {
+            "pointsPerBottle": 50,
+            "maxPerYear": 5
+          },
+          "result": 50
+        }
+      }
+    ],
+    "errors": [],
+    "resultingBalance": {
+      "total": 152600,
+      "available": 150100,
+      "used": 2500,
+      "transactionCount": 15
+    },
+    "timestamp": "2025-07-07T09:39:39.044Z",
+    "originalEvent": {
+      "eventId": "evt_1751881179017",
+      "eventType": "RECYCLE",
+      "timestamp": "2025-07-07T09:39:39.017Z",
+      "market": "HK",
+      "channel": "STORE",
+      "productLine": "PREMIUM_SERIES",
+      "consumerId": "user_hk_standard",
+      "context": {
+        "storeId": "HK_STORE_001",
+        "campaignCode": ""
+      },
+      "attributes": {
+        "recycledCount": 1
+      }
+    }
+  },
+  {
+    "consumerId": "user_hk_standard",
+    "eventId": "evt_1751881182850",
+    "eventType": "CONSULTATION",
+    "totalPointsAwarded": 75,
+    "pointBreakdown": [
+      {
+        "ruleId": "CONSULTATION_BONUS",
+        "points": 75,
+        "description": "Beauty consultation completion bonus (+75 MD)",
+        "ruleCategory": "CONSULTATION",
+        "computation": {
+          "calculationType": "CONSULTATION_REWARD",
+          "formula": "consultationBonus = 75",
+          "inputs": {
+            "consultationBonus": 75
+          },
+          "result": 75
+        }
+      }
+    ],
+    "errors": [],
+    "resultingBalance": {
+      "total": 152675,
+      "available": 150175,
+      "used": 2500,
+      "transactionCount": 16
+    },
+    "timestamp": "2025-07-07T09:39:42.876Z",
+    "originalEvent": {
+      "eventId": "evt_1751881182850",
+      "eventType": "CONSULTATION",
+      "timestamp": "2025-07-07T09:39:42.850Z",
+      "market": "HK",
+      "channel": "STORE",
+      "productLine": "PREMIUM_SERIES",
+      "consumerId": "user_hk_standard",
+      "context": {
+        "storeId": "HK_STORE_001",
+        "campaignCode": ""
+      },
+      "attributes": {
+        "skinTestDate": "2025-07-07",
+        "consultationType": "BEAUTY_CONSULTATION"
+      }
+    }
+  },
+  {
+    "consumerId": "user_hk_standard",
+    "eventId": "evt_1751881183607",
+    "eventType": "CONSULTATION",
+    "totalPointsAwarded": 75,
+    "pointBreakdown": [
+      {
+        "ruleId": "CONSULTATION_BONUS",
+        "points": 75,
+        "description": "Beauty consultation completion bonus (+75 MD)",
+        "ruleCategory": "CONSULTATION",
+        "computation": {
+          "calculationType": "CONSULTATION_REWARD",
+          "formula": "consultationBonus = 75",
+          "inputs": {
+            "consultationBonus": 75
+          },
+          "result": 75
+        }
+      }
+    ],
+    "errors": [],
+    "resultingBalance": {
+      "total": 152750,
+      "available": 150250,
+      "used": 2500,
+      "transactionCount": 17
+    },
+    "timestamp": "2025-07-07T09:39:43.633Z",
+    "originalEvent": {
+      "eventId": "evt_1751881183607",
+      "eventType": "CONSULTATION",
+      "timestamp": "2025-07-07T09:39:43.607Z",
+      "market": "HK",
+      "channel": "STORE",
+      "productLine": "PREMIUM_SERIES",
+      "consumerId": "user_hk_standard",
+      "context": {
+        "storeId": "HK_STORE_001",
+        "campaignCode": ""
+      },
+      "attributes": {
+        "skinTestDate": "2025-07-07",
+        "consultationType": "BEAUTY_CONSULTATION"
+      }
+    }
+  },
+  {
+    "consumerId": "user_hk_standard",
+    "eventId": "evt_1751881185919",
+    "eventType": "ADJUSTMENT",
+    "totalPointsAwarded": 1000,
+    "pointBreakdown": [
+      {
+        "ruleId": "INTERACTION_ADJUST_POINT_BY_MANAGER",
+        "points": 1000,
+        "description": "Manual account adjustment (+1000 MD)",
+        "ruleCategory": "MANUAL_ADJUSTMENT",
+        "computation": {
+          "calculationType": "MANUAL_ADJUSTMENT",
+          "formula": "adjustedPoints (manual override)",
+          "inputs": {},
+          "result": 1000
+        }
+      }
+    ],
+    "errors": [],
+    "resultingBalance": {
+      "total": 153750,
+      "available": 151250,
+      "used": 2500,
+      "transactionCount": 18
+    },
+    "timestamp": "2025-07-07T09:39:45.944Z",
+    "originalEvent": {
+      "eventId": "evt_1751881185919",
+      "eventType": "ADJUSTMENT",
+      "timestamp": "2025-07-07T09:39:45.919Z",
+      "market": "HK",
+      "channel": "STORE",
+      "productLine": "PREMIUM_SERIES",
+      "consumerId": "user_hk_standard",
+      "context": {
+        "adminId": "ADMIN_001"
+      },
+      "attributes": {
+        "adjustedPoints": 1000,
+        "reason": "Customer service compensation"
+      }
+    }
+  },
+  {
+    "consumerId": "user_hk_standard",
+    "eventId": "evt_1751881194633",
+    "eventType": "REDEMPTION",
+    "totalPointsAwarded": -500,
+    "pointBreakdown": [
+      {
+        "ruleId": "REDEMPTION_DEDUCTION",
+        "points": -500,
+        "description": "Points redeemed for rewards (-500 MD)",
+        "ruleCategory": "REDEMPTION",
+        "computation": {
+          "calculationType": "POINT_DEDUCTION",
+          "formula": "redemptionPoints = -500",
+          "inputs": {
+            "redemptionPoints": 500
+          },
+          "result": -500
+        }
+      }
+    ],
+    "errors": [],
+    "resultingBalance": {
+      "total": 153750,
+      "available": 150750,
+      "used": 3000,
+      "transactionCount": 19
+    },
+    "timestamp": "2025-07-07T09:39:54.660Z",
+    "originalEvent": {
+      "eventId": "evt_1751881194633",
+      "eventType": "REDEMPTION",
+      "timestamp": "2025-07-07T09:39:54.633Z",
+      "market": "HK",
+      "channel": "STORE",
+      "productLine": "PREMIUM_SERIES",
+      "consumerId": "user_hk_standard",
+      "context": {
+        "storeId": "HK_STORE_001",
+        "campaignCode": "",
+        "adminId": "ADMIN_001"
+      },
+      "attributes": {
+        "redemptionPoints": 500
+      }
+    }
+  },
+  {
+    "consumerId": "user_hk_standard",
+    "eventId": "evt_1751881195383",
+    "eventType": "REDEMPTION",
+    "totalPointsAwarded": -500,
+    "pointBreakdown": [
+      {
+        "ruleId": "REDEMPTION_DEDUCTION",
+        "points": -500,
+        "description": "Points redeemed for rewards (-500 MD)",
+        "ruleCategory": "REDEMPTION",
+        "computation": {
+          "calculationType": "POINT_DEDUCTION",
+          "formula": "redemptionPoints = -500",
+          "inputs": {
+            "redemptionPoints": 500
+          },
+          "result": -500
+        }
+      }
+    ],
+    "errors": [],
+    "resultingBalance": {
+      "total": 153750,
+      "available": 150250,
+      "used": 3500,
+      "transactionCount": 20
+    },
+    "timestamp": "2025-07-07T09:39:55.409Z",
+    "originalEvent": {
+      "eventId": "evt_1751881195383",
+      "eventType": "REDEMPTION",
+      "timestamp": "2025-07-07T09:39:55.383Z",
+      "market": "HK",
+      "channel": "STORE",
+      "productLine": "PREMIUM_SERIES",
+      "consumerId": "user_hk_standard",
+      "context": {
+        "storeId": "HK_STORE_001",
+        "campaignCode": "",
+        "adminId": "ADMIN_001"
+      },
+      "attributes": {
+        "redemptionPoints": 500
+      }
+    }
+  },
+  {
+    "consumerId": "user_hk_standard",
+    "eventId": "evt_1751881195526",
+    "eventType": "REDEMPTION",
+    "totalPointsAwarded": -500,
+    "pointBreakdown": [
+      {
+        "ruleId": "REDEMPTION_DEDUCTION",
+        "points": -500,
+        "description": "Points redeemed for rewards (-500 MD)",
+        "ruleCategory": "REDEMPTION",
+        "computation": {
+          "calculationType": "POINT_DEDUCTION",
+          "formula": "redemptionPoints = -500",
+          "inputs": {
+            "redemptionPoints": 500
+          },
+          "result": -500
+        }
+      }
+    ],
+    "errors": [],
+    "resultingBalance": {
+      "total": 153750,
+      "available": 149750,
+      "used": 4000,
+      "transactionCount": 21
+    },
+    "timestamp": "2025-07-07T09:39:55.549Z",
+    "originalEvent": {
+      "eventId": "evt_1751881195526",
+      "eventType": "REDEMPTION",
+      "timestamp": "2025-07-07T09:39:55.526Z",
+      "market": "HK",
+      "channel": "STORE",
+      "productLine": "PREMIUM_SERIES",
+      "consumerId": "user_hk_standard",
+      "context": {
+        "storeId": "HK_STORE_001",
+        "campaignCode": "",
+        "adminId": "ADMIN_001"
+      },
+      "attributes": {
+        "redemptionPoints": 500
+      }
+    }
+  },
+  {
+    "consumerId": "user_hk_standard",
+    "eventId": "evt_1751881195675",
+    "eventType": "REDEMPTION",
+    "totalPointsAwarded": -500,
+    "pointBreakdown": [
+      {
+        "ruleId": "REDEMPTION_DEDUCTION",
+        "points": -500,
+        "description": "Points redeemed for rewards (-500 MD)",
+        "ruleCategory": "REDEMPTION",
+        "computation": {
+          "calculationType": "POINT_DEDUCTION",
+          "formula": "redemptionPoints = -500",
+          "inputs": {
+            "redemptionPoints": 500
+          },
+          "result": -500
+        }
+      }
+    ],
+    "errors": [],
+    "resultingBalance": {
+      "total": 153750,
+      "available": 149250,
+      "used": 4500,
+      "transactionCount": 22
+    },
+    "timestamp": "2025-07-07T09:39:55.705Z",
+    "originalEvent": {
+      "eventId": "evt_1751881195675",
+      "eventType": "REDEMPTION",
+      "timestamp": "2025-07-07T09:39:55.675Z",
+      "market": "HK",
+      "channel": "STORE",
+      "productLine": "PREMIUM_SERIES",
+      "consumerId": "user_hk_standard",
+      "context": {
+        "storeId": "HK_STORE_001",
+        "campaignCode": "",
+        "adminId": "ADMIN_001"
+      },
+      "attributes": {
+        "redemptionPoints": 500
+      }
+    }
+  },
+  {
+    "consumerId": "user_hk_standard",
+    "eventId": "evt_1751881195818",
+    "eventType": "REDEMPTION",
+    "totalPointsAwarded": -500,
+    "pointBreakdown": [
+      {
+        "ruleId": "REDEMPTION_DEDUCTION",
+        "points": -500,
+        "description": "Points redeemed for rewards (-500 MD)",
+        "ruleCategory": "REDEMPTION",
+        "computation": {
+          "calculationType": "POINT_DEDUCTION",
+          "formula": "redemptionPoints = -500",
+          "inputs": {
+            "redemptionPoints": 500
+          },
+          "result": -500
+        }
+      }
+    ],
+    "errors": [],
+    "resultingBalance": {
+      "total": 153750,
+      "available": 148750,
+      "used": 5000,
+      "transactionCount": 23
+    },
+    "timestamp": "2025-07-07T09:39:55.841Z",
+    "originalEvent": {
+      "eventId": "evt_1751881195818",
+      "eventType": "REDEMPTION",
+      "timestamp": "2025-07-07T09:39:55.818Z",
+      "market": "HK",
+      "channel": "STORE",
+      "productLine": "PREMIUM_SERIES",
+      "consumerId": "user_hk_standard",
+      "context": {
+        "storeId": "HK_STORE_001",
+        "campaignCode": "",
+        "adminId": "ADMIN_001"
+      },
+      "attributes": {
+        "redemptionPoints": 500
+      }
+    }
+  },
+  {
+    "consumerId": "user_hk_standard",
+    "eventId": "evt_1751881195961",
+    "eventType": "REDEMPTION",
+    "totalPointsAwarded": -500,
+    "pointBreakdown": [
+      {
+        "ruleId": "REDEMPTION_DEDUCTION",
+        "points": -500,
+        "description": "Points redeemed for rewards (-500 MD)",
+        "ruleCategory": "REDEMPTION",
+        "computation": {
+          "calculationType": "POINT_DEDUCTION",
+          "formula": "redemptionPoints = -500",
+          "inputs": {
+            "redemptionPoints": 500
+          },
+          "result": -500
+        }
+      }
+    ],
+    "errors": [],
+    "resultingBalance": {
+      "total": 153750,
+      "available": 148250,
+      "used": 5500,
+      "transactionCount": 24
+    },
+    "timestamp": "2025-07-07T09:39:55.986Z",
+    "originalEvent": {
+      "eventId": "evt_1751881195961",
+      "eventType": "REDEMPTION",
+      "timestamp": "2025-07-07T09:39:55.961Z",
+      "market": "HK",
+      "channel": "STORE",
+      "productLine": "PREMIUM_SERIES",
+      "consumerId": "user_hk_standard",
+      "context": {
+        "storeId": "HK_STORE_001",
+        "campaignCode": "",
+        "adminId": "ADMIN_001"
+      },
+      "attributes": {
+        "redemptionPoints": 500
+      }
+    }
+  },
+  {
+    "consumerId": "user_hk_standard",
+    "eventId": "evt_1751881562749",
+    "eventType": "REDEMPTION",
+    "totalPointsAwarded": -500,
+    "pointBreakdown": [
+      {
+        "ruleId": "REDEMPTION_DEDUCTION",
+        "points": -500,
+        "description": "Points redeemed for rewards (-500 MD)",
+        "ruleCategory": "REDEMPTION",
+        "computation": {
+          "calculationType": "POINT_DEDUCTION",
+          "formula": "redemptionPoints = -500",
+          "inputs": {
+            "redemptionPoints": 500
+          },
+          "result": -500
+        }
+      }
+    ],
+    "errors": [],
+    "resultingBalance": {
+      "total": 153750,
+      "available": 147750,
+      "used": 6000,
+      "transactionCount": 25
+    },
+    "timestamp": "2025-07-07T09:46:02.791Z",
+    "originalEvent": {
+      "eventId": "evt_1751881562749",
+      "eventType": "REDEMPTION",
+      "timestamp": "2025-07-07T09:46:02.749Z",
+      "market": "HK",
+      "channel": "STORE",
+      "productLine": "PREMIUM_SERIES",
+      "consumerId": "user_hk_standard",
+      "context": {
+        "storeId": "HK_STORE_001",
+        "campaignCode": "",
+        "adminId": "ADMIN_001"
+      },
+      "attributes": {
+        "redemptionPoints": 500
+      }
+    }
+  },
+  {
+    "consumerId": "user_hk_standard",
+    "eventId": "evt_1751881567602",
+    "eventType": "REDEMPTION",
+    "totalPointsAwarded": -500,
+    "pointBreakdown": [
+      {
+        "ruleId": "REDEMPTION_DEDUCTION",
+        "points": -500,
+        "description": "Points redeemed for rewards (-500 MD)",
+        "ruleCategory": "REDEMPTION",
+        "computation": {
+          "calculationType": "POINT_DEDUCTION",
+          "formula": "redemptionPoints = -500",
+          "inputs": {
+            "redemptionPoints": 500
+          },
+          "result": -500
+        }
+      }
+    ],
+    "errors": [],
+    "resultingBalance": {
+      "total": 153750,
+      "available": 147250,
+      "used": 6500,
+      "transactionCount": 26
+    },
+    "timestamp": "2025-07-07T09:46:07.638Z",
+    "originalEvent": {
+      "eventId": "evt_1751881567602",
+      "eventType": "REDEMPTION",
+      "timestamp": "2025-07-07T09:46:07.602Z",
+      "market": "HK",
+      "channel": "STORE",
+      "productLine": "STANDARD_SERIES",
+      "consumerId": "user_hk_standard",
+      "context": {
+        "storeId": "HK_STORE_001",
+        "campaignCode": "",
+        "adminId": "ADMIN_001"
+      },
+      "attributes": {
+        "redemptionPoints": 500
+      }
+    }
+  },
+  {
+    "consumerId": "user_hk_standard",
+    "eventId": "test-redemption-valid",
+    "eventType": "REDEMPTION",
+    "totalPointsAwarded": -100,
+    "pointBreakdown": [
+      {
+        "ruleId": "REDEMPTION_DEDUCTION",
+        "points": -100,
+        "description": "Points redeemed for rewards (-100 MD)",
+        "ruleCategory": "REDEMPTION",
+        "computation": {
+          "calculationType": "POINT_DEDUCTION",
+          "formula": "redemptionPoints = -100",
+          "inputs": {
+            "redemptionPoints": 100
+          },
+          "result": -100
+        }
+      }
+    ],
+    "errors": [],
+    "resultingBalance": {
+      "total": 153750,
+      "available": 147150,
+      "used": 6600,
+      "transactionCount": 27
+    },
+    "timestamp": "2025-07-07T09:53:15.762Z",
+    "originalEvent": {
+      "eventId": "test-redemption-valid",
+      "eventType": "REDEMPTION",
+      "timestamp": "2025-07-07T09:53:15.735Z",
+      "market": "HK",
+      "channel": "STORE",
+      "consumerId": "user_hk_standard",
+      "context": {
+        "storeId": "STORE_HK_001",
+        "campaignCode": ""
+      },
+      "attributes": {
+        "redemptionPoints": 100
+      }
+    }
+  },
+  {
+    "consumerId": "user_hk_vip_birthday",
+    "eventId": "evt_1751882231668",
+    "eventType": "PURCHASE",
+    "totalPointsAwarded": 3750,
+    "pointBreakdown": [
+      {
+        "ruleId": "ORDER_BASE_POINT",
+        "points": 1500,
+        "description": "Base purchase reward for HK market (+1500 MD)",
+        "ruleCategory": "BASE_PURCHASE",
+        "computation": {
+          "calculationType": "RATE_MULTIPLICATION",
+          "formula": "floor(amount × 1)",
+          "inputs": {
+            "standardRate": 1
+          },
+          "result": 1500
+        }
+      },
+      {
+        "ruleId": "FIRST_PURCHASE_BIRTH_MONTH_BONUS",
+        "points": 150,
+        "description": "Birthday month special bonus (+150 MD)",
+        "ruleCategory": "PERSONAL_MILESTONE",
+        "computation": {
+          "calculationType": "TIMED_MULTIPLIER",
+          "formula": "floor(floor(amount × 1) × (1.1 - 1.0))",
+          "inputs": {
+            "multiplier": 1.1
+          },
+          "result": 150
+        }
+      },
+      {
+        "ruleId": "FLEXIBLE_VIP_MULTIPLIER",
+        "points": 1800,
+        "description": "VIP tier multiplier bonus for HK (+1800 MD)",
+        "ruleCategory": "VIP_TIER",
+        "computation": {
+          "calculationType": "TIER_MULTIPLIER",
+          "formula": "floor(floor(amount × 1) × (2 - 1.0))",
+          "inputs": {
+            "multiplier": 2
+          },
+          "result": 1800
+        }
+      },
+      {
+        "ruleId": "FLEXIBLE_CAMPAIGN_BONUS",
+        "points": 300,
+        "description": "Special campaign bonus for HK (+300 MD)",
+        "ruleCategory": "CAMPAIGN",
+        "computation": {
+          "calculationType": "CAMPAIGN_BONUS",
+          "formula": "fixedBonus = 300",
+          "inputs": {
+            "fixedBonus": 300
+          },
+          "result": 300
+        }
+      }
+    ],
+    "errors": [],
+    "resultingBalance": {
+      "total": 9639373,
+      "available": 9575249,
+      "used": 64124,
+      "transactionCount": 149
+    },
+    "timestamp": "2025-07-07T09:57:11.717Z",
+    "originalEvent": {
+      "eventId": "evt_1751882231668",
+      "eventType": "PURCHASE",
+      "timestamp": "2025-07-07T09:57:11.668Z",
+      "market": "HK",
+      "channel": "STORE",
+      "productLine": "PREMIUM_SERIES",
+      "consumerId": "user_hk_vip_birthday",
+      "context": {
+        "storeId": "STORE_HK_001",
+        "campaignCode": ""
+      },
+      "attributes": {
+        "amount": 1500,
+        "currency": "HKD",
+        "skuList": [
+          "SKU_HK_059"
+        ]
+      }
+    }
+  },
+  {
+    "consumerId": "user_hk_vip_birthday",
+    "eventId": "evt_1751882233537",
+    "eventType": "PURCHASE",
+    "totalPointsAwarded": 3750,
+    "pointBreakdown": [
+      {
+        "ruleId": "ORDER_BASE_POINT",
+        "points": 1500,
+        "description": "Base purchase reward for HK market (+1500 MD)",
+        "ruleCategory": "BASE_PURCHASE",
+        "computation": {
+          "calculationType": "RATE_MULTIPLICATION",
+          "formula": "floor(amount × 1)",
+          "inputs": {
+            "standardRate": 1
+          },
+          "result": 1500
+        }
+      },
+      {
+        "ruleId": "FIRST_PURCHASE_BIRTH_MONTH_BONUS",
+        "points": 150,
+        "description": "Birthday month special bonus (+150 MD)",
+        "ruleCategory": "PERSONAL_MILESTONE",
+        "computation": {
+          "calculationType": "TIMED_MULTIPLIER",
+          "formula": "floor(floor(amount × 1) × (1.1 - 1.0))",
+          "inputs": {
+            "multiplier": 1.1
+          },
+          "result": 150
+        }
+      },
+      {
+        "ruleId": "FLEXIBLE_VIP_MULTIPLIER",
+        "points": 1800,
+        "description": "VIP tier multiplier bonus for HK (+1800 MD)",
+        "ruleCategory": "VIP_TIER",
+        "computation": {
+          "calculationType": "TIER_MULTIPLIER",
+          "formula": "floor(floor(amount × 1) × (2 - 1.0))",
+          "inputs": {
+            "multiplier": 2
+          },
+          "result": 1800
+        }
+      },
+      {
+        "ruleId": "FLEXIBLE_CAMPAIGN_BONUS",
+        "points": 300,
+        "description": "Special campaign bonus for HK (+300 MD)",
+        "ruleCategory": "CAMPAIGN",
+        "computation": {
+          "calculationType": "CAMPAIGN_BONUS",
+          "formula": "fixedBonus = 300",
+          "inputs": {
+            "fixedBonus": 300
+          },
+          "result": 300
+        }
+      }
+    ],
+    "errors": [],
+    "resultingBalance": {
+      "total": 9643123,
+      "available": 9578999,
+      "used": 64124,
+      "transactionCount": 150
+    },
+    "timestamp": "2025-07-07T09:57:13.563Z",
+    "originalEvent": {
+      "eventId": "evt_1751882233537",
+      "eventType": "PURCHASE",
+      "timestamp": "2025-07-07T09:57:13.537Z",
+      "market": "HK",
+      "channel": "STORE",
+      "productLine": "PREMIUM_SERIES",
+      "consumerId": "user_hk_vip_birthday",
+      "context": {
+        "storeId": "STORE_HK_001",
+        "campaignCode": ""
+      },
+      "attributes": {
+        "amount": 1500,
+        "currency": "HKD",
+        "skuList": [
+          "SKU_HK_059"
+        ]
+      }
+    }
+  },
+  {
+    "consumerId": "user_hk_vip_birthday",
+    "eventId": "evt_1751882236221",
+    "eventType": "REGISTRATION",
+    "totalPointsAwarded": 0,
+    "pointBreakdown": [],
+    "errors": [],
+    "resultingBalance": {
+      "total": 9643123,
+      "available": 9578999,
+      "used": 64124,
+      "transactionCount": 151
+    },
+    "timestamp": "2025-07-07T09:57:16.244Z",
+    "originalEvent": {
+      "eventId": "evt_1751882236221",
+      "eventType": "REGISTRATION",
+      "timestamp": "2025-07-07T09:57:16.221Z",
+      "market": "HK",
+      "channel": "STORE",
+      "productLine": "PREMIUM_SERIES",
+      "consumerId": "user_hk_vip_birthday",
+      "context": {
+        "storeId": "",
+        "campaignCode": ""
+      },
+      "attributes": {}
+    }
+  },
+  {
+    "consumerId": "user_jp_vip",
+    "eventId": "evt_1751882238268",
+    "eventType": "REGISTRATION",
+    "totalPointsAwarded": 150,
+    "pointBreakdown": [
+      {
+        "ruleId": "INTERACTION_REGISTRY_POINT",
+        "points": 150,
+        "description": "Welcome bonus for JP registration (+150 MD)",
+        "ruleCategory": "REGISTRATION",
+        "computation": {
+          "calculationType": "FIXED_BONUS",
+          "formula": "registrationBonus = 150",
+          "inputs": {
+            "registrationBonus": 150
+          },
+          "result": 150
+        }
+      }
+    ],
+    "errors": [],
+    "resultingBalance": {
+      "total": 58375,
+      "available": 58375,
+      "used": 0,
+      "transactionCount": 22
+    },
+    "timestamp": "2025-07-07T09:57:18.293Z",
+    "originalEvent": {
+      "eventId": "evt_1751882238268",
+      "eventType": "REGISTRATION",
+      "timestamp": "2025-07-07T09:57:18.268Z",
+      "market": "JP",
+      "channel": "STORE",
+      "productLine": "PREMIUM_SERIES",
+      "consumerId": "user_jp_vip",
+      "context": {
+        "storeId": "STORE_JP_001",
+        "campaignCode": ""
+      },
+      "attributes": {}
+    }
+  },
+  {
+    "consumerId": "user_tw_vip",
+    "eventId": "evt_1751882239648",
+    "eventType": "REGISTRATION",
+    "totalPointsAwarded": 0,
+    "pointBreakdown": [],
+    "errors": [],
+    "resultingBalance": {
+      "total": 39000,
+      "available": 39000,
+      "used": 0,
+      "transactionCount": 10
+    },
+    "timestamp": "2025-07-07T09:57:19.674Z",
+    "originalEvent": {
+      "eventId": "evt_1751882239648",
+      "eventType": "REGISTRATION",
+      "timestamp": "2025-07-07T09:57:19.648Z",
+      "market": "TW",
+      "channel": "STORE",
+      "productLine": "PREMIUM_SERIES",
+      "consumerId": "user_tw_vip",
+      "context": {
+        "storeId": "STORE_TW_001",
+        "campaignCode": ""
+      },
+      "attributes": {}
+    }
+  },
+  {
+    "consumerId": "user_tw_vip",
+    "eventId": "evt_1751882242078",
+    "eventType": "RECYCLE",
+    "totalPointsAwarded": 150,
+    "pointBreakdown": [
+      {
+        "ruleId": "INTERACTION_ADJUST_POINT_TIMES_PER_YEAR",
+        "points": 150,
+        "description": "Engagement activity reward (+150 MD)",
+        "ruleCategory": "ENGAGEMENT_ACTIVITY",
+        "computation": {
+          "calculationType": "ACTIVITY_REWARD",
+          "formula": "min(itemCount, 5) × 50",
+          "inputs": {
+            "pointsPerBottle": 50,
+            "maxPerYear": 5
+          },
+          "result": 150
+        }
+      }
+    ],
+    "errors": [],
+    "resultingBalance": {
+      "total": 39150,
+      "available": 39150,
+      "used": 0,
+      "transactionCount": 11
+    },
+    "timestamp": "2025-07-07T09:57:22.100Z",
+    "originalEvent": {
+      "eventId": "evt_1751882242078",
+      "eventType": "RECYCLE",
+      "timestamp": "2025-07-07T09:57:22.078Z",
+      "market": "TW",
+      "channel": "STORE",
+      "productLine": "PREMIUM_SERIES",
+      "consumerId": "user_tw_vip",
+      "context": {
+        "storeId": "STORE_TW_001",
+        "campaignCode": ""
+      },
+      "attributes": {
+        "recycledCount": 3
+      }
+    }
+  },
+  {
+    "consumerId": "user_tw_vip",
+    "eventId": "evt_1751882242843",
+    "eventType": "RECYCLE",
+    "totalPointsAwarded": 150,
+    "pointBreakdown": [
+      {
+        "ruleId": "INTERACTION_ADJUST_POINT_TIMES_PER_YEAR",
+        "points": 150,
+        "description": "Engagement activity reward (+150 MD)",
+        "ruleCategory": "ENGAGEMENT_ACTIVITY",
+        "computation": {
+          "calculationType": "ACTIVITY_REWARD",
+          "formula": "min(itemCount, 5) × 50",
+          "inputs": {
+            "pointsPerBottle": 50,
+            "maxPerYear": 5
+          },
+          "result": 150
+        }
+      }
+    ],
+    "errors": [],
+    "resultingBalance": {
+      "total": 39300,
+      "available": 39300,
+      "used": 0,
+      "transactionCount": 12
+    },
+    "timestamp": "2025-07-07T09:57:22.866Z",
+    "originalEvent": {
+      "eventId": "evt_1751882242843",
+      "eventType": "RECYCLE",
+      "timestamp": "2025-07-07T09:57:22.843Z",
+      "market": "TW",
+      "channel": "STORE",
+      "productLine": "PREMIUM_SERIES",
+      "consumerId": "user_tw_vip",
+      "context": {
+        "storeId": "STORE_TW_001",
+        "campaignCode": ""
+      },
+      "attributes": {
+        "recycledCount": 3
+      }
+    }
+  },
+  {
+    "consumerId": "user_tw_vip",
+    "eventId": "evt_1751882245791",
+    "eventType": "RECYCLE",
+    "totalPointsAwarded": 250,
+    "pointBreakdown": [
+      {
+        "ruleId": "INTERACTION_ADJUST_POINT_TIMES_PER_YEAR",
+        "points": 250,
+        "description": "Engagement activity reward (+250 MD)",
+        "ruleCategory": "ENGAGEMENT_ACTIVITY",
+        "computation": {
+          "calculationType": "ACTIVITY_REWARD",
+          "formula": "min(itemCount, 5) × 50",
+          "inputs": {
+            "pointsPerBottle": 50,
+            "maxPerYear": 5
+          },
+          "result": 250
+        }
+      }
+    ],
+    "errors": [],
+    "resultingBalance": {
+      "total": 39550,
+      "available": 39550,
+      "used": 0,
+      "transactionCount": 13
+    },
+    "timestamp": "2025-07-07T09:57:25.815Z",
+    "originalEvent": {
+      "eventId": "evt_1751882245791",
+      "eventType": "RECYCLE",
+      "timestamp": "2025-07-07T09:57:25.791Z",
+      "market": "TW",
+      "channel": "STORE",
+      "productLine": "PREMIUM_SERIES",
+      "consumerId": "user_tw_vip",
+      "context": {
+        "storeId": "STORE_TW_001",
+        "campaignCode": ""
+      },
+      "attributes": {
+        "recycledCount": 10
+      }
+    }
+  },
+  {
+    "consumerId": "user_tw_vip",
+    "eventId": "evt_1751882246113",
+    "eventType": "RECYCLE",
+    "totalPointsAwarded": 250,
+    "pointBreakdown": [
+      {
+        "ruleId": "INTERACTION_ADJUST_POINT_TIMES_PER_YEAR",
+        "points": 250,
+        "description": "Engagement activity reward (+250 MD)",
+        "ruleCategory": "ENGAGEMENT_ACTIVITY",
+        "computation": {
+          "calculationType": "ACTIVITY_REWARD",
+          "formula": "min(itemCount, 5) × 50",
+          "inputs": {
+            "pointsPerBottle": 50,
+            "maxPerYear": 5
+          },
+          "result": 250
+        }
+      }
+    ],
+    "errors": [],
+    "resultingBalance": {
+      "total": 39800,
+      "available": 39800,
+      "used": 0,
+      "transactionCount": 14
+    },
+    "timestamp": "2025-07-07T09:57:26.139Z",
+    "originalEvent": {
+      "eventId": "evt_1751882246113",
+      "eventType": "RECYCLE",
+      "timestamp": "2025-07-07T09:57:26.113Z",
+      "market": "TW",
+      "channel": "STORE",
+      "productLine": "PREMIUM_SERIES",
+      "consumerId": "user_tw_vip",
+      "context": {
+        "storeId": "STORE_TW_001",
+        "campaignCode": ""
+      },
+      "attributes": {
+        "recycledCount": 10
+      }
+    }
+  },
+  {
+    "consumerId": "user_tw_vip",
+    "eventId": "evt_1751882246511",
+    "eventType": "RECYCLE",
+    "totalPointsAwarded": 250,
+    "pointBreakdown": [
+      {
+        "ruleId": "INTERACTION_ADJUST_POINT_TIMES_PER_YEAR",
+        "points": 250,
+        "description": "Engagement activity reward (+250 MD)",
+        "ruleCategory": "ENGAGEMENT_ACTIVITY",
+        "computation": {
+          "calculationType": "ACTIVITY_REWARD",
+          "formula": "min(itemCount, 5) × 50",
+          "inputs": {
+            "pointsPerBottle": 50,
+            "maxPerYear": 5
+          },
+          "result": 250
+        }
+      }
+    ],
+    "errors": [],
+    "resultingBalance": {
+      "total": 40050,
+      "available": 40050,
+      "used": 0,
+      "transactionCount": 15
+    },
+    "timestamp": "2025-07-07T09:57:26.535Z",
+    "originalEvent": {
+      "eventId": "evt_1751882246511",
+      "eventType": "RECYCLE",
+      "timestamp": "2025-07-07T09:57:26.511Z",
+      "market": "TW",
+      "channel": "STORE",
+      "productLine": "PREMIUM_SERIES",
+      "consumerId": "user_tw_vip",
+      "context": {
+        "storeId": "STORE_TW_001",
+        "campaignCode": ""
+      },
+      "attributes": {
+        "recycledCount": 10
+      }
+    }
+  },
+  {
+    "consumerId": "user_tw_vip",
+    "eventId": "evt_1751882246713",
+    "eventType": "RECYCLE",
+    "totalPointsAwarded": 250,
+    "pointBreakdown": [
+      {
+        "ruleId": "INTERACTION_ADJUST_POINT_TIMES_PER_YEAR",
+        "points": 250,
+        "description": "Engagement activity reward (+250 MD)",
+        "ruleCategory": "ENGAGEMENT_ACTIVITY",
+        "computation": {
+          "calculationType": "ACTIVITY_REWARD",
+          "formula": "min(itemCount, 5) × 50",
+          "inputs": {
+            "pointsPerBottle": 50,
+            "maxPerYear": 5
+          },
+          "result": 250
+        }
+      }
+    ],
+    "errors": [],
+    "resultingBalance": {
+      "total": 40300,
+      "available": 40300,
+      "used": 0,
+      "transactionCount": 16
+    },
+    "timestamp": "2025-07-07T09:57:26.735Z",
+    "originalEvent": {
+      "eventId": "evt_1751882246713",
+      "eventType": "RECYCLE",
+      "timestamp": "2025-07-07T09:57:26.713Z",
+      "market": "TW",
+      "channel": "STORE",
+      "productLine": "PREMIUM_SERIES",
+      "consumerId": "user_tw_vip",
+      "context": {
+        "storeId": "STORE_TW_001",
+        "campaignCode": ""
+      },
+      "attributes": {
+        "recycledCount": 10
+      }
+    }
+  },
+  {
+    "consumerId": "user_tw_vip",
+    "eventId": "evt_1751882250870",
+    "eventType": "CONSULTATION",
+    "totalPointsAwarded": 75,
+    "pointBreakdown": [
+      {
+        "ruleId": "CONSULTATION_BONUS",
+        "points": 75,
+        "description": "Beauty consultation completion bonus (+75 MD)",
+        "ruleCategory": "CONSULTATION",
+        "computation": {
+          "calculationType": "CONSULTATION_REWARD",
+          "formula": "consultationBonus = 75",
+          "inputs": {
+            "consultationBonus": 75
+          },
+          "result": 75
+        }
+      }
+    ],
+    "errors": [],
+    "resultingBalance": {
+      "total": 40375,
+      "available": 40375,
+      "used": 0,
+      "transactionCount": 17
+    },
+    "timestamp": "2025-07-07T09:57:30.891Z",
+    "originalEvent": {
+      "eventId": "evt_1751882250870",
+      "eventType": "CONSULTATION",
+      "timestamp": "2025-07-07T09:57:30.870Z",
+      "market": "TW",
+      "channel": "STORE",
+      "productLine": "PREMIUM_SERIES",
+      "consumerId": "user_tw_vip",
+      "context": {
+        "storeId": "STORE_TW_001",
+        "campaignCode": ""
+      },
+      "attributes": {
+        "skinTestDate": "2025-07-07",
+        "consultationType": "BEAUTY_CONSULTATION"
+      }
+    }
+  },
+  {
+    "consumerId": "user_tw_vip",
+    "eventId": "evt_1751882251424",
+    "eventType": "CONSULTATION",
+    "totalPointsAwarded": 75,
+    "pointBreakdown": [
+      {
+        "ruleId": "CONSULTATION_BONUS",
+        "points": 75,
+        "description": "Beauty consultation completion bonus (+75 MD)",
+        "ruleCategory": "CONSULTATION",
+        "computation": {
+          "calculationType": "CONSULTATION_REWARD",
+          "formula": "consultationBonus = 75",
+          "inputs": {
+            "consultationBonus": 75
+          },
+          "result": 75
+        }
+      }
+    ],
+    "errors": [],
+    "resultingBalance": {
+      "total": 40450,
+      "available": 40450,
+      "used": 0,
+      "transactionCount": 18
+    },
+    "timestamp": "2025-07-07T09:57:31.446Z",
+    "originalEvent": {
+      "eventId": "evt_1751882251424",
+      "eventType": "CONSULTATION",
+      "timestamp": "2025-07-07T09:57:31.424Z",
+      "market": "TW",
+      "channel": "STORE",
+      "productLine": "PREMIUM_SERIES",
+      "consumerId": "user_tw_vip",
+      "context": {
+        "storeId": "STORE_TW_001",
+        "campaignCode": ""
+      },
+      "attributes": {
+        "skinTestDate": "2025-07-07",
+        "consultationType": "BEAUTY_CONSULTATION"
+      }
+    }
+  },
+  {
+    "consumerId": "user_tw_vip",
+    "eventId": "evt_1751882251596",
+    "eventType": "CONSULTATION",
+    "totalPointsAwarded": 75,
+    "pointBreakdown": [
+      {
+        "ruleId": "CONSULTATION_BONUS",
+        "points": 75,
+        "description": "Beauty consultation completion bonus (+75 MD)",
+        "ruleCategory": "CONSULTATION",
+        "computation": {
+          "calculationType": "CONSULTATION_REWARD",
+          "formula": "consultationBonus = 75",
+          "inputs": {
+            "consultationBonus": 75
+          },
+          "result": 75
+        }
+      }
+    ],
+    "errors": [],
+    "resultingBalance": {
+      "total": 40525,
+      "available": 40525,
+      "used": 0,
+      "transactionCount": 19
+    },
+    "timestamp": "2025-07-07T09:57:31.623Z",
+    "originalEvent": {
+      "eventId": "evt_1751882251596",
+      "eventType": "CONSULTATION",
+      "timestamp": "2025-07-07T09:57:31.596Z",
+      "market": "TW",
+      "channel": "STORE",
+      "productLine": "PREMIUM_SERIES",
+      "consumerId": "user_tw_vip",
+      "context": {
+        "storeId": "STORE_TW_001",
+        "campaignCode": ""
+      },
+      "attributes": {
+        "skinTestDate": "2025-07-07",
+        "consultationType": "BEAUTY_CONSULTATION"
+      }
+    }
+  },
+  {
+    "consumerId": "user_tw_vip",
+    "eventId": "evt_1751882251761",
+    "eventType": "CONSULTATION",
+    "totalPointsAwarded": 75,
+    "pointBreakdown": [
+      {
+        "ruleId": "CONSULTATION_BONUS",
+        "points": 75,
+        "description": "Beauty consultation completion bonus (+75 MD)",
+        "ruleCategory": "CONSULTATION",
+        "computation": {
+          "calculationType": "CONSULTATION_REWARD",
+          "formula": "consultationBonus = 75",
+          "inputs": {
+            "consultationBonus": 75
+          },
+          "result": 75
+        }
+      }
+    ],
+    "errors": [],
+    "resultingBalance": {
+      "total": 40600,
+      "available": 40600,
+      "used": 0,
+      "transactionCount": 20
+    },
+    "timestamp": "2025-07-07T09:57:31.786Z",
+    "originalEvent": {
+      "eventId": "evt_1751882251761",
+      "eventType": "CONSULTATION",
+      "timestamp": "2025-07-07T09:57:31.761Z",
+      "market": "TW",
+      "channel": "STORE",
+      "productLine": "PREMIUM_SERIES",
+      "consumerId": "user_tw_vip",
+      "context": {
+        "storeId": "STORE_TW_001",
+        "campaignCode": ""
+      },
+      "attributes": {
+        "skinTestDate": "2025-07-07",
+        "consultationType": "BEAUTY_CONSULTATION"
+      }
+    }
+  },
+  {
+    "consumerId": "user_tw_vip",
+    "eventId": "evt_1751882251911",
+    "eventType": "CONSULTATION",
+    "totalPointsAwarded": 75,
+    "pointBreakdown": [
+      {
+        "ruleId": "CONSULTATION_BONUS",
+        "points": 75,
+        "description": "Beauty consultation completion bonus (+75 MD)",
+        "ruleCategory": "CONSULTATION",
+        "computation": {
+          "calculationType": "CONSULTATION_REWARD",
+          "formula": "consultationBonus = 75",
+          "inputs": {
+            "consultationBonus": 75
+          },
+          "result": 75
+        }
+      }
+    ],
+    "errors": [],
+    "resultingBalance": {
+      "total": 40675,
+      "available": 40675,
+      "used": 0,
+      "transactionCount": 21
+    },
+    "timestamp": "2025-07-07T09:57:31.933Z",
+    "originalEvent": {
+      "eventId": "evt_1751882251911",
+      "eventType": "CONSULTATION",
+      "timestamp": "2025-07-07T09:57:31.911Z",
+      "market": "TW",
+      "channel": "STORE",
+      "productLine": "PREMIUM_SERIES",
+      "consumerId": "user_tw_vip",
+      "context": {
+        "storeId": "STORE_TW_001",
+        "campaignCode": ""
+      },
+      "attributes": {
+        "skinTestDate": "2025-07-07",
+        "consultationType": "BEAUTY_CONSULTATION"
+      }
+    }
+  },
+  {
+    "consumerId": "user_tw_vip",
+    "eventId": "evt_1751882253929",
+    "eventType": "ADJUSTMENT",
+    "totalPointsAwarded": 1000,
+    "pointBreakdown": [
+      {
+        "ruleId": "INTERACTION_ADJUST_POINT_BY_MANAGER",
+        "points": 1000,
+        "description": "Manual account adjustment (+1000 MD)",
+        "ruleCategory": "MANUAL_ADJUSTMENT",
+        "computation": {
+          "calculationType": "MANUAL_ADJUSTMENT",
+          "formula": "adjustedPoints (manual override)",
+          "inputs": {},
+          "result": 1000
+        }
+      }
+    ],
+    "errors": [],
+    "resultingBalance": {
+      "total": 41675,
+      "available": 41675,
+      "used": 0,
+      "transactionCount": 22
+    },
+    "timestamp": "2025-07-07T09:57:33.951Z",
+    "originalEvent": {
+      "eventId": "evt_1751882253929",
+      "eventType": "ADJUSTMENT",
+      "timestamp": "2025-07-07T09:57:33.929Z",
+      "market": "TW",
+      "channel": "STORE",
+      "productLine": "PREMIUM_SERIES",
+      "consumerId": "user_tw_vip",
+      "context": {
+        "adminId": "ADMIN_001"
+      },
+      "attributes": {
+        "adjustedPoints": 1000,
+        "reason": "Customer service compensation"
+      }
+    }
+  },
+  {
+    "consumerId": "user_tw_vip",
+    "eventId": "evt_1751882254394",
+    "eventType": "ADJUSTMENT",
+    "totalPointsAwarded": 1000,
+    "pointBreakdown": [
+      {
+        "ruleId": "INTERACTION_ADJUST_POINT_BY_MANAGER",
+        "points": 1000,
+        "description": "Manual account adjustment (+1000 MD)",
+        "ruleCategory": "MANUAL_ADJUSTMENT",
+        "computation": {
+          "calculationType": "MANUAL_ADJUSTMENT",
+          "formula": "adjustedPoints (manual override)",
+          "inputs": {},
+          "result": 1000
+        }
+      }
+    ],
+    "errors": [],
+    "resultingBalance": {
+      "total": 42675,
+      "available": 42675,
+      "used": 0,
+      "transactionCount": 23
+    },
+    "timestamp": "2025-07-07T09:57:34.419Z",
+    "originalEvent": {
+      "eventId": "evt_1751882254394",
+      "eventType": "ADJUSTMENT",
+      "timestamp": "2025-07-07T09:57:34.394Z",
+      "market": "TW",
+      "channel": "STORE",
+      "productLine": "PREMIUM_SERIES",
+      "consumerId": "user_tw_vip",
+      "context": {
+        "adminId": "ADMIN_001"
+      },
+      "attributes": {
+        "adjustedPoints": 1000,
+        "reason": "Customer service compensation"
+      }
+    }
+  },
+  {
+    "consumerId": "user_tw_vip",
+    "eventId": "evt_1751882254694",
+    "eventType": "ADJUSTMENT",
+    "totalPointsAwarded": 1000,
+    "pointBreakdown": [
+      {
+        "ruleId": "INTERACTION_ADJUST_POINT_BY_MANAGER",
+        "points": 1000,
+        "description": "Manual account adjustment (+1000 MD)",
+        "ruleCategory": "MANUAL_ADJUSTMENT",
+        "computation": {
+          "calculationType": "MANUAL_ADJUSTMENT",
+          "formula": "adjustedPoints (manual override)",
+          "inputs": {},
+          "result": 1000
+        }
+      }
+    ],
+    "errors": [],
+    "resultingBalance": {
+      "total": 43675,
+      "available": 43675,
+      "used": 0,
+      "transactionCount": 24
+    },
+    "timestamp": "2025-07-07T09:57:34.721Z",
+    "originalEvent": {
+      "eventId": "evt_1751882254694",
+      "eventType": "ADJUSTMENT",
+      "timestamp": "2025-07-07T09:57:34.694Z",
+      "market": "TW",
+      "channel": "STORE",
+      "productLine": "PREMIUM_SERIES",
+      "consumerId": "user_tw_vip",
+      "context": {
+        "adminId": "ADMIN_001"
+      },
+      "attributes": {
+        "adjustedPoints": 1000,
+        "reason": "Customer service compensation"
+      }
+    }
+  },
+  {
+    "consumerId": "user_tw_vip",
+    "eventId": "evt_1751882261607",
+    "eventType": "REDEMPTION",
+    "totalPointsAwarded": -500,
+    "pointBreakdown": [
+      {
+        "ruleId": "REDEMPTION_DEDUCTION",
+        "points": -500,
+        "description": "Points redeemed for rewards (-500 MD)",
+        "ruleCategory": "REDEMPTION",
+        "computation": {
+          "calculationType": "POINT_DEDUCTION",
+          "formula": "redemptionPoints = -500",
+          "inputs": {
+            "redemptionPoints": 500
+          },
+          "result": -500
+        }
+      }
+    ],
+    "errors": [],
+    "resultingBalance": {
+      "total": 43675,
+      "available": 43175,
+      "used": 500,
+      "transactionCount": 25
+    },
+    "timestamp": "2025-07-07T09:57:41.631Z",
+    "originalEvent": {
+      "eventId": "evt_1751882261607",
+      "eventType": "REDEMPTION",
+      "timestamp": "2025-07-07T09:57:41.607Z",
+      "market": "TW",
+      "channel": "STORE",
+      "productLine": "PREMIUM_SERIES",
+      "consumerId": "user_tw_vip",
+      "context": {
+        "storeId": "STORE_TW_001",
+        "campaignCode": "",
+        "adminId": "ADMIN_001"
+      },
+      "attributes": {
+        "redemptionPoints": 500
+      }
+    }
   }
 ]
