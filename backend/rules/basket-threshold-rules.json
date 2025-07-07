@@ -20,7 +20,7 @@
             "value": "HK"
           },
           {
-            "fact": "attributes.srpAmount",
+            "fact": "attributes.amount",
             "operator": "greaterThanInclusive",
             "value": 5000
           }
@@ -40,7 +40,7 @@
           "value": "HK"
         },
         {
-          "fact": "attributes.srpAmount",
+          "fact": "attributes.amount",
           "operator": "greaterThanInclusive",
           "value": 5000
         }
@@ -72,7 +72,7 @@
           "value": "HK"
         },
         {
-          "fact": "attributes.srpAmount",
+          "fact": "attributes.amount",
           "operator": "greaterThanInclusive",
           "value": 10000
         }
@@ -103,7 +103,7 @@
           "value": "TW"
         },
         {
-          "fact": "attributes.srpAmount",
+          "fact": "attributes.amount",
           "operator": "greaterThanInclusive",
           "value": 15000
         }

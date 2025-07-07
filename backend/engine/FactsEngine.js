@@ -44,9 +44,7 @@ class FactsEngine {
     this.factDefinitions.set('attributes.currency', (params, almanac) => {
       return almanac.factValue('attributes').then(attributes => attributes?.currency);
     });
-    this.factDefinitions.set('attributes.srpAmount', (params, almanac) => {
-      return almanac.factValue('attributes').then(attributes => attributes?.srpAmount);
-    });
+    // Amount fact - the only field we need for calculations
     this.factDefinitions.set('attributes.skuList', (params, almanac) => {
       return almanac.factValue('attributes').then(attributes => attributes?.skuList || []);
     });
@@ -236,29 +234,27 @@ class FactsEngine {
     });
     
     this.factDefinitions.set('discountedAmount', (params, almanac) => {
-      return almanac.factValue('attributes').then(attributes => attributes?.srpAmount || attributes?.amount || 0);
+      return almanac.factValue('attributes').then(attributes => attributes?.amount || 0); // No SRP, just use amount
     });
 
     // Amount-based facts (pure functions with calculations)
     this.factDefinitions.set('amountInBasePoints', (params) => {
       const market = params.market;
       const amount = params.attributes?.amount || 0;
-      const srpAmount = params.attributes?.srpAmount || 0;
       
       if (market === 'JP') {
         return Math.floor(amount * 0.1);
       } else {
-        return Math.floor(srpAmount || amount);
+        return Math.floor(amount); // Use actual amount
       }
     });
 
     this.factDefinitions.set('isHighValuePurchase', (params) => {
       const market = params.market;
       const amount = params.attributes?.amount || 0;
-      const srpAmount = params.attributes?.srpAmount || 0;
       
       const thresholds = { JP: 5000, HK: 3000, TW: 3000 };
-      const baseAmount = market === 'JP' ? amount : (srpAmount || amount);
+      const baseAmount = amount; // Use actual amount
       
       return baseAmount >= (thresholds[market] || 3000);
     });

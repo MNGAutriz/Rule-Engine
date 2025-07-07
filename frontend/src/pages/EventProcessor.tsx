@@ -46,7 +46,6 @@ const EventProcessor: React.FC = () => {
     attributes: {
       amount: 1500,
       currency: 'HKD',
-      srpAmount: 1500,
       skuList: ['SK_HK_001']
     }
   });
@@ -75,7 +74,6 @@ const EventProcessor: React.FC = () => {
             ...prev.attributes,
             currency: hkDefaults.currency,
             amount: hkDefaults.defaultAmount,
-            srpAmount: hkDefaults.defaultAmount,
             skuList: hkDefaults.skus.slice(0, 1) || ['SK_HK_001']
           }
         }));
@@ -109,16 +107,7 @@ const EventProcessor: React.FC = () => {
         updated.attributes = {
           ...updated.attributes,
           skuList: marketDefaults.skus.slice(0, 1) || [`SK_${value}_001`],
-          amount: marketDefaults.defaultAmount,
-          srpAmount: marketDefaults.defaultAmount
-        };
-      }
-      
-      // Auto-set SRP amount when amount changes
-      if (field === 'attributes' && value?.amount) {
-        updated.attributes = {
-          ...updated.attributes,
-          srpAmount: value.amount
+          amount: marketDefaults.defaultAmount
         };
       }
       
@@ -129,7 +118,6 @@ const EventProcessor: React.FC = () => {
             updated.attributes = {
               ...updated.attributes,
               amount: updated.attributes?.amount || (defaults?.marketDefaults[updated.market || 'HK']?.defaultAmount || 1500),
-              srpAmount: updated.attributes?.srpAmount || (defaults?.marketDefaults[updated.market || 'HK']?.defaultAmount || 1500),
               currency: updated.attributes?.currency || (defaults?.marketDefaults[updated.market || 'HK']?.currency || 'HKD'),
               skuList: updated.attributes?.skuList || (defaults?.marketDefaults[updated.market || 'HK']?.skus.slice(0, 1) || ['SK_HK_001'])
             };
@@ -207,10 +195,9 @@ const EventProcessor: React.FC = () => {
       // Auto-map related fields
       if (parent === 'attributes') {
         if (field === 'amount' && typeof value === 'number') {
-          // Auto-set SRP amount to match amount (unless manually changed)
+          // Auto-set attributes if not set
           updated.attributes = {
-            ...updated.attributes,
-            srpAmount: updated.attributes?.srpAmount === prev.attributes?.amount ? value : updated.attributes?.srpAmount || value
+            ...updated.attributes
           };
         }
         
@@ -226,8 +213,7 @@ const EventProcessor: React.FC = () => {
           const defaultAmount = amountMap[value as keyof typeof amountMap] || 1500;
           updated.attributes = {
             ...updated.attributes,
-            amount: updated.attributes?.amount || defaultAmount,
-            srpAmount: updated.attributes?.srpAmount || defaultAmount
+            amount: updated.attributes?.amount || defaultAmount
           };
         }
       }
@@ -255,9 +241,6 @@ const EventProcessor: React.FC = () => {
         }
         if (!eventData.attributes?.currency) {
           throw new Error('Currency is required for Purchase events');
-        }
-        if (!eventData.attributes?.srpAmount) {
-          throw new Error('SRP Amount is required for Purchase events');
         }
         if (!eventData.attributes?.skuList || eventData.attributes.skuList.length === 0) {
           throw new Error('SKU List is required for Purchase events');
@@ -368,7 +351,6 @@ const EventProcessor: React.FC = () => {
       attributes: {
         amount: 1500,
         currency: 'HKD',
-        srpAmount: 1500,
         skuList: ['SK_HK_001']
       }
     };
@@ -631,16 +613,6 @@ const EventProcessor: React.FC = () => {
                           <SelectItem value="EUR">Euro (EUR)</SelectItem>
                         </SelectContent>
                       </Select>
-                    </div>
-                    <div className="space-y-2">
-                      <Label className="text-sm font-semibold text-gray-700">SRP Amount</Label>
-                      <Input
-                        type="number"
-                        value={eventData.attributes?.srpAmount || ''}
-                        onChange={(e) => handleNestedChange('attributes', 'srpAmount', Number(e.target.value))}
-                        className="border-black focus:border-black"
-                        placeholder="1500"
-                      />
                     </div>
                     <div className="space-y-2">
                       <Label className="text-sm font-semibold text-gray-700">SKU List</Label>

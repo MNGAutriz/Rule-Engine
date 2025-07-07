@@ -260,7 +260,7 @@ class RulesEngine {
         market: eventData.market || cdpData.market,
         // Set transaction amounts from attributes for purchase calculations
         transactionAmount: eventData.attributes?.amount || 0,
-        discountedAmount: eventData.attributes?.srpAmount || eventData.attributes?.amount || 0,
+        discountedAmount: eventData.attributes?.amount || 0, // No SRP, just use amount
         // Merge recycling data - for RECYCLE events, preserve event's recycledCount
         attributes: {
           ...eventData.attributes,

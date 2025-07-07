@@ -45,7 +45,7 @@
       "type": "ORDER_BASE_POINT",
       "params": {
         "standardRate": 1.0,
-        "description": "HK/TW base purchase - 1 MD per 1 HKD/TWD SRP"
+        "description": "HK/TW base purchase - 1 MD per 1 HKD/TWD spent"
       }
     },
     "priority": 10

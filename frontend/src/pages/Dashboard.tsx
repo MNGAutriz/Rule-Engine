@@ -150,7 +150,6 @@ const Dashboard: React.FC = () => {
       attributes: {
         amount: selectedMarket === 'HK' ? 1500 : selectedMarket === 'JP' ? 150000 : 45000,
         currency: selectedMarket === 'HK' ? 'HKD' : selectedMarket === 'JP' ? 'JPY' : 'TWD',
-        srpAmount: selectedMarket === 'HK' ? 1500 : selectedMarket === 'JP' ? 150000 : 45000,
         skuList: [`SK_${selectedMarket}_001`]
       }
     };
