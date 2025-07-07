@@ -182,33 +182,73 @@ export const consumersApi = {
     return response.data;
   },
 
-  // Get all consumers (mock implementation for dashboard)
+  // Get all consumers (enhanced implementation for dashboard)
   getAllConsumers: async (): Promise<Consumer[]> => {
-    // Since there's no direct endpoint, we'll fetch some sample consumers
-    const sampleConsumerIds = ['user_hk_standard', 'user_hk_vip', 'user_jp_standard', 'user_tw_essence_lover', 'user_tw_vip'];
-    const consumers = [];
-    
-    for (const consumerId of sampleConsumerIds) {
-      try {
-        const points = await consumersApi.getConsumerPoints(consumerId);
-        consumers.push({
-          consumerId,
-          profile: {
-            market: points.market || 'HK',
-            tier: consumerId.includes('vip') ? 'VIP' : 'STANDARD'
-          },
-          balance: {
-            total: points.total,
-            available: points.available,
-            used: points.used,
-            accountVersion: points.accountVersion
-          }
-        });
-      } catch (error) {
-        console.warn(`Failed to fetch consumer ${consumerId}:`, error);
+    try {
+      // First, get defaults to know available markets and sample consumer IDs
+      const defaults = await defaultsApi.getDefaults();
+      const allConsumerIds: string[] = [];
+      
+      // Collect all consumer IDs from market defaults
+      Object.values(defaults.marketDefaults).forEach(marketData => {
+        allConsumerIds.push(...marketData.consumerIds);
+      });
+      
+      // Remove duplicates
+      const uniqueConsumerIds = [...new Set(allConsumerIds)];
+      const consumers: Consumer[] = [];
+      
+      // Fetch each consumer's data
+      for (const consumerId of uniqueConsumerIds) {
+        try {
+          const points = await consumersApi.getConsumerPoints(consumerId);
+          consumers.push({
+            consumerId,
+            profile: {
+              market: points.market || 'HK',
+              tier: consumerId.includes('vip') ? 'VIP' : 'STANDARD'
+            },
+            balance: {
+              total: points.total,
+              available: points.available,
+              used: points.used,
+              accountVersion: points.accountVersion
+            }
+          });
+        } catch (error) {
+          console.warn(`Failed to fetch consumer ${consumerId}:`, error);
+        }
       }
+      
+      return consumers;
+    } catch (error) {
+      console.error('Error getting all consumers:', error);
+      // Fallback to sample consumers if defaults API fails
+      const sampleConsumerIds = ['user_hk_standard', 'user_hk_vip', 'user_jp_standard', 'user_tw_essence_lover', 'user_tw_vip'];
+      const consumers = [];
+      
+      for (const consumerId of sampleConsumerIds) {
+        try {
+          const points = await consumersApi.getConsumerPoints(consumerId);
+          consumers.push({
+            consumerId,
+            profile: {
+              market: points.market || 'HK',
+              tier: consumerId.includes('vip') ? 'VIP' : 'STANDARD'
+            },
+            balance: {
+              total: points.total,
+              available: points.available,
+              used: points.used,
+              accountVersion: points.accountVersion
+            }
+          });
+        } catch (error) {
+          console.warn(`Failed to fetch consumer ${consumerId}:`, error);
+        }
+      }
+      return consumers;
     }
-    return consumers;
   },
 
   // Get consumer by ID

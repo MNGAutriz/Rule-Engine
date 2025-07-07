@@ -13,7 +13,7 @@
       "firstPurchaseDate": "2024-01-20T10:00:00Z",
       "totalPurchases": 25,
       "totalSpent": 50000,
-      "lastPurchaseDate": "2025-07-07T03:54:31.091Z",
+      "lastPurchaseDate": "2025-07-07T04:00:46.250Z",
       "consultationsCompleted": 5,
       "lastConsultationDate": "2025-06-15T14:30:00Z",
       "recyclingActivity": {
@@ -34,10 +34,10 @@
       "skinType": "COMBINATION"
     },
     "balance": {
-      "total": 9289574,
-      "available": 9289574,
+      "total": 9293324,
+      "available": 9293324,
       "used": 0,
-      "accountVersion": 113
+      "accountVersion": 115
     }
   },
   "user_hk_standard": {
@@ -76,7 +76,7 @@
       "total": 139148,
       "available": 139148,
       "used": 0,
-      "accountVersion": 86
+      "accountVersion": 87
     }
   },
   "user_tw_vip": {
@@ -193,10 +193,10 @@
       "skinType": "NORMAL"
     },
     "balance": {
-      "total": 20000,
-      "available": 20000,
+      "total": 20150,
+      "available": 20150,
       "used": 0,
-      "accountVersion": 14
+      "accountVersion": 15
     }
   },
   "user_jp_standard": {

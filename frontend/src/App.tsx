@@ -3,7 +3,7 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import Dashboard from '@/pages/Dashboard';
 import EventProcessor from '@/pages/EventProcessor';
 import CampaignManager from '@/pages/CampaignManager';
-import { Settings, Play, BarChart3, Menu, Calendar, X } from 'lucide-react';
+import { Crown, Play, BarChart3, Menu, Calendar, X } from 'lucide-react';
 
 const App: React.FC = () => {
   const [currentPage, setCurrentPage] = useState<'dashboard' | 'events' | 'campaigns'>('dashboard');
@@ -94,7 +94,7 @@ const App: React.FC = () => {
                   onClick={toggleSidebar}
                   className="p-2 rounded-lg hover:bg-blue-50 transition-all duration-300 transform hover:scale-110 focus:outline-none cursor-pointer"
                 >
-                  <Settings className="h-6 w-6 text-blue-700 drop-shadow-sm group-hover:text-blue-800 transition-colors duration-300" />
+                  <Crown className="h-6 w-6 text-blue-700 drop-shadow-sm group-hover:text-blue-800 transition-colors duration-300" />
                   <div className="absolute -top-1 -right-1 w-3 h-3 bg-green-500 rounded-full animate-pulse"></div>
                 </button>
               </div>
