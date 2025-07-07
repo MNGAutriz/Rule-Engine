@@ -46127,5 +46127,572 @@
         "redemptionPoints": 500
       }
     }
+  },
+  {
+    "consumerId": "user_hk_vip_birthday",
+    "eventId": "evt_1751892960864",
+    "eventType": "PURCHASE",
+    "totalPointsAwarded": 3750,
+    "pointBreakdown": [
+      {
+        "ruleId": "ORDER_BASE_POINT",
+        "points": 1500,
+        "description": "Base purchase reward for HK market (+1500 MD)",
+        "ruleCategory": "BASE_PURCHASE",
+        "computation": {
+          "calculationType": "RATE_MULTIPLICATION",
+          "formula": "floor(amount × 1)",
+          "inputs": {
+            "standardRate": 1
+          },
+          "result": 1500
+        }
+      },
+      {
+        "ruleId": "FIRST_PURCHASE_BIRTH_MONTH_BONUS",
+        "points": 150,
+        "description": "Birthday month special bonus (+150 MD)",
+        "ruleCategory": "PERSONAL_MILESTONE",
+        "computation": {
+          "calculationType": "TIMED_MULTIPLIER",
+          "formula": "floor(floor(amount × 1) × (1.1 - 1.0))",
+          "inputs": {
+            "multiplier": 1.1
+          },
+          "result": 150
+        }
+      },
+      {
+        "ruleId": "FLEXIBLE_VIP_MULTIPLIER",
+        "points": 1800,
+        "description": "VIP tier multiplier bonus for HK (+1800 MD)",
+        "ruleCategory": "VIP_TIER",
+        "computation": {
+          "calculationType": "TIER_MULTIPLIER",
+          "formula": "floor(floor(amount × 1) × (2 - 1.0))",
+          "inputs": {
+            "multiplier": 2
+          },
+          "result": 1800
+        }
+      },
+      {
+        "ruleId": "FLEXIBLE_CAMPAIGN_BONUS",
+        "points": 300,
+        "description": "Special campaign bonus for HK (+300 MD)",
+        "ruleCategory": "CAMPAIGN",
+        "computation": {
+          "calculationType": "CAMPAIGN_BONUS",
+          "formula": "fixedBonus = 300",
+          "inputs": {
+            "fixedBonus": 300
+          },
+          "result": 300
+        }
+      }
+    ],
+    "errors": [],
+    "resultingBalance": {
+      "total": 9688123,
+      "available": 9623999,
+      "used": 64124,
+      "transactionCount": 167
+    },
+    "timestamp": "2025-07-07T12:56:00.902Z",
+    "originalEvent": {
+      "eventId": "evt_1751892960864",
+      "eventType": "PURCHASE",
+      "timestamp": "2025-07-07T12:56:00.864Z",
+      "market": "HK",
+      "channel": "STORE",
+      "productLine": "PREMIUM_SERIES",
+      "consumerId": "user_hk_vip_birthday",
+      "context": {
+        "storeId": "STORE_HK_001",
+        "campaignCode": ""
+      },
+      "attributes": {
+        "amount": 1500,
+        "currency": "HKD",
+        "skuList": [
+          "SKU_HK_059"
+        ]
+      }
+    }
+  },
+  {
+    "consumerId": "user_hk_vip_birthday",
+    "eventId": "evt_1751893464870",
+    "eventType": "PURCHASE",
+    "totalPointsAwarded": 3750,
+    "pointBreakdown": [
+      {
+        "ruleId": "ORDER_BASE_POINT",
+        "points": 1500,
+        "description": "Base purchase reward for HK market (+1500 MD)",
+        "ruleCategory": "BASE_PURCHASE",
+        "computation": {
+          "calculationType": "RATE_MULTIPLICATION",
+          "formula": "floor(amount × 1)",
+          "inputs": {
+            "standardRate": 1
+          },
+          "result": 1500
+        }
+      },
+      {
+        "ruleId": "FIRST_PURCHASE_BIRTH_MONTH_BONUS",
+        "points": 150,
+        "description": "Birthday month special bonus (+150 MD)",
+        "ruleCategory": "PERSONAL_MILESTONE",
+        "computation": {
+          "calculationType": "TIMED_MULTIPLIER",
+          "formula": "floor(floor(amount × 1) × (1.1 - 1.0))",
+          "inputs": {
+            "multiplier": 1.1
+          },
+          "result": 150
+        }
+      },
+      {
+        "ruleId": "FLEXIBLE_VIP_MULTIPLIER",
+        "points": 1800,
+        "description": "VIP tier multiplier bonus for HK (+1800 MD)",
+        "ruleCategory": "VIP_TIER",
+        "computation": {
+          "calculationType": "TIER_MULTIPLIER",
+          "formula": "floor(floor(amount × 1) × (2 - 1.0))",
+          "inputs": {
+            "multiplier": 2
+          },
+          "result": 1800
+        }
+      },
+      {
+        "ruleId": "FLEXIBLE_CAMPAIGN_BONUS",
+        "points": 300,
+        "description": "Special campaign bonus for HK (+300 MD)",
+        "ruleCategory": "CAMPAIGN",
+        "computation": {
+          "calculationType": "CAMPAIGN_BONUS",
+          "formula": "fixedBonus = 300",
+          "inputs": {
+            "fixedBonus": 300
+          },
+          "result": 300
+        }
+      }
+    ],
+    "errors": [],
+    "resultingBalance": {
+      "total": 9691873,
+      "available": 9627749,
+      "used": 64124,
+      "transactionCount": 168
+    },
+    "timestamp": "2025-07-07T13:04:24.913Z",
+    "originalEvent": {
+      "eventId": "evt_1751893464870",
+      "eventType": "PURCHASE",
+      "timestamp": "2025-07-07T13:04:24.870Z",
+      "market": "HK",
+      "channel": "STORE",
+      "productLine": "PREMIUM_SERIES",
+      "consumerId": "user_hk_vip_birthday",
+      "context": {
+        "storeId": "STORE_HK_001",
+        "campaignCode": ""
+      },
+      "attributes": {
+        "amount": 1500,
+        "currency": "HKD",
+        "skuList": [
+          "SKU_HK_059"
+        ]
+      }
+    }
+  },
+  {
+    "consumerId": "user_hk_vip_birthday",
+    "eventId": "evt_1751893732419",
+    "eventType": "REGISTRATION",
+    "totalPointsAwarded": 0,
+    "pointBreakdown": [],
+    "errors": [],
+    "resultingBalance": {
+      "total": 9691873,
+      "available": 9627749,
+      "used": 64124,
+      "transactionCount": 169
+    },
+    "timestamp": "2025-07-07T13:08:52.468Z",
+    "originalEvent": {
+      "eventId": "evt_1751893732419",
+      "eventType": "REGISTRATION",
+      "timestamp": "2025-07-07T13:08:52.419Z",
+      "market": "HK",
+      "channel": "STORE",
+      "productLine": "PREMIUM_SERIES",
+      "consumerId": "user_hk_vip_birthday",
+      "context": {
+        "storeId": "",
+        "campaignCode": ""
+      },
+      "attributes": {}
+    }
+  },
+  {
+    "consumerId": "user_jp_vip",
+    "eventId": "evt_1751893736192",
+    "eventType": "REGISTRATION",
+    "totalPointsAwarded": 150,
+    "pointBreakdown": [
+      {
+        "ruleId": "INTERACTION_REGISTRY_POINT",
+        "points": 150,
+        "description": "Welcome bonus for JP registration (+150 MD)",
+        "ruleCategory": "REGISTRATION",
+        "computation": {
+          "calculationType": "FIXED_BONUS",
+          "formula": "registrationBonus = 150",
+          "inputs": {
+            "registrationBonus": 150
+          },
+          "result": 150
+        }
+      }
+    ],
+    "errors": [],
+    "resultingBalance": {
+      "total": 60025,
+      "available": 60025,
+      "used": 0,
+      "transactionCount": 33
+    },
+    "timestamp": "2025-07-07T13:08:56.220Z",
+    "originalEvent": {
+      "eventId": "evt_1751893736192",
+      "eventType": "REGISTRATION",
+      "timestamp": "2025-07-07T13:08:56.192Z",
+      "market": "JP",
+      "channel": "STORE",
+      "productLine": "PREMIUM_SERIES",
+      "consumerId": "user_jp_vip",
+      "context": {
+        "storeId": "STORE_JP_001",
+        "campaignCode": ""
+      },
+      "attributes": {}
+    }
+  },
+  {
+    "consumerId": "user_jp_vip",
+    "eventId": "evt_1751893739223",
+    "eventType": "PURCHASE",
+    "totalPointsAwarded": 37500,
+    "pointBreakdown": [
+      {
+        "ruleId": "ORDER_BASE_POINT",
+        "points": 15000,
+        "description": "Base purchase reward for JP market (+15000 MD)",
+        "ruleCategory": "BASE_PURCHASE",
+        "computation": {
+          "calculationType": "RATE_MULTIPLICATION",
+          "formula": "floor(amount × 0.1)",
+          "inputs": {
+            "conversionRate": 0.1
+          },
+          "result": 15000
+        }
+      },
+      {
+        "ruleId": "ORDER_MULTIPLE_POINT_LIMIT",
+        "points": 7500,
+        "description": "Repeat purchase bonus for JP (+7500 MD)",
+        "ruleCategory": "PURCHASE_BONUS",
+        "computation": {
+          "calculationType": "MULTIPLIER_BONUS",
+          "formula": "floor(floor(amount × 0) × (1.5 - 1.0))",
+          "inputs": {
+            "multiplier": 1.5
+          },
+          "result": 7500
+        }
+      },
+      {
+        "ruleId": "FLEXIBLE_VIP_MULTIPLIER",
+        "points": 15000,
+        "description": "VIP tier multiplier bonus for JP (+15000 MD)",
+        "ruleCategory": "VIP_TIER",
+        "computation": {
+          "calculationType": "TIER_MULTIPLIER",
+          "formula": "floor(floor(amount × 1) × (2 - 1.0))",
+          "inputs": {
+            "multiplier": 2
+          },
+          "result": 15000
+        }
+      }
+    ],
+    "errors": [],
+    "resultingBalance": {
+      "total": 97525,
+      "available": 97525,
+      "used": 0,
+      "transactionCount": 34
+    },
+    "timestamp": "2025-07-07T13:08:59.254Z",
+    "originalEvent": {
+      "eventId": "evt_1751893739223",
+      "eventType": "PURCHASE",
+      "timestamp": "2025-07-07T13:08:59.223Z",
+      "market": "JP",
+      "channel": "STORE",
+      "productLine": "PREMIUM_SERIES",
+      "consumerId": "user_jp_vip",
+      "context": {
+        "storeId": "STORE_JP_001",
+        "campaignCode": ""
+      },
+      "attributes": {
+        "currency": "JPY",
+        "skuList": [
+          "SKU_JP_052"
+        ],
+        "amount": 150000
+      }
+    }
+  },
+  {
+    "consumerId": "user_jp_vip",
+    "eventId": "evt_1751893748725",
+    "eventType": "CONSULTATION",
+    "totalPointsAwarded": 75,
+    "pointBreakdown": [
+      {
+        "ruleId": "CONSULTATION_BONUS",
+        "points": 75,
+        "description": "Beauty consultation completion bonus (+75 MD)",
+        "ruleCategory": "CONSULTATION",
+        "computation": {
+          "calculationType": "CONSULTATION_REWARD",
+          "formula": "consultationBonus = 75",
+          "inputs": {
+            "consultationBonus": 75
+          },
+          "result": 75
+        }
+      }
+    ],
+    "errors": [],
+    "resultingBalance": {
+      "total": 97600,
+      "available": 97600,
+      "used": 0,
+      "transactionCount": 35
+    },
+    "timestamp": "2025-07-07T13:09:08.749Z",
+    "originalEvent": {
+      "eventId": "evt_1751893748725",
+      "eventType": "CONSULTATION",
+      "timestamp": "2025-07-07T13:09:08.725Z",
+      "market": "JP",
+      "channel": "STORE",
+      "productLine": "PREMIUM_SERIES",
+      "consumerId": "user_jp_vip",
+      "context": {
+        "storeId": "STORE_JP_001",
+        "campaignCode": ""
+      },
+      "attributes": {
+        "skinTestDate": "2025-07-07",
+        "consultationType": "BEAUTY_CONSULTATION"
+      }
+    }
+  },
+  {
+    "consumerId": "user_jp_vip",
+    "eventId": "evt_1751893759158",
+    "eventType": "ADJUSTMENT",
+    "totalPointsAwarded": 1000,
+    "pointBreakdown": [
+      {
+        "ruleId": "INTERACTION_ADJUST_POINT_BY_MANAGER",
+        "points": 1000,
+        "description": "Manual account adjustment (+1000 MD)",
+        "ruleCategory": "MANUAL_ADJUSTMENT",
+        "computation": {
+          "calculationType": "MANUAL_ADJUSTMENT",
+          "formula": "adjustedPoints (manual override)",
+          "inputs": {},
+          "result": 1000
+        }
+      }
+    ],
+    "errors": [],
+    "resultingBalance": {
+      "total": 98600,
+      "available": 98600,
+      "used": 0,
+      "transactionCount": 36
+    },
+    "timestamp": "2025-07-07T13:09:19.186Z",
+    "originalEvent": {
+      "eventId": "evt_1751893759158",
+      "eventType": "ADJUSTMENT",
+      "timestamp": "2025-07-07T13:09:19.158Z",
+      "market": "JP",
+      "channel": "STORE",
+      "productLine": "PREMIUM_SERIES",
+      "consumerId": "user_jp_vip",
+      "context": {
+        "adminId": "ADMIN_001"
+      },
+      "attributes": {
+        "adjustedPoints": 1000,
+        "reason": "Customer service compensation"
+      }
+    }
+  },
+  {
+    "consumerId": "user_jp_vip",
+    "eventId": "evt_1751893763527",
+    "eventType": "REDEMPTION",
+    "totalPointsAwarded": -500,
+    "pointBreakdown": [
+      {
+        "ruleId": "REDEMPTION_DEDUCTION",
+        "points": -500,
+        "description": "Points redeemed for rewards (-500 MD)",
+        "ruleCategory": "REDEMPTION",
+        "computation": {
+          "calculationType": "POINT_DEDUCTION",
+          "formula": "redemptionPoints = -500",
+          "inputs": {
+            "redemptionPoints": 500
+          },
+          "result": -500
+        }
+      }
+    ],
+    "errors": [],
+    "resultingBalance": {
+      "total": 98600,
+      "available": 98100,
+      "used": 500,
+      "transactionCount": 37
+    },
+    "timestamp": "2025-07-07T13:09:23.565Z",
+    "originalEvent": {
+      "eventId": "evt_1751893763527",
+      "eventType": "REDEMPTION",
+      "timestamp": "2025-07-07T13:09:23.527Z",
+      "market": "JP",
+      "channel": "STORE",
+      "productLine": "PREMIUM_SERIES",
+      "consumerId": "user_jp_vip",
+      "context": {
+        "storeId": "STORE_JP_001",
+        "campaignCode": "",
+        "adminId": "ADMIN_001"
+      },
+      "attributes": {
+        "redemptionPoints": 500
+      }
+    }
+  },
+  {
+    "consumerId": "user_jp_vip",
+    "eventId": "evt_1751893764295",
+    "eventType": "REDEMPTION",
+    "totalPointsAwarded": -500,
+    "pointBreakdown": [
+      {
+        "ruleId": "REDEMPTION_DEDUCTION",
+        "points": -500,
+        "description": "Points redeemed for rewards (-500 MD)",
+        "ruleCategory": "REDEMPTION",
+        "computation": {
+          "calculationType": "POINT_DEDUCTION",
+          "formula": "redemptionPoints = -500",
+          "inputs": {
+            "redemptionPoints": 500
+          },
+          "result": -500
+        }
+      }
+    ],
+    "errors": [],
+    "resultingBalance": {
+      "total": 98600,
+      "available": 97600,
+      "used": 1000,
+      "transactionCount": 38
+    },
+    "timestamp": "2025-07-07T13:09:24.331Z",
+    "originalEvent": {
+      "eventId": "evt_1751893764295",
+      "eventType": "REDEMPTION",
+      "timestamp": "2025-07-07T13:09:24.295Z",
+      "market": "JP",
+      "channel": "STORE",
+      "productLine": "PREMIUM_SERIES",
+      "consumerId": "user_jp_vip",
+      "context": {
+        "storeId": "STORE_JP_001",
+        "campaignCode": "",
+        "adminId": "ADMIN_001"
+      },
+      "attributes": {
+        "redemptionPoints": 500
+      }
+    }
+  },
+  {
+    "consumerId": "user_jp_vip",
+    "eventId": "evt_1751893771934",
+    "eventType": "REDEMPTION",
+    "totalPointsAwarded": -9999,
+    "pointBreakdown": [
+      {
+        "ruleId": "REDEMPTION_DEDUCTION",
+        "points": -9999,
+        "description": "Points redeemed for rewards (-9999 MD)",
+        "ruleCategory": "REDEMPTION",
+        "computation": {
+          "calculationType": "POINT_DEDUCTION",
+          "formula": "redemptionPoints = -9999",
+          "inputs": {
+            "redemptionPoints": 9999
+          },
+          "result": -9999
+        }
+      }
+    ],
+    "errors": [],
+    "resultingBalance": {
+      "total": 98600,
+      "available": 87601,
+      "used": 10999,
+      "transactionCount": 39
+    },
+    "timestamp": "2025-07-07T13:09:31.967Z",
+    "originalEvent": {
+      "eventId": "evt_1751893771934",
+      "eventType": "REDEMPTION",
+      "timestamp": "2025-07-07T13:09:31.934Z",
+      "market": "JP",
+      "channel": "STORE",
+      "productLine": "PREMIUM_SERIES",
+      "consumerId": "user_jp_vip",
+      "context": {
+        "storeId": "STORE_JP_001",
+        "campaignCode": "",
+        "adminId": "ADMIN_001"
+      },
+      "attributes": {
+        "redemptionPoints": 9999
+      }
+    }
   }
 ]

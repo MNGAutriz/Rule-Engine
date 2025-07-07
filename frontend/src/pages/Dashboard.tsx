@@ -2,6 +2,9 @@ import React, { useState, useEffect } from 'react';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
+import LoadingSpinner from '@/components/LoadingSpinner';
+import RuleCard from '@/components/RuleCard';
+import StatsGrid from '@/components/StatsGrid';
 import { rulesApi, eventsApi, consumersApi, defaultsApi } from '@/services/api';
 import type { Rule, EventData } from '@/services/api';
 import { 
@@ -16,8 +19,6 @@ import {
   Activity,
   ShoppingBasket,
   CheckCircle,
-  Clock,
-  Eye,
   Shield,
   FileText,
   Globe,
@@ -80,7 +81,6 @@ const Dashboard: React.FC = () => {
         const defaults = await defaultsApi.getDefaults();
         setStats(prev => ({ ...prev, activeMarkets: defaults.markets || ['HK', 'JP', 'TW'] }));
       } catch (error) {
-        console.warn('Could not fetch defaults, using fallback markets:', error);
         setStats(prev => ({ ...prev, activeMarkets: ['HK', 'JP', 'TW'] }));
       }
 
@@ -114,7 +114,6 @@ const Dashboard: React.FC = () => {
           todayPointsAwarded: finalDailyPoints
         }));
       } catch (error) {
-        console.error('Error loading consumer data:', error);
         // Set fallback values
         setStats(prev => ({ 
           ...prev, 
@@ -126,7 +125,7 @@ const Dashboard: React.FC = () => {
       }
 
     } catch (error) {
-      console.error('Error loading dashboard data:', error);
+      // Error handled silently with fallback values
     } finally {
       setLoading(false);
     }
@@ -152,11 +151,9 @@ const Dashboard: React.FC = () => {
 
     try {
       const result = await eventsApi.processEvent(testEvent);
-      console.log('Test event result:', result);
       alert(`Test successful! Awarded ${result.totalPointsAwarded} points to ${result.consumerId}`);
       loadDashboardData();
     } catch (error) {
-      console.error('Test event failed:', error);
       alert('Test event failed. Check console for details.');
     }
   };
@@ -194,94 +191,20 @@ const Dashboard: React.FC = () => {
     return (
       <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
         {categoryRules.map((rule, index) => (
-          <Card key={rule.id || index} className={`border-2 border-${categoryColor}-100 hover:border-${categoryColor}-300 hover:shadow-lg transition-all duration-300 cursor-pointer`}>
-            <CardHeader className={`bg-${categoryColor}-50 pb-3`}>
-              <div className="flex items-center justify-between">
-                <div className="flex items-center space-x-3">
-                  <div className={`p-2 bg-${categoryColor}-200 rounded-lg`}>
-                    {React.createElement(categoryIcon, { className: `h-5 w-5 text-${categoryColor}-700` })}
-                  </div>
-                  <div>
-                    <CardTitle className={`text-lg font-bold text-${categoryColor}-800 line-clamp-1`}>
-                      {rule.name || `Rule ${index + 1}`}
-                    </CardTitle>
-                    <div className="flex items-center space-x-2 mt-1">
-                      <span className={`inline-flex items-center px-2 py-1 rounded-full text-xs font-medium ${rule.active !== false ? `bg-green-100 text-green-800` : `bg-gray-100 text-gray-800`}`}>
-                        {rule.active !== false ? (
-                          <>
-                            <CheckCircle className="w-3 h-3 mr-1" />
-                            Active
-                          </>
-                        ) : (
-                          <>
-                            <Clock className="w-3 h-3 mr-1" />
-                            Inactive
-                          </>
-                        )}
-                      </span>
-                      <span className={`inline-flex items-center px-2 py-1 rounded-full text-xs font-medium bg-${categoryColor}-200 text-${categoryColor}-800`}>
-                        Priority: {rule.priority || 1}
-                      </span>
-                    </div>
-                  </div>
-                </div>
-                <Eye className="h-5 w-5 text-gray-400" />
-              </div>
-            </CardHeader>
-            <CardContent className="p-4">
-              <div className="space-y-3">
-                <div>
-                  <p className="text-sm font-medium text-gray-700 mb-1">Event Type:</p>
-                  <span className={`inline-flex items-center px-3 py-1 rounded-full text-sm font-medium bg-${categoryColor}-50 text-${categoryColor}-700 border border-${categoryColor}-200`}>
-                    {rule.event?.type || 'Unknown'}
-                  </span>
-                </div>
-                
-                {rule.markets && rule.markets.length > 0 && (
-                  <div>
-                    <p className="text-sm font-medium text-gray-700 mb-1">Markets:</p>
-                    <div className="flex flex-wrap gap-1">
-                      {rule.markets.map((market) => (
-                        <span key={market} className="inline-flex items-center px-2 py-1 rounded text-xs font-medium bg-blue-100 text-blue-800">
-                          {market}
-                        </span>
-                      ))}
-                    </div>
-                  </div>
-                )}
-
-                {rule.event?.params && (
-                  <div>
-                    <p className="text-sm font-medium text-gray-700 mb-1">Configuration:</p>
-                    <div className="bg-gray-50 rounded-lg p-3 text-xs">
-                      {Object.entries(rule.event.params).slice(0, 3).map(([key, value]) => (
-                        <div key={key} className="flex justify-between items-center mb-1 last:mb-0">
-                          <span className="text-gray-600 capitalize">{key.replace(/([A-Z])/g, ' $1').trim()}:</span>
-                          <span className="font-medium text-gray-800">
-                            {typeof value === 'object' ? JSON.stringify(value).slice(0, 20) + '...' : String(value)}
-                          </span>
-                        </div>
-                      ))}
-                    </div>
-                  </div>
-                )}
-              </div>
-            </CardContent>
-          </Card>
+          <RuleCard 
+            key={rule.id || index}
+            rule={rule}
+            index={index}
+            categoryColor={categoryColor}
+            categoryIcon={categoryIcon}
+          />
         ))}
       </div>
     );
   };
 
   if (loading) {
-    return (
-      <div className="min-h-screen bg-white flex items-center justify-center">
-        <div className="text-center">
-          <div className="w-16 h-16 border-4 border-blue-200 border-t-blue-600 rounded-full animate-spin mx-auto mb-4"></div>
-          <p className="text-slate-600 font-poppins text-lg">Loading your dashboard...</p>
-        </div>
-      </div>
-    );
+    return <LoadingSpinner message="Loading your dashboard..." />;
   }
 
   return (
@@ -370,107 +293,56 @@ const Dashboard: React.FC = () => {
       </div>
 
       <div className="container mx-auto px-8 py-10">
-        {/* Beautiful Stats Cards with Different Gradients */}
-        <div className="grid gap-8 md:grid-cols-2 lg:grid-cols-4 mb-12">
-          {/* Total Rules Card - Orange Gradient */}
-          <Card className="bg-gradient-to-br from-orange-500 to-orange-600 text-white border-0 shadow-lg hover:shadow-xl transition-all duration-300 hover:scale-105 cursor-pointer">
-            <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-3">
-              <CardTitle className="text-sm font-semibold text-orange-100 uppercase tracking-wider">Total Rules</CardTitle>
-              <div className="p-3 bg-white/20 rounded-xl">
-                <FileText className="h-6 w-6 text-white" />
-              </div>
-            </CardHeader>
-            <CardContent>
-              <div className="text-4xl font-bold mb-2">
-                {loading ? (
-                  <div className="w-12 h-8 bg-orange-300/30 rounded animate-pulse"></div>
-                ) : (
-                  stats.totalRules
-                )}
-              </div>
-              <div className="flex items-center text-orange-100">
-                <TrendingUp className="h-4 w-4 mr-1" />
-                <span className="text-sm">Active business rules</span>
-              </div>
-            </CardContent>
-          </Card>
-
-          {/* Total Consumers Card - Emerald Gradient */}
-          <Card className="bg-gradient-to-br from-emerald-500 to-emerald-600 text-white border-0 shadow-lg hover:shadow-xl transition-all duration-300 hover:scale-105 cursor-pointer">
-            <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-3">
-              <CardTitle className="text-sm font-semibold text-emerald-100 uppercase tracking-wider">Total Consumers</CardTitle>
-              <div className="p-3 bg-white/20 rounded-xl">
-                <Users className="h-6 w-6 text-white" />
-              </div>
-            </CardHeader>
-            <CardContent>
-              <div className="text-4xl font-bold mb-2">
-                {loading ? (
-                  <div className="w-12 h-8 bg-emerald-300/30 rounded animate-pulse"></div>
-                ) : (
-                  stats.totalConsumers
-                )}
-              </div>
-              <div className="flex items-center text-emerald-100">
-                <TrendingUp className="h-4 w-4 mr-1" />
-                <span className="text-sm">Registered users</span>
-              </div>
-            </CardContent>
-          </Card>
-
-          {/* Points Awarded Card - Purple Gradient */}
-          <Card className="bg-gradient-to-br from-purple-500 to-purple-600 text-white border-0 shadow-lg hover:shadow-xl transition-all duration-300 hover:scale-105 cursor-pointer">
-            <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-3">
-              <CardTitle className="text-sm font-semibold text-purple-100 uppercase tracking-wider">Points Awarded</CardTitle>
-              <div className="p-3 bg-white/20 rounded-xl">
-                <Award className="h-6 w-6 text-white" />
-              </div>
-            </CardHeader>
-            <CardContent>
-              <div className="text-4xl font-bold mb-2">
-                {loading ? (
-                  <div className="w-16 h-8 bg-purple-300/30 rounded animate-pulse"></div>
-                ) : (
-                  stats.totalPointsAwarded.toLocaleString()
-                )}
-              </div>
-              <div className="flex items-center text-purple-100">
-                <Crown className="h-4 w-4 mr-1" />
-                <span className="text-sm">Total distributed</span>
-              </div>
-            </CardContent>
-          </Card>
-
-          {/* Active Markets Card - Red Gradient */}
-          <Card className="bg-gradient-to-br from-red-500 to-red-600 text-white border-0 shadow-lg hover:shadow-xl transition-all duration-300 hover:scale-105 cursor-pointer">
-            <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-3">
-              <CardTitle className="text-sm font-semibold text-red-100 uppercase tracking-wider">Active Markets</CardTitle>
-              <div className="p-3 bg-white/20 rounded-xl">
-                <Globe className="h-6 w-6 text-white" />
-              </div>
-            </CardHeader>
-            <CardContent>
-              <div className="text-4xl font-bold mb-2">
-                {loading ? (
-                  <div className="w-8 h-8 bg-red-300/30 rounded animate-pulse"></div>
-                ) : (
-                  stats.activeMarkets.length
-                )}
-              </div>
-              <div className="flex items-center text-red-100">
-                <Activity className="h-4 w-4 mr-1" />
-                <span className="text-sm">
-                  {loading ? (
-                    <div className="w-16 h-4 bg-red-300/30 rounded animate-pulse"></div>
-                  ) : stats.activeMarkets.length > 0 ? (
-                    stats.activeMarkets.join(', ')
-                  ) : (
-                    'No markets available'
-                  )}
-                </span>
-              </div>
-            </CardContent>
-          </Card>
+        {/* Stats Cards */}
+        <div className="mb-12">
+          <StatsGrid 
+            stats={[
+              {
+                title: "Total Rules",
+                value: loading ? "" : stats.totalRules.toString(),
+                description: "Active business rules",
+                icon: FileText,
+                gradientColors: "bg-gradient-to-br from-orange-500 to-orange-600",
+                iconBgColor: "orange", 
+                descriptionIcon: TrendingUp
+              },
+              {
+                title: "Total Consumers",
+                value: loading ? "" : stats.totalConsumers.toString(),
+                description: "Registered users",
+                icon: Users,
+                gradientColors: "bg-gradient-to-br from-emerald-500 to-emerald-600",
+                iconBgColor: "emerald",
+                descriptionIcon: TrendingUp
+              },
+              {
+                title: "Points Awarded", 
+                value: loading ? "" : stats.totalPointsAwarded.toLocaleString(),
+                description: "Total distributed",
+                icon: Award,
+                gradientColors: "bg-gradient-to-br from-purple-500 to-purple-600",
+                iconBgColor: "purple",
+                descriptionIcon: Crown
+              },
+              {
+                title: "Active Markets",
+                value: loading ? "" : stats.activeMarkets.length.toString(),
+                description: loading ? "Loading..." : stats.activeMarkets.length > 0 ? stats.activeMarkets.join(', ') : 'No markets available',
+                icon: Globe,
+                gradientColors: "bg-gradient-to-br from-red-500 to-red-600", 
+                iconBgColor: "red",
+                descriptionIcon: Activity
+              }
+            ]}
+            columns="4"
+          />
+          {loading && (
+            <div className="grid gap-8 md:grid-cols-2 lg:grid-cols-4">
+              {[1,2,3,4].map((i) => (
+                <div key={i} className="h-32 bg-gray-200 rounded-lg animate-pulse"></div>
+              ))}
+            </div>
+          )}
         </div>
 
         {/* Performance Metrics Row */}

@@ -4,6 +4,10 @@ import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
+import LoadingSpinner from '@/components/LoadingSpinner';
+import PageHeader from '@/components/PageHeader';
+import StatusBadge from '@/components/StatusBadge';
+import StatsGrid from '@/components/StatsGrid';
 import { campaignsApi } from '@/services/api';
 import { 
   Calendar, 
@@ -61,7 +65,6 @@ const CampaignManager: React.FC = () => {
       const campaignData = await campaignsApi.getActiveCampaigns(cleanFilters);
       setCampaigns(campaignData);
     } catch (error) {
-      console.error('Error loading campaigns:', error);
       setCampaigns([]);
     } finally {
       setLoading(false);
@@ -115,78 +118,48 @@ const CampaignManager: React.FC = () => {
           </p>
         </div>
 
-        {/* Stats Cards with Bright Gradient Design */}
-        <div className="grid grid-cols-1 md:grid-cols-4 gap-6">
-          {/* Active Campaigns Card - Indigo Gradient */}
-          <Card className="bg-gradient-to-br from-indigo-500 to-indigo-600 text-white border-0 shadow-lg hover:shadow-xl transition-all duration-300 hover:scale-105 cursor-pointer">
-            <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-3">
-              <CardTitle className="text-sm font-semibold text-indigo-100 uppercase tracking-wider">Active Campaigns</CardTitle>
-              <div className="p-3 bg-white/20 rounded-xl">
-                <PlayCircle className="h-6 w-6 text-white" />
-              </div>
-            </CardHeader>
-            <CardContent>
-              <div className="text-4xl font-bold mb-2">
-                {campaigns.filter(c => getStatusText(c) === 'Active').length}
-              </div>
-              <div className="flex items-center text-indigo-100">
-                <Activity className="h-4 w-4 mr-1" />
-                <span className="text-sm">Currently running</span>
-              </div>
-            </CardContent>
-          </Card>
-
-          {/* Total Campaigns Card - Pink Gradient */}
-          <Card className="bg-gradient-to-br from-pink-500 to-pink-600 text-white border-0 shadow-lg hover:shadow-xl transition-all duration-300 hover:scale-105 cursor-pointer">
-            <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-3">
-              <CardTitle className="text-sm font-semibold text-pink-100 uppercase tracking-wider">Total Campaigns</CardTitle>
-              <div className="p-3 bg-white/20 rounded-xl">
-                <Target className="h-6 w-6 text-white" />
-              </div>
-            </CardHeader>
-            <CardContent>
-              <div className="text-4xl font-bold mb-2">{campaigns.length}</div>
-              <div className="flex items-center text-pink-100">
-                <CheckCircle className="h-4 w-4 mr-1" />
-                <span className="text-sm">All time campaigns</span>
-              </div>
-            </CardContent>
-          </Card>
-
-          {/* Markets Card - Amber Gradient */}
-          <Card className="bg-gradient-to-br from-amber-500 to-amber-600 text-white border-0 shadow-lg hover:shadow-xl transition-all duration-300 hover:scale-105 cursor-pointer">
-            <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-3">
-              <CardTitle className="text-sm font-semibold text-amber-100 uppercase tracking-wider">Markets</CardTitle>
-              <div className="p-3 bg-white/20 rounded-xl">
-                <Globe className="h-6 w-6 text-white" />
-              </div>
-            </CardHeader>
-            <CardContent>
-              <div className="text-4xl font-bold mb-2">3</div>
-              <div className="flex items-center text-amber-100">
-                <Globe className="h-4 w-4 mr-1" />
-                <span className="text-sm">Global coverage</span>
-              </div>
-            </CardContent>
-          </Card>
-
-          {/* Performance Card - Red Gradient */}
-          <Card className="bg-gradient-to-br from-red-500 to-red-600 text-white border-0 shadow-lg hover:shadow-xl transition-all duration-300 hover:scale-105 cursor-pointer">
-            <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-3">
-              <CardTitle className="text-sm font-semibold text-red-100 uppercase tracking-wider">Performance</CardTitle>
-              <div className="p-3 bg-white/20 rounded-xl">
-                <TrendingUp className="h-6 w-6 text-white" />
-              </div>
-            </CardHeader>
-            <CardContent>
-              <div className="text-4xl font-bold mb-2">98.5%</div>
-              <div className="flex items-center text-red-100">
-                <TrendingUp className="h-4 w-4 mr-1" />
-                <span className="text-sm">Success rate</span>
-              </div>
-            </CardContent>
-          </Card>
-        </div>
+        {/* Stats Cards */}
+        <StatsGrid 
+          stats={[
+            {
+              title: "Active Campaigns",
+              value: campaigns.filter(c => getStatusText(c) === 'Active').length.toString(),
+              description: "Currently running",
+              icon: PlayCircle,
+              gradientColors: "bg-gradient-to-br from-indigo-500 to-indigo-600",
+              iconBgColor: "indigo",
+              descriptionIcon: Activity
+            },
+            {
+              title: "Total Campaigns",
+              value: campaigns.length.toString(),
+              description: "All time campaigns",
+              icon: Target,
+              gradientColors: "bg-gradient-to-br from-pink-500 to-pink-600", 
+              iconBgColor: "pink",
+              descriptionIcon: CheckCircle
+            },
+            {
+              title: "Markets",
+              value: "3",
+              description: "Global coverage",
+              icon: Globe,
+              gradientColors: "bg-gradient-to-br from-amber-500 to-amber-600",
+              iconBgColor: "amber",
+              descriptionIcon: Globe
+            },
+            {
+              title: "Performance", 
+              value: "98.5%",
+              description: "Success rate",
+              icon: TrendingUp,
+              gradientColors: "bg-gradient-to-br from-red-500 to-red-600",
+              iconBgColor: "red", 
+              descriptionIcon: TrendingUp
+            }
+          ]}
+          columns="4"
+        />
 
         {/* Filters */}
         <Card className="border border-gray-200 shadow-lg bg-white">

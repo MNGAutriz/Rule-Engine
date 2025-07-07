@@ -255,13 +255,12 @@ export const consumersApi = {
             }
           });
         } catch (error) {
-          console.warn(`Failed to fetch consumer ${consumerId}:`, error);
+          // Consumer fetch failed, skip
         }
       }
       
       return consumers;
     } catch (error) {
-      console.error('Error getting all consumers:', error);
       // Fallback to sample consumers if defaults API fails
       const sampleConsumerIds = ['user_hk_standard', 'user_hk_vip', 'user_jp_standard', 'user_tw_essence_lover', 'user_tw_vip'];
       const consumers = [];
@@ -283,7 +282,7 @@ export const consumersApi = {
             }
           });
         } catch (error) {
-          console.warn(`Failed to fetch consumer ${consumerId}:`, error);
+          // Consumer fetch failed, skip
         }
       }
       return consumers;

@@ -6,6 +6,8 @@ import { Label } from '@/components/ui/label';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import LoadingButton from '@/components/LoadingButton';
 import ValidationMessage from '@/components/ValidationMessage';
+import PageHeader from '@/components/PageHeader';
+import StatsGrid from '@/components/StatsGrid';
 import { eventsApi, defaultsApi, consumersApi } from '@/services/api';
 import type { EventData, EventResponse, DefaultsResponse, RedemptionValidationResponse, RecyclingValidationResponse } from '@/services/api';
 import { RefreshCw, CheckCircle, Activity,Calendar,Zap,Settings, Database, Code, Sparkles, Send, Cpu, AlertCircle, Clock, Award, CreditCard, TrendingUp, Info, User, Target} from 'lucide-react';
@@ -64,9 +66,9 @@ const EventProcessor: React.FC = () => {
           }
         }));
       }
-    } catch (error) {
-      console.error('Error loading defaults:', error);
       // Keep the hardcoded defaults if API fails
+    } catch (error) {
+      // API fallback - continue with hardcoded defaults
     }
   };
 
@@ -223,7 +225,6 @@ const EventProcessor: React.FC = () => {
       
       return validationResult.valid;
     } catch (error) {
-      console.error('Error validating redemption:', error);
       setValidationMessage('❌ Error validating redemption. Please try again.');
       return false;
     } finally {
@@ -246,7 +247,6 @@ const EventProcessor: React.FC = () => {
       
       return validationResult.valid;
     } catch (error) {
-      console.error('Error validating recycling:', error);
       setRecyclingValidationMessage('❌ Error validating recycling. Please try again.');
       return false;
     } finally {
@@ -406,89 +406,57 @@ const EventProcessor: React.FC = () => {
   return (
     <div className="min-h-screen bg-gray-50">
       <div className="container mx-auto p-6 space-y-8 bg-white rounded-lg shadow-sm mx-4 my-6">
-        {/* Header with P&G Light Blue Theme */}
-        <div className="text-center space-y-4">
-          <div className="inline-flex items-center justify-center w-20 h-20 rounded-full bg-blue-700 mb-4 shadow-lg">
-            <Zap className="h-10 w-10 text-white" />
-          </div>
-          <h1 className="text-4xl font-bold text-blue-700">
-            Event Processor
-          </h1>
-          <p className="text-xl text-gray-600 max-w-2xl mx-auto">
-            Test and validate loyalty events in real-time with our powerful processing engine
-          </p>
-        </div>
+        {/* Header */}
+        <PageHeader 
+          title="Event Processor"
+          subtitle="Test and validate loyalty events in real-time with our powerful processing engine"
+          icon={Zap}
+          iconBgColor="bg-blue-700"
+          titleColor="text-blue-700"
+        />
 
-        {/* Stats Cards with Bright Gradient Design */}
-        <div className="grid grid-cols-1 md:grid-cols-4 gap-6">
-          {/* Processing Speed Card - Orange Gradient */}
-          <Card className="bg-gradient-to-br from-orange-500 to-orange-600 text-white border-0 shadow-lg hover:shadow-xl transition-all duration-300 hover:scale-105 cursor-pointer">
-            <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-3">
-              <CardTitle className="text-sm font-semibold text-orange-100 uppercase tracking-wider">Processing Speed</CardTitle>
-              <div className="p-3 bg-white/20 rounded-xl">
-                <Activity className="h-6 w-6 text-white" />
-              </div>
-            </CardHeader>
-            <CardContent>
-              <div className="text-4xl font-bold mb-2">~15ms</div>
-              <div className="flex items-center text-orange-100">
-                <Zap className="h-4 w-4 mr-1" />
-                <span className="text-sm">Average response time</span>
-              </div>
-            </CardContent>
-          </Card>
-
-          {/* Rules Engine Card - Emerald Gradient */}
-          <Card className="bg-gradient-to-br from-emerald-500 to-emerald-600 text-white border-0 shadow-lg hover:shadow-xl transition-all duration-300 hover:scale-105 cursor-pointer">
-            <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-3">
-              <CardTitle className="text-sm font-semibold text-emerald-100 uppercase tracking-wider">Rules Engine</CardTitle>
-              <div className="p-3 bg-white/20 rounded-xl">
-                <Settings className="h-6 w-6 text-white" />
-              </div>
-            </CardHeader>
-            <CardContent>
-              <div className="text-4xl font-bold mb-2">Active</div>
-              <div className="flex items-center text-emerald-100">
-                <CheckCircle className="h-4 w-4 mr-1" />
-                <span className="text-sm">System operational</span>
-              </div>
-            </CardContent>
-          </Card>
-
-          {/* Success Rate Card - Purple Gradient */}
-          <Card className="bg-gradient-to-br from-purple-500 to-purple-600 text-white border-0 shadow-lg hover:shadow-xl transition-all duration-300 hover:scale-105 cursor-pointer">
-            <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-3">
-              <CardTitle className="text-sm font-semibold text-purple-100 uppercase tracking-wider">Success Rate</CardTitle>
-              <div className="p-3 bg-white/20 rounded-xl">
-                <CheckCircle className="h-6 w-6 text-white" />
-              </div>
-            </CardHeader>
-            <CardContent>
-              <div className="text-4xl font-bold mb-2">99.9%</div>
-              <div className="flex items-center text-purple-100">
-                <TrendingUp className="h-4 w-4 mr-1" />
-                <span className="text-sm">Event processing</span>
-              </div>
-            </CardContent>
-          </Card>
-
-          {/* Database Card - Red Gradient */}
-          <Card className="bg-gradient-to-br from-red-500 to-red-600 text-white border-0 shadow-lg hover:shadow-xl transition-all duration-300 hover:scale-105 cursor-pointer">
-            <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-3">
-              <CardTitle className="text-sm font-semibold text-red-100 uppercase tracking-wider">Database</CardTitle>
-              <div className="p-3 bg-white/20 rounded-xl">
-                <Database className="h-6 w-6 text-white" />
-              </div>
-            </CardHeader>
-            <CardContent>
-              <div className="text-4xl font-bold mb-2">Online</div>
-              <div className="flex items-center text-red-100">
-                <Activity className="h-4 w-4 mr-1" />
-                <span className="text-sm">Connection stable</span>
-              </div>
-            </CardContent>
-          </Card>
-        </div>
+        {/* Stats Cards */}
+        <StatsGrid 
+          stats={[
+            {
+              title: "Processing Speed",
+              value: "~15ms",
+              description: "Average response time",
+              icon: Activity,
+              gradientColors: "bg-gradient-to-br from-orange-500 to-orange-600",
+              iconBgColor: "orange",
+              descriptionIcon: Zap
+            },
+            {
+              title: "Rules Engine", 
+              value: "Active",
+              description: "System operational",
+              icon: Settings,
+              gradientColors: "bg-gradient-to-br from-emerald-500 to-emerald-600",
+              iconBgColor: "emerald",
+              descriptionIcon: CheckCircle
+            },
+            {
+              title: "Success Rate",
+              value: "99.9%", 
+              description: "Event processing",
+              icon: CheckCircle,
+              gradientColors: "bg-gradient-to-br from-purple-500 to-purple-600",
+              iconBgColor: "purple",
+              descriptionIcon: TrendingUp
+            },
+            {
+              title: "Database",
+              value: "Online",
+              description: "Connection stable", 
+              icon: Database,
+              gradientColors: "bg-gradient-to-br from-red-500 to-red-600",
+              iconBgColor: "red",
+              descriptionIcon: Activity
+            }
+          ]}
+          columns="4"
+        />
 
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
           {/* Event Configuration */}
