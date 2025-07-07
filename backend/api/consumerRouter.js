@@ -254,4 +254,76 @@ router.post('/validate-redemption', async (req, res) => {
   }
 });
 
+/**
+ * POST /api/consumer/validate-recycling
+ * Validates if a recycling count is within the yearly limit
+ */
+router.post('/validate-recycling', async (req, res) => {
+  try {
+    const { consumerId, recycledCount } = req.body;
+    
+    if (!consumerId || !recycledCount) {
+      return res.status(400).json({
+        error: 'Missing required parameters',
+        details: 'consumerId and recycledCount are required'
+      });
+    }
+
+    if (recycledCount <= 0) {
+      return res.status(400).json({
+        valid: false,
+        error: 'Recycled count must be greater than 0'
+      });
+    }
+
+    // Get user data to check recycling activity
+    const user = consumerService.getConsumerById(consumerId);
+    if (!user) {
+      return res.status(404).json({
+        error: 'Consumer not found'
+      });
+    }
+
+    // Get current year recycling data
+    const recyclingActivity = user.engagement?.recyclingActivity || {
+      totalBottlesRecycled: 0,
+      thisYearBottlesRecycled: 0,
+      lastRecyclingDate: null
+    };
+
+    const maxBottlesPerYear = 5; // As defined in transaction rules
+    const currentYearRecycled = recyclingActivity.thisYearBottlesRecycled || 0;
+    const proposedTotal = currentYearRecycled + recycledCount;
+
+    if (proposedTotal > maxBottlesPerYear) {
+      const availableSlots = Math.max(0, maxBottlesPerYear - currentYearRecycled);
+      return res.json({
+        valid: false,
+        currentYearRecycled: currentYearRecycled,
+        requestedRecycling: recycledCount,
+        maxPerYear: maxBottlesPerYear,
+        availableSlots: availableSlots,
+        exceedsBy: proposedTotal - maxBottlesPerYear,
+        message: `Exceeds yearly limit. You have recycled ${currentYearRecycled} bottles this year and can recycle ${availableSlots} more (max ${maxBottlesPerYear}/year).`
+      });
+    }
+
+    return res.json({
+      valid: true,
+      currentYearRecycled: currentYearRecycled,
+      requestedRecycling: recycledCount,
+      maxPerYear: maxBottlesPerYear,
+      remainingSlots: maxBottlesPerYear - proposedTotal,
+      message: `Recycling is valid. After this, you will have recycled ${proposedTotal} bottles this year.`
+    });
+
+  } catch (error) {
+    console.error('Error validating recycling:', error);
+    res.status(500).json({
+      error: 'Failed to validate recycling',
+      message: error.message
+    });
+  }
+});
+
 module.exports = router;

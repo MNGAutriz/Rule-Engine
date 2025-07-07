@@ -237,6 +237,36 @@ class RulesEngine {
       // Validate event data according to generalized input template
       ValidationHelpers.validateEventData(eventData);
       
+      // Special validation for RECYCLE events - check yearly bottle limits
+      if (eventData.eventType === 'RECYCLE' && eventData.attributes?.recycledCount) {
+        const user = consumerService.getConsumerById(eventData.consumerId);
+        if (user && user.engagement?.recyclingActivity) {
+          const recyclingActivity = user.engagement.recyclingActivity;
+          const maxBottlesPerYear = 5; // As defined in transaction rules
+          const currentYearRecycled = recyclingActivity.thisYearBottlesRecycled || 0;
+          const requestedCount = eventData.attributes.recycledCount;
+          const proposedTotal = currentYearRecycled + requestedCount;
+          
+          if (proposedTotal > maxBottlesPerYear) {
+            const availableSlots = Math.max(0, maxBottlesPerYear - currentYearRecycled);
+            const errorMessage = `Recycling limit exceeded. You have recycled ${currentYearRecycled} bottles this year and can only recycle ${availableSlots} more (max ${maxBottlesPerYear}/year). Requested: ${requestedCount}`;
+            console.error(errorMessage);
+            this.errors.push(errorMessage);
+            
+            // Return error response instead of processing
+            return {
+              consumerId: eventData.consumerId,
+              eventId: eventData.eventId,
+              eventType: eventData.eventType,
+              totalPointsAwarded: 0,
+              pointBreakdown: [],
+              errors: this.errors,
+              resultingBalance: consumerService.getBalance(eventData.consumerId) // Return current balance unchanged
+            };
+          }
+        }
+      }
+      
       // Set consumer market if provided in event data
       if (eventData.market) {
         await consumerService.setConsumerMarket(eventData.consumerId, eventData.market);

@@ -112,6 +112,18 @@ export interface DefaultsResponse {
   adjustmentReasons: string[];
 }
 
+export interface RecyclingValidationResponse {
+  valid: boolean;
+  currentYearRecycled: number;
+  requestedRecycling: number;
+  maxPerYear: number;
+  availableSlots?: number;
+  remainingSlots?: number;
+  exceedsBy?: number;
+  message: string;
+  error?: string;
+}
+
 export interface RedemptionValidationResponse {
   valid: boolean;
   availablePoints: number;
@@ -197,6 +209,14 @@ export const consumersApi = {
     const response = await api.post('/api/consumer/validate-redemption', {
       consumerId,
       redemptionPoints
+    });
+    return response.data;
+  },
+
+  validateRecycling: async (consumerId: string, recycledCount: number): Promise<RecyclingValidationResponse> => {
+    const response = await api.post('/api/consumer/validate-recycling', {
+      consumerId,
+      recycledCount
     });
     return response.data;
   },

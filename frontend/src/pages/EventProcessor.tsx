@@ -5,7 +5,7 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { eventsApi, defaultsApi, consumersApi } from '@/services/api';
-import type { EventData, EventResponse, DefaultsResponse, RedemptionValidationResponse } from '@/services/api';
+import type { EventData, EventResponse, DefaultsResponse, RedemptionValidationResponse, RecyclingValidationResponse } from '@/services/api';
 import { 
   RefreshCw, 
   AlertCircle, 
@@ -35,6 +35,8 @@ const EventProcessor: React.FC = () => {
   const [error, setError] = useState<string | null>(null);
   const [validationMessage, setValidationMessage] = useState<string | null>(null);
   const [validationLoading, setValidationLoading] = useState(false);
+  const [recyclingValidationMessage, setRecyclingValidationMessage] = useState<string | null>(null);
+  const [recyclingValidationLoading, setRecyclingValidationLoading] = useState(false);
   const [eventData, setEventData] = useState<Partial<EventData>>({
     eventType: 'PURCHASE',
     market: 'HK',
@@ -247,6 +249,29 @@ const EventProcessor: React.FC = () => {
     }
   };
 
+  const validateRecyclingCount = async (consumerId: string, recycledCount: number) => {
+    try {
+      setRecyclingValidationLoading(true);
+      setRecyclingValidationMessage(null);
+      
+      const validationResult = await consumersApi.validateRecycling(consumerId, recycledCount);
+      
+      if (validationResult.valid) {
+        setRecyclingValidationMessage(`✅ ${validationResult.message}`);
+      } else {
+        setRecyclingValidationMessage(`❌ ${validationResult.message}`);
+      }
+      
+      return validationResult.valid;
+    } catch (error) {
+      console.error('Error validating recycling:', error);
+      setRecyclingValidationMessage('❌ Error validating recycling. Please try again.');
+      return false;
+    } finally {
+      setRecyclingValidationLoading(false);
+    }
+  };
+
   const handleProcessEvent = async () => {
     try {
       setLoading(true);
@@ -293,6 +318,12 @@ const EventProcessor: React.FC = () => {
       if (eventData.eventType === 'RECYCLE') {
         if (!eventData.attributes?.recycledCount || eventData.attributes.recycledCount <= 0) {
           throw new Error('Recycled Count is required for Recycle events');
+        }
+        
+        // Validate recycling count against yearly limits
+        const isValidRecycling = await validateRecyclingCount(eventData.consumerId, eventData.attributes.recycledCount);
+        if (!isValidRecycling) {
+          throw new Error('Cannot proceed with recycling - yearly limit exceeded');
         }
       }
 
@@ -748,17 +779,55 @@ const EventProcessor: React.FC = () => {
                 
                 {/* Additional Attributes for Recycle Events */}
                 {eventData.eventType === 'RECYCLE' && (
-                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4 pt-4 border-t border-gray-200">
-                    <div className="space-y-2">
-                      <Label className="text-sm font-semibold text-gray-700">Recycled Count *</Label>
-                      <Input
-                        type="number"
-                        value={eventData.attributes?.recycledCount || ''}
-                        onChange={(e) => handleNestedChange('attributes', 'recycledCount', Number(e.target.value))}
-                        className="border-black focus:border-black"
-                        placeholder="3"
-                      />
+                  <div className="space-y-4 pt-4 border-t border-gray-200">
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                      <div className="space-y-2">
+                        <Label className="text-sm font-semibold text-gray-700">Recycled Count *</Label>
+                        <Input
+                          type="number"
+                          value={eventData.attributes?.recycledCount || ''}
+                          onChange={(e) => {
+                            handleNestedChange('attributes', 'recycledCount', Number(e.target.value));
+                            setRecyclingValidationMessage(null); // Clear validation message when value changes
+                          }}
+                          className="border-black focus:border-black"
+                          placeholder="3"
+                        />
+                      </div>
+                      <div className="space-y-2 flex flex-col justify-end">
+                        <Button
+                          type="button"
+                          onClick={() => {
+                            if (eventData.consumerId && eventData.attributes?.recycledCount) {
+                              validateRecyclingCount(eventData.consumerId, eventData.attributes.recycledCount);
+                            }
+                          }}
+                          disabled={!eventData.consumerId || !eventData.attributes?.recycledCount || recyclingValidationLoading}
+                          className="bg-green-600 hover:bg-green-700 text-white h-10"
+                        >
+                          {recyclingValidationLoading ? (
+                            <>
+                              <RefreshCw className="mr-2 h-4 w-4 animate-spin" />
+                              Validating...
+                            </>
+                          ) : (
+                            'Validate Recycling'
+                          )}
+                        </Button>
+                      </div>
                     </div>
+                    
+                    {/* Recycling Validation Message */}
+                    {recyclingValidationMessage && (
+                      <div className={`p-3 rounded-md text-sm ${
+                        recyclingValidationMessage.includes('✅') 
+                          ? 'bg-green-50 text-green-800 border border-green-200' 
+                          : 'bg-red-50 text-red-800 border border-red-200'
+                      }`}>
+                        {recyclingValidationMessage}
+                      </div>
+                    )}
+                    
                     <div className="space-y-2">
                       <Label className="text-sm font-semibold text-gray-700">Bottle Type</Label>
                       <Select

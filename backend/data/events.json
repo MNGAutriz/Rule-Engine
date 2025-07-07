@@ -41683,5 +41683,1372 @@
         "redemptionPoints": 500
       }
     }
+  },
+  {
+    "consumerId": "user_hk_standard",
+    "eventId": "test-recycling-valid",
+    "eventType": "RECYCLE",
+    "totalPointsAwarded": 50,
+    "pointBreakdown": [
+      {
+        "ruleId": "INTERACTION_ADJUST_POINT_TIMES_PER_YEAR",
+        "points": 50,
+        "description": "Engagement activity reward (+50 MD)",
+        "ruleCategory": "ENGAGEMENT_ACTIVITY",
+        "computation": {
+          "calculationType": "ACTIVITY_REWARD",
+          "formula": "min(itemCount, 5) × 50",
+          "inputs": {
+            "pointsPerBottle": 50,
+            "maxPerYear": 5
+          },
+          "result": 50
+        }
+      }
+    ],
+    "errors": [],
+    "resultingBalance": {
+      "total": 153800,
+      "available": 147200,
+      "used": 6600,
+      "transactionCount": 28
+    },
+    "timestamp": "2025-07-07T10:05:14.075Z",
+    "originalEvent": {
+      "eventId": "test-recycling-valid",
+      "eventType": "RECYCLE",
+      "timestamp": "2025-07-07T10:05:14.032Z",
+      "market": "HK",
+      "channel": "STORE",
+      "consumerId": "user_hk_standard",
+      "context": {
+        "storeId": "STORE_HK_001",
+        "campaignCode": ""
+      },
+      "attributes": {
+        "recycledCount": 1
+      }
+    }
+  },
+  {
+    "consumerId": "user_hk_standard",
+    "eventId": "test-recycling-edge",
+    "eventType": "RECYCLE",
+    "totalPointsAwarded": 150,
+    "pointBreakdown": [
+      {
+        "ruleId": "INTERACTION_ADJUST_POINT_TIMES_PER_YEAR",
+        "points": 150,
+        "description": "Engagement activity reward (+150 MD)",
+        "ruleCategory": "ENGAGEMENT_ACTIVITY",
+        "computation": {
+          "calculationType": "ACTIVITY_REWARD",
+          "formula": "min(itemCount, 5) × 50",
+          "inputs": {
+            "pointsPerBottle": 50,
+            "maxPerYear": 5
+          },
+          "result": 150
+        }
+      }
+    ],
+    "errors": [],
+    "resultingBalance": {
+      "total": 153950,
+      "available": 147350,
+      "used": 6600,
+      "transactionCount": 29
+    },
+    "timestamp": "2025-07-07T10:05:14.108Z",
+    "originalEvent": {
+      "eventId": "test-recycling-edge",
+      "eventType": "RECYCLE",
+      "timestamp": "2025-07-07T10:05:14.095Z",
+      "market": "HK",
+      "channel": "STORE",
+      "consumerId": "user_hk_standard",
+      "context": {
+        "storeId": "STORE_HK_001",
+        "campaignCode": ""
+      },
+      "attributes": {
+        "recycledCount": 3
+      }
+    }
+  },
+  {
+    "consumerId": "user_hk_vip_birthday",
+    "eventId": "evt_1751883157488",
+    "eventType": "PURCHASE",
+    "totalPointsAwarded": 3750,
+    "pointBreakdown": [
+      {
+        "ruleId": "ORDER_BASE_POINT",
+        "points": 1500,
+        "description": "Base purchase reward for HK market (+1500 MD)",
+        "ruleCategory": "BASE_PURCHASE",
+        "computation": {
+          "calculationType": "RATE_MULTIPLICATION",
+          "formula": "floor(amount × 1)",
+          "inputs": {
+            "standardRate": 1
+          },
+          "result": 1500
+        }
+      },
+      {
+        "ruleId": "FIRST_PURCHASE_BIRTH_MONTH_BONUS",
+        "points": 150,
+        "description": "Birthday month special bonus (+150 MD)",
+        "ruleCategory": "PERSONAL_MILESTONE",
+        "computation": {
+          "calculationType": "TIMED_MULTIPLIER",
+          "formula": "floor(floor(amount × 1) × (1.1 - 1.0))",
+          "inputs": {
+            "multiplier": 1.1
+          },
+          "result": 150
+        }
+      },
+      {
+        "ruleId": "FLEXIBLE_VIP_MULTIPLIER",
+        "points": 1800,
+        "description": "VIP tier multiplier bonus for HK (+1800 MD)",
+        "ruleCategory": "VIP_TIER",
+        "computation": {
+          "calculationType": "TIER_MULTIPLIER",
+          "formula": "floor(floor(amount × 1) × (2 - 1.0))",
+          "inputs": {
+            "multiplier": 2
+          },
+          "result": 1800
+        }
+      },
+      {
+        "ruleId": "FLEXIBLE_CAMPAIGN_BONUS",
+        "points": 300,
+        "description": "Special campaign bonus for HK (+300 MD)",
+        "ruleCategory": "CAMPAIGN",
+        "computation": {
+          "calculationType": "CAMPAIGN_BONUS",
+          "formula": "fixedBonus = 300",
+          "inputs": {
+            "fixedBonus": 300
+          },
+          "result": 300
+        }
+      }
+    ],
+    "errors": [],
+    "resultingBalance": {
+      "total": 9646873,
+      "available": 9582749,
+      "used": 64124,
+      "transactionCount": 152
+    },
+    "timestamp": "2025-07-07T10:12:37.538Z",
+    "originalEvent": {
+      "eventId": "evt_1751883157488",
+      "eventType": "PURCHASE",
+      "timestamp": "2025-07-07T10:12:37.488Z",
+      "market": "HK",
+      "channel": "STORE",
+      "productLine": "PREMIUM_SERIES",
+      "consumerId": "user_hk_vip_birthday",
+      "context": {
+        "storeId": "STORE_HK_001",
+        "campaignCode": ""
+      },
+      "attributes": {
+        "amount": 1500,
+        "currency": "HKD",
+        "skuList": [
+          "SKU_HK_059"
+        ]
+      }
+    }
+  },
+  {
+    "consumerId": "user_hk_vip_birthday",
+    "eventId": "evt_1751883159461",
+    "eventType": "REGISTRATION",
+    "totalPointsAwarded": 0,
+    "pointBreakdown": [],
+    "errors": [],
+    "resultingBalance": {
+      "total": 9646873,
+      "available": 9582749,
+      "used": 64124,
+      "transactionCount": 153
+    },
+    "timestamp": "2025-07-07T10:12:39.486Z",
+    "originalEvent": {
+      "eventId": "evt_1751883159461",
+      "eventType": "REGISTRATION",
+      "timestamp": "2025-07-07T10:12:39.461Z",
+      "market": "HK",
+      "channel": "STORE",
+      "productLine": "PREMIUM_SERIES",
+      "consumerId": "user_hk_vip_birthday",
+      "context": {
+        "storeId": "",
+        "campaignCode": ""
+      },
+      "attributes": {}
+    }
+  },
+  {
+    "consumerId": "user_jp_vip",
+    "eventId": "evt_1751883161507",
+    "eventType": "REGISTRATION",
+    "totalPointsAwarded": 150,
+    "pointBreakdown": [
+      {
+        "ruleId": "INTERACTION_REGISTRY_POINT",
+        "points": 150,
+        "description": "Welcome bonus for JP registration (+150 MD)",
+        "ruleCategory": "REGISTRATION",
+        "computation": {
+          "calculationType": "FIXED_BONUS",
+          "formula": "registrationBonus = 150",
+          "inputs": {
+            "registrationBonus": 150
+          },
+          "result": 150
+        }
+      }
+    ],
+    "errors": [],
+    "resultingBalance": {
+      "total": 58525,
+      "available": 58525,
+      "used": 0,
+      "transactionCount": 23
+    },
+    "timestamp": "2025-07-07T10:12:41.537Z",
+    "originalEvent": {
+      "eventId": "evt_1751883161507",
+      "eventType": "REGISTRATION",
+      "timestamp": "2025-07-07T10:12:41.507Z",
+      "market": "JP",
+      "channel": "STORE",
+      "productLine": "PREMIUM_SERIES",
+      "consumerId": "user_jp_vip",
+      "context": {
+        "storeId": "STORE_JP_001",
+        "campaignCode": ""
+      },
+      "attributes": {}
+    }
+  },
+  {
+    "consumerId": "new_user_000",
+    "eventId": "evt_1751883222185",
+    "eventType": "REGISTRATION",
+    "totalPointsAwarded": 0,
+    "pointBreakdown": [],
+    "errors": [],
+    "resultingBalance": {
+      "total": 0,
+      "available": 0,
+      "used": 0,
+      "transactionCount": 1
+    },
+    "timestamp": "2025-07-07T10:13:42.212Z",
+    "originalEvent": {
+      "eventId": "evt_1751883222185",
+      "eventType": "REGISTRATION",
+      "timestamp": "2025-07-07T10:13:42.185Z",
+      "market": "TW",
+      "channel": "STORE",
+      "productLine": "PREMIUM_SERIES",
+      "consumerId": "new_user_000",
+      "context": {
+        "storeId": "",
+        "campaignCode": ""
+      },
+      "attributes": {}
+    }
+  },
+  {
+    "consumerId": "new_user_000",
+    "eventId": "evt_1751883233433",
+    "eventType": "RECYCLE",
+    "totalPointsAwarded": 50,
+    "pointBreakdown": [
+      {
+        "ruleId": "INTERACTION_ADJUST_POINT_TIMES_PER_YEAR",
+        "points": 50,
+        "description": "Engagement activity reward (+50 MD)",
+        "ruleCategory": "ENGAGEMENT_ACTIVITY",
+        "computation": {
+          "calculationType": "ACTIVITY_REWARD",
+          "formula": "min(itemCount, 5) × 50",
+          "inputs": {
+            "pointsPerBottle": 50,
+            "maxPerYear": 5
+          },
+          "result": 50
+        }
+      }
+    ],
+    "errors": [],
+    "resultingBalance": {
+      "total": 50,
+      "available": 50,
+      "used": 0,
+      "transactionCount": 2
+    },
+    "timestamp": "2025-07-07T10:13:53.451Z",
+    "originalEvent": {
+      "eventId": "evt_1751883233433",
+      "eventType": "RECYCLE",
+      "timestamp": "2025-07-07T10:13:53.433Z",
+      "market": "TW",
+      "channel": "STORE",
+      "productLine": "PREMIUM_SERIES",
+      "consumerId": "new_user_000",
+      "context": {
+        "storeId": "",
+        "campaignCode": ""
+      },
+      "attributes": {
+        "recycledCount": 1
+      }
+    }
+  },
+  {
+    "consumerId": "new_user_000",
+    "eventId": "evt_1751883237786",
+    "eventType": "RECYCLE",
+    "totalPointsAwarded": 50,
+    "pointBreakdown": [
+      {
+        "ruleId": "INTERACTION_ADJUST_POINT_TIMES_PER_YEAR",
+        "points": 50,
+        "description": "Engagement activity reward (+50 MD)",
+        "ruleCategory": "ENGAGEMENT_ACTIVITY",
+        "computation": {
+          "calculationType": "ACTIVITY_REWARD",
+          "formula": "min(itemCount, 5) × 50",
+          "inputs": {
+            "pointsPerBottle": 50,
+            "maxPerYear": 5
+          },
+          "result": 50
+        }
+      }
+    ],
+    "errors": [],
+    "resultingBalance": {
+      "total": 100,
+      "available": 100,
+      "used": 0,
+      "transactionCount": 3
+    },
+    "timestamp": "2025-07-07T10:13:57.802Z",
+    "originalEvent": {
+      "eventId": "evt_1751883237786",
+      "eventType": "RECYCLE",
+      "timestamp": "2025-07-07T10:13:57.786Z",
+      "market": "TW",
+      "channel": "STORE",
+      "productLine": "PREMIUM_SERIES",
+      "consumerId": "new_user_000",
+      "context": {
+        "storeId": "",
+        "campaignCode": ""
+      },
+      "attributes": {
+        "recycledCount": 1
+      }
+    }
+  },
+  {
+    "consumerId": "new_user_000",
+    "eventId": "evt_1751883238333",
+    "eventType": "RECYCLE",
+    "totalPointsAwarded": 50,
+    "pointBreakdown": [
+      {
+        "ruleId": "INTERACTION_ADJUST_POINT_TIMES_PER_YEAR",
+        "points": 50,
+        "description": "Engagement activity reward (+50 MD)",
+        "ruleCategory": "ENGAGEMENT_ACTIVITY",
+        "computation": {
+          "calculationType": "ACTIVITY_REWARD",
+          "formula": "min(itemCount, 5) × 50",
+          "inputs": {
+            "pointsPerBottle": 50,
+            "maxPerYear": 5
+          },
+          "result": 50
+        }
+      }
+    ],
+    "errors": [],
+    "resultingBalance": {
+      "total": 150,
+      "available": 150,
+      "used": 0,
+      "transactionCount": 4
+    },
+    "timestamp": "2025-07-07T10:13:58.350Z",
+    "originalEvent": {
+      "eventId": "evt_1751883238333",
+      "eventType": "RECYCLE",
+      "timestamp": "2025-07-07T10:13:58.333Z",
+      "market": "TW",
+      "channel": "STORE",
+      "productLine": "PREMIUM_SERIES",
+      "consumerId": "new_user_000",
+      "context": {
+        "storeId": "",
+        "campaignCode": ""
+      },
+      "attributes": {
+        "recycledCount": 1
+      }
+    }
+  },
+  {
+    "consumerId": "new_user_000",
+    "eventId": "evt_1751883238829",
+    "eventType": "RECYCLE",
+    "totalPointsAwarded": 50,
+    "pointBreakdown": [
+      {
+        "ruleId": "INTERACTION_ADJUST_POINT_TIMES_PER_YEAR",
+        "points": 50,
+        "description": "Engagement activity reward (+50 MD)",
+        "ruleCategory": "ENGAGEMENT_ACTIVITY",
+        "computation": {
+          "calculationType": "ACTIVITY_REWARD",
+          "formula": "min(itemCount, 5) × 50",
+          "inputs": {
+            "pointsPerBottle": 50,
+            "maxPerYear": 5
+          },
+          "result": 50
+        }
+      }
+    ],
+    "errors": [],
+    "resultingBalance": {
+      "total": 200,
+      "available": 200,
+      "used": 0,
+      "transactionCount": 5
+    },
+    "timestamp": "2025-07-07T10:13:58.849Z",
+    "originalEvent": {
+      "eventId": "evt_1751883238829",
+      "eventType": "RECYCLE",
+      "timestamp": "2025-07-07T10:13:58.829Z",
+      "market": "TW",
+      "channel": "STORE",
+      "productLine": "PREMIUM_SERIES",
+      "consumerId": "new_user_000",
+      "context": {
+        "storeId": "",
+        "campaignCode": ""
+      },
+      "attributes": {
+        "recycledCount": 1
+      }
+    }
+  },
+  {
+    "consumerId": "new_user_000",
+    "eventId": "evt_1751883239436",
+    "eventType": "RECYCLE",
+    "totalPointsAwarded": 50,
+    "pointBreakdown": [
+      {
+        "ruleId": "INTERACTION_ADJUST_POINT_TIMES_PER_YEAR",
+        "points": 50,
+        "description": "Engagement activity reward (+50 MD)",
+        "ruleCategory": "ENGAGEMENT_ACTIVITY",
+        "computation": {
+          "calculationType": "ACTIVITY_REWARD",
+          "formula": "min(itemCount, 5) × 50",
+          "inputs": {
+            "pointsPerBottle": 50,
+            "maxPerYear": 5
+          },
+          "result": 50
+        }
+      }
+    ],
+    "errors": [],
+    "resultingBalance": {
+      "total": 250,
+      "available": 250,
+      "used": 0,
+      "transactionCount": 6
+    },
+    "timestamp": "2025-07-07T10:13:59.453Z",
+    "originalEvent": {
+      "eventId": "evt_1751883239436",
+      "eventType": "RECYCLE",
+      "timestamp": "2025-07-07T10:13:59.436Z",
+      "market": "TW",
+      "channel": "STORE",
+      "productLine": "PREMIUM_SERIES",
+      "consumerId": "new_user_000",
+      "context": {
+        "storeId": "",
+        "campaignCode": ""
+      },
+      "attributes": {
+        "recycledCount": 1
+      }
+    }
+  },
+  {
+    "consumerId": "new_user_000",
+    "eventId": "evt_1751883239809",
+    "eventType": "RECYCLE",
+    "totalPointsAwarded": 50,
+    "pointBreakdown": [
+      {
+        "ruleId": "INTERACTION_ADJUST_POINT_TIMES_PER_YEAR",
+        "points": 50,
+        "description": "Engagement activity reward (+50 MD)",
+        "ruleCategory": "ENGAGEMENT_ACTIVITY",
+        "computation": {
+          "calculationType": "ACTIVITY_REWARD",
+          "formula": "min(itemCount, 5) × 50",
+          "inputs": {
+            "pointsPerBottle": 50,
+            "maxPerYear": 5
+          },
+          "result": 50
+        }
+      }
+    ],
+    "errors": [],
+    "resultingBalance": {
+      "total": 300,
+      "available": 300,
+      "used": 0,
+      "transactionCount": 7
+    },
+    "timestamp": "2025-07-07T10:13:59.827Z",
+    "originalEvent": {
+      "eventId": "evt_1751883239809",
+      "eventType": "RECYCLE",
+      "timestamp": "2025-07-07T10:13:59.809Z",
+      "market": "TW",
+      "channel": "STORE",
+      "productLine": "PREMIUM_SERIES",
+      "consumerId": "new_user_000",
+      "context": {
+        "storeId": "",
+        "campaignCode": ""
+      },
+      "attributes": {
+        "recycledCount": 1
+      }
+    }
+  },
+  {
+    "consumerId": "new_user_000",
+    "eventId": "evt_1751883240015",
+    "eventType": "RECYCLE",
+    "totalPointsAwarded": 50,
+    "pointBreakdown": [
+      {
+        "ruleId": "INTERACTION_ADJUST_POINT_TIMES_PER_YEAR",
+        "points": 50,
+        "description": "Engagement activity reward (+50 MD)",
+        "ruleCategory": "ENGAGEMENT_ACTIVITY",
+        "computation": {
+          "calculationType": "ACTIVITY_REWARD",
+          "formula": "min(itemCount, 5) × 50",
+          "inputs": {
+            "pointsPerBottle": 50,
+            "maxPerYear": 5
+          },
+          "result": 50
+        }
+      }
+    ],
+    "errors": [],
+    "resultingBalance": {
+      "total": 350,
+      "available": 350,
+      "used": 0,
+      "transactionCount": 8
+    },
+    "timestamp": "2025-07-07T10:14:00.032Z",
+    "originalEvent": {
+      "eventId": "evt_1751883240015",
+      "eventType": "RECYCLE",
+      "timestamp": "2025-07-07T10:14:00.015Z",
+      "market": "TW",
+      "channel": "STORE",
+      "productLine": "PREMIUM_SERIES",
+      "consumerId": "new_user_000",
+      "context": {
+        "storeId": "",
+        "campaignCode": ""
+      },
+      "attributes": {
+        "recycledCount": 1
+      }
+    }
+  },
+  {
+    "consumerId": "new_user_000",
+    "eventId": "evt_1751883240163",
+    "eventType": "RECYCLE",
+    "totalPointsAwarded": 50,
+    "pointBreakdown": [
+      {
+        "ruleId": "INTERACTION_ADJUST_POINT_TIMES_PER_YEAR",
+        "points": 50,
+        "description": "Engagement activity reward (+50 MD)",
+        "ruleCategory": "ENGAGEMENT_ACTIVITY",
+        "computation": {
+          "calculationType": "ACTIVITY_REWARD",
+          "formula": "min(itemCount, 5) × 50",
+          "inputs": {
+            "pointsPerBottle": 50,
+            "maxPerYear": 5
+          },
+          "result": 50
+        }
+      }
+    ],
+    "errors": [],
+    "resultingBalance": {
+      "total": 400,
+      "available": 400,
+      "used": 0,
+      "transactionCount": 9
+    },
+    "timestamp": "2025-07-07T10:14:00.177Z",
+    "originalEvent": {
+      "eventId": "evt_1751883240163",
+      "eventType": "RECYCLE",
+      "timestamp": "2025-07-07T10:14:00.163Z",
+      "market": "TW",
+      "channel": "STORE",
+      "productLine": "PREMIUM_SERIES",
+      "consumerId": "new_user_000",
+      "context": {
+        "storeId": "",
+        "campaignCode": ""
+      },
+      "attributes": {
+        "recycledCount": 1
+      }
+    }
+  },
+  {
+    "consumerId": "new_user_000",
+    "eventId": "evt_1751883240317",
+    "eventType": "RECYCLE",
+    "totalPointsAwarded": 50,
+    "pointBreakdown": [
+      {
+        "ruleId": "INTERACTION_ADJUST_POINT_TIMES_PER_YEAR",
+        "points": 50,
+        "description": "Engagement activity reward (+50 MD)",
+        "ruleCategory": "ENGAGEMENT_ACTIVITY",
+        "computation": {
+          "calculationType": "ACTIVITY_REWARD",
+          "formula": "min(itemCount, 5) × 50",
+          "inputs": {
+            "pointsPerBottle": 50,
+            "maxPerYear": 5
+          },
+          "result": 50
+        }
+      }
+    ],
+    "errors": [],
+    "resultingBalance": {
+      "total": 450,
+      "available": 450,
+      "used": 0,
+      "transactionCount": 10
+    },
+    "timestamp": "2025-07-07T10:14:00.337Z",
+    "originalEvent": {
+      "eventId": "evt_1751883240317",
+      "eventType": "RECYCLE",
+      "timestamp": "2025-07-07T10:14:00.317Z",
+      "market": "TW",
+      "channel": "STORE",
+      "productLine": "PREMIUM_SERIES",
+      "consumerId": "new_user_000",
+      "context": {
+        "storeId": "",
+        "campaignCode": ""
+      },
+      "attributes": {
+        "recycledCount": 1
+      }
+    }
+  },
+  {
+    "consumerId": "new_user_000",
+    "eventId": "evt_1751883240552",
+    "eventType": "RECYCLE",
+    "totalPointsAwarded": 50,
+    "pointBreakdown": [
+      {
+        "ruleId": "INTERACTION_ADJUST_POINT_TIMES_PER_YEAR",
+        "points": 50,
+        "description": "Engagement activity reward (+50 MD)",
+        "ruleCategory": "ENGAGEMENT_ACTIVITY",
+        "computation": {
+          "calculationType": "ACTIVITY_REWARD",
+          "formula": "min(itemCount, 5) × 50",
+          "inputs": {
+            "pointsPerBottle": 50,
+            "maxPerYear": 5
+          },
+          "result": 50
+        }
+      }
+    ],
+    "errors": [],
+    "resultingBalance": {
+      "total": 500,
+      "available": 500,
+      "used": 0,
+      "transactionCount": 11
+    },
+    "timestamp": "2025-07-07T10:14:00.577Z",
+    "originalEvent": {
+      "eventId": "evt_1751883240552",
+      "eventType": "RECYCLE",
+      "timestamp": "2025-07-07T10:14:00.552Z",
+      "market": "TW",
+      "channel": "STORE",
+      "productLine": "PREMIUM_SERIES",
+      "consumerId": "new_user_000",
+      "context": {
+        "storeId": "",
+        "campaignCode": ""
+      },
+      "attributes": {
+        "recycledCount": 1
+      }
+    }
+  },
+  {
+    "consumerId": "new_user_000",
+    "eventId": "evt_1751883240726",
+    "eventType": "RECYCLE",
+    "totalPointsAwarded": 50,
+    "pointBreakdown": [
+      {
+        "ruleId": "INTERACTION_ADJUST_POINT_TIMES_PER_YEAR",
+        "points": 50,
+        "description": "Engagement activity reward (+50 MD)",
+        "ruleCategory": "ENGAGEMENT_ACTIVITY",
+        "computation": {
+          "calculationType": "ACTIVITY_REWARD",
+          "formula": "min(itemCount, 5) × 50",
+          "inputs": {
+            "pointsPerBottle": 50,
+            "maxPerYear": 5
+          },
+          "result": 50
+        }
+      }
+    ],
+    "errors": [],
+    "resultingBalance": {
+      "total": 550,
+      "available": 550,
+      "used": 0,
+      "transactionCount": 12
+    },
+    "timestamp": "2025-07-07T10:14:00.742Z",
+    "originalEvent": {
+      "eventId": "evt_1751883240726",
+      "eventType": "RECYCLE",
+      "timestamp": "2025-07-07T10:14:00.726Z",
+      "market": "TW",
+      "channel": "STORE",
+      "productLine": "PREMIUM_SERIES",
+      "consumerId": "new_user_000",
+      "context": {
+        "storeId": "",
+        "campaignCode": ""
+      },
+      "attributes": {
+        "recycledCount": 1
+      }
+    }
+  },
+  {
+    "consumerId": "new_user_000",
+    "eventId": "evt_1751883241064",
+    "eventType": "RECYCLE",
+    "totalPointsAwarded": 50,
+    "pointBreakdown": [
+      {
+        "ruleId": "INTERACTION_ADJUST_POINT_TIMES_PER_YEAR",
+        "points": 50,
+        "description": "Engagement activity reward (+50 MD)",
+        "ruleCategory": "ENGAGEMENT_ACTIVITY",
+        "computation": {
+          "calculationType": "ACTIVITY_REWARD",
+          "formula": "min(itemCount, 5) × 50",
+          "inputs": {
+            "pointsPerBottle": 50,
+            "maxPerYear": 5
+          },
+          "result": 50
+        }
+      }
+    ],
+    "errors": [],
+    "resultingBalance": {
+      "total": 600,
+      "available": 600,
+      "used": 0,
+      "transactionCount": 13
+    },
+    "timestamp": "2025-07-07T10:14:01.077Z",
+    "originalEvent": {
+      "eventId": "evt_1751883241064",
+      "eventType": "RECYCLE",
+      "timestamp": "2025-07-07T10:14:01.064Z",
+      "market": "TW",
+      "channel": "STORE",
+      "productLine": "PREMIUM_SERIES",
+      "consumerId": "new_user_000",
+      "context": {
+        "storeId": "",
+        "campaignCode": ""
+      },
+      "attributes": {
+        "recycledCount": 1
+      }
+    }
+  },
+  {
+    "consumerId": "new_user_000",
+    "eventId": "evt_1751883241240",
+    "eventType": "RECYCLE",
+    "totalPointsAwarded": 50,
+    "pointBreakdown": [
+      {
+        "ruleId": "INTERACTION_ADJUST_POINT_TIMES_PER_YEAR",
+        "points": 50,
+        "description": "Engagement activity reward (+50 MD)",
+        "ruleCategory": "ENGAGEMENT_ACTIVITY",
+        "computation": {
+          "calculationType": "ACTIVITY_REWARD",
+          "formula": "min(itemCount, 5) × 50",
+          "inputs": {
+            "pointsPerBottle": 50,
+            "maxPerYear": 5
+          },
+          "result": 50
+        }
+      }
+    ],
+    "errors": [],
+    "resultingBalance": {
+      "total": 650,
+      "available": 650,
+      "used": 0,
+      "transactionCount": 14
+    },
+    "timestamp": "2025-07-07T10:14:01.253Z",
+    "originalEvent": {
+      "eventId": "evt_1751883241240",
+      "eventType": "RECYCLE",
+      "timestamp": "2025-07-07T10:14:01.240Z",
+      "market": "TW",
+      "channel": "STORE",
+      "productLine": "PREMIUM_SERIES",
+      "consumerId": "new_user_000",
+      "context": {
+        "storeId": "",
+        "campaignCode": ""
+      },
+      "attributes": {
+        "recycledCount": 1
+      }
+    }
+  },
+  {
+    "consumerId": "new_user_000",
+    "eventId": "evt_1751883241366",
+    "eventType": "RECYCLE",
+    "totalPointsAwarded": 50,
+    "pointBreakdown": [
+      {
+        "ruleId": "INTERACTION_ADJUST_POINT_TIMES_PER_YEAR",
+        "points": 50,
+        "description": "Engagement activity reward (+50 MD)",
+        "ruleCategory": "ENGAGEMENT_ACTIVITY",
+        "computation": {
+          "calculationType": "ACTIVITY_REWARD",
+          "formula": "min(itemCount, 5) × 50",
+          "inputs": {
+            "pointsPerBottle": 50,
+            "maxPerYear": 5
+          },
+          "result": 50
+        }
+      }
+    ],
+    "errors": [],
+    "resultingBalance": {
+      "total": 700,
+      "available": 700,
+      "used": 0,
+      "transactionCount": 15
+    },
+    "timestamp": "2025-07-07T10:14:01.382Z",
+    "originalEvent": {
+      "eventId": "evt_1751883241366",
+      "eventType": "RECYCLE",
+      "timestamp": "2025-07-07T10:14:01.366Z",
+      "market": "TW",
+      "channel": "STORE",
+      "productLine": "PREMIUM_SERIES",
+      "consumerId": "new_user_000",
+      "context": {
+        "storeId": "",
+        "campaignCode": ""
+      },
+      "attributes": {
+        "recycledCount": 1
+      }
+    }
+  },
+  {
+    "consumerId": "new_user_000",
+    "eventId": "evt_1751883241518",
+    "eventType": "RECYCLE",
+    "totalPointsAwarded": 50,
+    "pointBreakdown": [
+      {
+        "ruleId": "INTERACTION_ADJUST_POINT_TIMES_PER_YEAR",
+        "points": 50,
+        "description": "Engagement activity reward (+50 MD)",
+        "ruleCategory": "ENGAGEMENT_ACTIVITY",
+        "computation": {
+          "calculationType": "ACTIVITY_REWARD",
+          "formula": "min(itemCount, 5) × 50",
+          "inputs": {
+            "pointsPerBottle": 50,
+            "maxPerYear": 5
+          },
+          "result": 50
+        }
+      }
+    ],
+    "errors": [],
+    "resultingBalance": {
+      "total": 750,
+      "available": 750,
+      "used": 0,
+      "transactionCount": 16
+    },
+    "timestamp": "2025-07-07T10:14:01.536Z",
+    "originalEvent": {
+      "eventId": "evt_1751883241518",
+      "eventType": "RECYCLE",
+      "timestamp": "2025-07-07T10:14:01.518Z",
+      "market": "TW",
+      "channel": "STORE",
+      "productLine": "PREMIUM_SERIES",
+      "consumerId": "new_user_000",
+      "context": {
+        "storeId": "",
+        "campaignCode": ""
+      },
+      "attributes": {
+        "recycledCount": 1
+      }
+    }
+  },
+  {
+    "consumerId": "new_user_000",
+    "eventId": "evt_1751883241668",
+    "eventType": "RECYCLE",
+    "totalPointsAwarded": 50,
+    "pointBreakdown": [
+      {
+        "ruleId": "INTERACTION_ADJUST_POINT_TIMES_PER_YEAR",
+        "points": 50,
+        "description": "Engagement activity reward (+50 MD)",
+        "ruleCategory": "ENGAGEMENT_ACTIVITY",
+        "computation": {
+          "calculationType": "ACTIVITY_REWARD",
+          "formula": "min(itemCount, 5) × 50",
+          "inputs": {
+            "pointsPerBottle": 50,
+            "maxPerYear": 5
+          },
+          "result": 50
+        }
+      }
+    ],
+    "errors": [],
+    "resultingBalance": {
+      "total": 800,
+      "available": 800,
+      "used": 0,
+      "transactionCount": 17
+    },
+    "timestamp": "2025-07-07T10:14:01.682Z",
+    "originalEvent": {
+      "eventId": "evt_1751883241668",
+      "eventType": "RECYCLE",
+      "timestamp": "2025-07-07T10:14:01.668Z",
+      "market": "TW",
+      "channel": "STORE",
+      "productLine": "PREMIUM_SERIES",
+      "consumerId": "new_user_000",
+      "context": {
+        "storeId": "",
+        "campaignCode": ""
+      },
+      "attributes": {
+        "recycledCount": 1
+      }
+    }
+  },
+  {
+    "consumerId": "new_user_000",
+    "eventId": "evt_1751883241826",
+    "eventType": "RECYCLE",
+    "totalPointsAwarded": 50,
+    "pointBreakdown": [
+      {
+        "ruleId": "INTERACTION_ADJUST_POINT_TIMES_PER_YEAR",
+        "points": 50,
+        "description": "Engagement activity reward (+50 MD)",
+        "ruleCategory": "ENGAGEMENT_ACTIVITY",
+        "computation": {
+          "calculationType": "ACTIVITY_REWARD",
+          "formula": "min(itemCount, 5) × 50",
+          "inputs": {
+            "pointsPerBottle": 50,
+            "maxPerYear": 5
+          },
+          "result": 50
+        }
+      }
+    ],
+    "errors": [],
+    "resultingBalance": {
+      "total": 850,
+      "available": 850,
+      "used": 0,
+      "transactionCount": 18
+    },
+    "timestamp": "2025-07-07T10:14:01.853Z",
+    "originalEvent": {
+      "eventId": "evt_1751883241826",
+      "eventType": "RECYCLE",
+      "timestamp": "2025-07-07T10:14:01.826Z",
+      "market": "TW",
+      "channel": "STORE",
+      "productLine": "PREMIUM_SERIES",
+      "consumerId": "new_user_000",
+      "context": {
+        "storeId": "",
+        "campaignCode": ""
+      },
+      "attributes": {
+        "recycledCount": 1
+      }
+    }
+  },
+  {
+    "consumerId": "new_user_000",
+    "eventId": "evt_1751883242988",
+    "eventType": "RECYCLE",
+    "totalPointsAwarded": 50,
+    "pointBreakdown": [
+      {
+        "ruleId": "INTERACTION_ADJUST_POINT_TIMES_PER_YEAR",
+        "points": 50,
+        "description": "Engagement activity reward (+50 MD)",
+        "ruleCategory": "ENGAGEMENT_ACTIVITY",
+        "computation": {
+          "calculationType": "ACTIVITY_REWARD",
+          "formula": "min(itemCount, 5) × 50",
+          "inputs": {
+            "pointsPerBottle": 50,
+            "maxPerYear": 5
+          },
+          "result": 50
+        }
+      }
+    ],
+    "errors": [],
+    "resultingBalance": {
+      "total": 900,
+      "available": 900,
+      "used": 0,
+      "transactionCount": 19
+    },
+    "timestamp": "2025-07-07T10:14:03.005Z",
+    "originalEvent": {
+      "eventId": "evt_1751883242988",
+      "eventType": "RECYCLE",
+      "timestamp": "2025-07-07T10:14:02.988Z",
+      "market": "TW",
+      "channel": "STORE",
+      "productLine": "PREMIUM_SERIES",
+      "consumerId": "new_user_000",
+      "context": {
+        "storeId": "",
+        "campaignCode": ""
+      },
+      "attributes": {
+        "recycledCount": 1
+      }
+    }
+  },
+  {
+    "consumerId": "new_user_000",
+    "eventId": "evt_1751883243153",
+    "eventType": "RECYCLE",
+    "totalPointsAwarded": 50,
+    "pointBreakdown": [
+      {
+        "ruleId": "INTERACTION_ADJUST_POINT_TIMES_PER_YEAR",
+        "points": 50,
+        "description": "Engagement activity reward (+50 MD)",
+        "ruleCategory": "ENGAGEMENT_ACTIVITY",
+        "computation": {
+          "calculationType": "ACTIVITY_REWARD",
+          "formula": "min(itemCount, 5) × 50",
+          "inputs": {
+            "pointsPerBottle": 50,
+            "maxPerYear": 5
+          },
+          "result": 50
+        }
+      }
+    ],
+    "errors": [],
+    "resultingBalance": {
+      "total": 950,
+      "available": 950,
+      "used": 0,
+      "transactionCount": 20
+    },
+    "timestamp": "2025-07-07T10:14:03.170Z",
+    "originalEvent": {
+      "eventId": "evt_1751883243153",
+      "eventType": "RECYCLE",
+      "timestamp": "2025-07-07T10:14:03.153Z",
+      "market": "TW",
+      "channel": "STORE",
+      "productLine": "PREMIUM_SERIES",
+      "consumerId": "new_user_000",
+      "context": {
+        "storeId": "",
+        "campaignCode": ""
+      },
+      "attributes": {
+        "recycledCount": 1
+      }
+    }
+  },
+  {
+    "consumerId": "new_user_000",
+    "eventId": "evt_1751883243292",
+    "eventType": "RECYCLE",
+    "totalPointsAwarded": 50,
+    "pointBreakdown": [
+      {
+        "ruleId": "INTERACTION_ADJUST_POINT_TIMES_PER_YEAR",
+        "points": 50,
+        "description": "Engagement activity reward (+50 MD)",
+        "ruleCategory": "ENGAGEMENT_ACTIVITY",
+        "computation": {
+          "calculationType": "ACTIVITY_REWARD",
+          "formula": "min(itemCount, 5) × 50",
+          "inputs": {
+            "pointsPerBottle": 50,
+            "maxPerYear": 5
+          },
+          "result": 50
+        }
+      }
+    ],
+    "errors": [],
+    "resultingBalance": {
+      "total": 1000,
+      "available": 1000,
+      "used": 0,
+      "transactionCount": 21
+    },
+    "timestamp": "2025-07-07T10:14:03.309Z",
+    "originalEvent": {
+      "eventId": "evt_1751883243292",
+      "eventType": "RECYCLE",
+      "timestamp": "2025-07-07T10:14:03.292Z",
+      "market": "TW",
+      "channel": "STORE",
+      "productLine": "PREMIUM_SERIES",
+      "consumerId": "new_user_000",
+      "context": {
+        "storeId": "",
+        "campaignCode": ""
+      },
+      "attributes": {
+        "recycledCount": 1
+      }
+    }
+  },
+  {
+    "consumerId": "new_user_000",
+    "eventId": "evt_1751883243442",
+    "eventType": "RECYCLE",
+    "totalPointsAwarded": 50,
+    "pointBreakdown": [
+      {
+        "ruleId": "INTERACTION_ADJUST_POINT_TIMES_PER_YEAR",
+        "points": 50,
+        "description": "Engagement activity reward (+50 MD)",
+        "ruleCategory": "ENGAGEMENT_ACTIVITY",
+        "computation": {
+          "calculationType": "ACTIVITY_REWARD",
+          "formula": "min(itemCount, 5) × 50",
+          "inputs": {
+            "pointsPerBottle": 50,
+            "maxPerYear": 5
+          },
+          "result": 50
+        }
+      }
+    ],
+    "errors": [],
+    "resultingBalance": {
+      "total": 1050,
+      "available": 1050,
+      "used": 0,
+      "transactionCount": 22
+    },
+    "timestamp": "2025-07-07T10:14:03.461Z",
+    "originalEvent": {
+      "eventId": "evt_1751883243442",
+      "eventType": "RECYCLE",
+      "timestamp": "2025-07-07T10:14:03.442Z",
+      "market": "TW",
+      "channel": "STORE",
+      "productLine": "PREMIUM_SERIES",
+      "consumerId": "new_user_000",
+      "context": {
+        "storeId": "",
+        "campaignCode": ""
+      },
+      "attributes": {
+        "recycledCount": 1
+      }
+    }
+  },
+  {
+    "consumerId": "new_user_000",
+    "eventId": "evt_1751883243602",
+    "eventType": "RECYCLE",
+    "totalPointsAwarded": 50,
+    "pointBreakdown": [
+      {
+        "ruleId": "INTERACTION_ADJUST_POINT_TIMES_PER_YEAR",
+        "points": 50,
+        "description": "Engagement activity reward (+50 MD)",
+        "ruleCategory": "ENGAGEMENT_ACTIVITY",
+        "computation": {
+          "calculationType": "ACTIVITY_REWARD",
+          "formula": "min(itemCount, 5) × 50",
+          "inputs": {
+            "pointsPerBottle": 50,
+            "maxPerYear": 5
+          },
+          "result": 50
+        }
+      }
+    ],
+    "errors": [],
+    "resultingBalance": {
+      "total": 1100,
+      "available": 1100,
+      "used": 0,
+      "transactionCount": 23
+    },
+    "timestamp": "2025-07-07T10:14:03.617Z",
+    "originalEvent": {
+      "eventId": "evt_1751883243602",
+      "eventType": "RECYCLE",
+      "timestamp": "2025-07-07T10:14:03.602Z",
+      "market": "TW",
+      "channel": "STORE",
+      "productLine": "PREMIUM_SERIES",
+      "consumerId": "new_user_000",
+      "context": {
+        "storeId": "",
+        "campaignCode": ""
+      },
+      "attributes": {
+        "recycledCount": 1
+      }
+    }
+  },
+  {
+    "consumerId": "new_user_000",
+    "eventId": "evt_1751883243808",
+    "eventType": "RECYCLE",
+    "totalPointsAwarded": 50,
+    "pointBreakdown": [
+      {
+        "ruleId": "INTERACTION_ADJUST_POINT_TIMES_PER_YEAR",
+        "points": 50,
+        "description": "Engagement activity reward (+50 MD)",
+        "ruleCategory": "ENGAGEMENT_ACTIVITY",
+        "computation": {
+          "calculationType": "ACTIVITY_REWARD",
+          "formula": "min(itemCount, 5) × 50",
+          "inputs": {
+            "pointsPerBottle": 50,
+            "maxPerYear": 5
+          },
+          "result": 50
+        }
+      }
+    ],
+    "errors": [],
+    "resultingBalance": {
+      "total": 1150,
+      "available": 1150,
+      "used": 0,
+      "transactionCount": 24
+    },
+    "timestamp": "2025-07-07T10:14:03.828Z",
+    "originalEvent": {
+      "eventId": "evt_1751883243808",
+      "eventType": "RECYCLE",
+      "timestamp": "2025-07-07T10:14:03.808Z",
+      "market": "TW",
+      "channel": "STORE",
+      "productLine": "PREMIUM_SERIES",
+      "consumerId": "new_user_000",
+      "context": {
+        "storeId": "",
+        "campaignCode": ""
+      },
+      "attributes": {
+        "recycledCount": 1
+      }
+    }
   }
 ]
