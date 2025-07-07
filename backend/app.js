@@ -1,28 +1,25 @@
 const express = require('express');
 const cors = require('cors');
-const eventsRouter = require('./api/eventsRouter');
-const consumerRouter = require('./api/consumerRouter');
-const campaignRouter = require('./api/campaignRouter');
-const rulesRouter = require('./api/rulesRouter');
-const rulesManagementRouter = require('./api/rulesManagementRouter');
-const defaultsRouter = require('./api/defaultsRouter');
+const config = require('./src/config');
+const { logger } = require('./src/utils');
+const { errorHandler } = require('./src/middleware/errorHandler');
+const apiRoutes = require('./src/routes');
 
 const app = express();
-const PORT = process.env.PORT || 3000;
 
 // Middleware
-app.use(cors());
+app.use(cors(config.cors));
 
 // JSON parsing with better error handling
 app.use(express.json({
-  limit: '10mb',
+  limit: config.request.jsonLimit,
   strict: true
 }));
 
 // JSON parsing error handler
 app.use((error, req, res, next) => {
   if (error instanceof SyntaxError && error.status === 400 && 'body' in error) {
-    console.error('JSON parsing error:', error.message);
+    logger.error('JSON parsing error', error);
     return res.status(400).json({
       error: 'Invalid JSON',
       message: 'Request body contains malformed JSON. Please check your JSON syntax.'
@@ -33,39 +30,43 @@ app.use((error, req, res, next) => {
 
 // Request logging middleware
 app.use((req, res, next) => {
-  console.log(`${new Date().toISOString()} - ${req.method} ${req.path}`);
+  logger.info(`${req.method} ${req.path}`, {
+    method: req.method,
+    path: req.path,
+    ip: req.ip,
+    userAgent: req.get('User-Agent')
+  });
   next();
 });
 
 // Routes
-app.use('/api/events', eventsRouter);
-app.use('/api/consumer', consumerRouter);
-app.use('/api/campaigns', campaignRouter);
-app.use('/api/rules', rulesRouter);
-app.use('/api/rules-management', rulesManagementRouter);
-app.use('/api/defaults', defaultsRouter);
+app.use('/api', apiRoutes);
 
 // Health check endpoint
 app.get('/health', (req, res) => {
-  res.json({ status: 'healthy', timestamp: new Date().toISOString() });
-});
-
-// Error handling middleware
-app.use((err, req, res, next) => {
-  console.error('Error:', err);
-  res.status(500).json({
-    error: 'Internal server error',
-    message: err.message
+  res.json({ 
+    status: 'healthy', 
+    timestamp: new Date().toISOString(),
+    version: config.app.version,
+    name: config.app.name
   });
 });
 
+// Error handling middleware (must be last)
+app.use(errorHandler);
+
 // 404 handler
 app.use('*', (req, res) => {
+  logger.warn('Endpoint not found', { method: req.method, path: req.path });
   res.status(404).json({ error: 'Endpoint not found' });
 });
 
-app.listen(PORT, () => {
-  console.log(`Loyalty Rules Engine server running on port ${PORT}`);
+app.listen(config.port, () => {
+  logger.info(`${config.app.name} server running on port ${config.port}`, {
+    port: config.port,
+    environment: config.nodeEnv,
+    version: config.app.version
+  });
 });
 
 module.exports = app;

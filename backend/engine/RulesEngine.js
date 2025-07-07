@@ -6,6 +6,7 @@ const FactsEngine = require('./FactsEngine');
 const CalculationHelpers = require('./helpers/CalculationHelpers');
 const ValidationHelpers = require('./helpers/ValidationHelpers');
 const FormattingHelpers = require('./helpers/FormattingHelpers');
+const { logger } = require('../src/utils');
 const fs = require('fs');
 const path = require('path');
 const { v4: uuidv4 } = require('uuid');
@@ -44,7 +45,7 @@ class RulesEngine {
     this.initializeEventHandlers();
     
     this.initialized = true;
-    console.log('Rules Engine initialized with json-rules-engine patterns');
+    logger.info('Rules Engine initialized with json-rules-engine patterns');
   }
 
   /**
@@ -72,12 +73,11 @@ class RulesEngine {
         // Add each rule to the engine
         for (const rule of rulesData) {
           this.engine.addRule(rule);
-          console.log(`✅ Added rule:`, rule.event?.type, 'with conditions:', JSON.stringify(rule.conditions));
         }
         
-        console.log(`Loaded rules from ${file}`);
+        logger.info(`Loaded ${rulesData.length} rules from ${file}`);
       } catch (error) {
-        console.error(`Error loading rules from ${file}:`, error);
+        logger.error(`Error loading rules from ${file}`, error);
         throw new Error(`Failed to load rules from ${file}: ${error.message}`);
       }
     }
@@ -111,7 +111,8 @@ class RulesEngine {
 
     // Generic success handler for logging
     this.engine.on('success', (event, almanac, ruleResult) => {
-      console.log(`Rule triggered: ${event.type}`, {
+      logger.debug('Rule triggered', {
+        eventType: event.type,
         params: event.params,
         rule: ruleResult?.rule?.name || ruleResult?.name || 'Unnamed rule'
       });
@@ -140,9 +141,16 @@ class RulesEngine {
         // Get data from the current enriched event data stored during processing (for other attributes)
         const enrichedEventData = (this && this.currentEnrichedEventData) || {};
         const itemCount = enrichedEventData.attributes?.recycledCount || 0;
-        const adjustmentValue = enrichedEventData.attributes?.adjustedPoints || enrichedEventData.attributes?.adjustmentAmount || 0;
+        const adjustmentValue = enrichedEventData.attributes?.adjustmentPoints || enrichedEventData.attributes?.adjustedPoints || enrichedEventData.attributes?.adjustmentAmount || 0;
         
-        console.log(`Processing ${eventType} - market: ${market}, baseAmount: ${baseAmount}, discountedAmount: ${discountedAmount}`);
+        logger.debug('Processing rule event', {
+          eventType,
+          market,
+          baseAmount,
+          discountedAmount,
+          itemCount,
+          adjustmentValue
+        });
         
         let rewardPoints = 0;
         const params = event; // In json-rules-engine, the event object IS the params
@@ -205,17 +213,17 @@ class RulesEngine {
             break;
             
           default:
-            console.warn(`Unknown event type: ${eventType}`);
+            logger.warn('Unknown event type', { eventType });
             rewardPoints = 0;
         }
         
-        console.log(`Calculated ${rewardPoints} reward points for ${eventType}`);
+        logger.debug('Calculated reward points', { eventType, rewardPoints });
         
         // Add to breakdown with proper campaign information
         this.addToBreakdown(eventType, rewardPoints, FormattingHelpers.getDescription(eventType, market, rewardPoints), params);
         
       } catch (error) {
-        console.error(`Error in event handler for ${eventType}:`, error);
+        logger.error(`Error in event handler for ${eventType}`, error);
         this.addError(`Failed to process ${eventType}: ${error.message}`);
       }
     };
@@ -232,40 +240,14 @@ class RulesEngine {
         await this.initializeEngine();
       }
       
-      console.log('Processing event:', eventData.eventId, 'for consumer:', eventData.consumerId);
+      logger.info('Processing event', {
+        eventId: eventData.eventId,
+        consumerId: eventData.consumerId,
+        eventType: eventData.eventType
+      });
       
-      // Validate event data according to generalized input template
-      ValidationHelpers.validateEventData(eventData);
-      
-      // Special validation for RECYCLE events - check yearly bottle limits
-      if (eventData.eventType === 'RECYCLE' && eventData.attributes?.recycledCount) {
-        const user = consumerService.getConsumerById(eventData.consumerId);
-        if (user && user.engagement?.recyclingActivity) {
-          const recyclingActivity = user.engagement.recyclingActivity;
-          const maxBottlesPerYear = 5; // As defined in transaction rules
-          const currentYearRecycled = recyclingActivity.thisYearBottlesRecycled || 0;
-          const requestedCount = eventData.attributes.recycledCount;
-          const proposedTotal = currentYearRecycled + requestedCount;
-          
-          if (proposedTotal > maxBottlesPerYear) {
-            const availableSlots = Math.max(0, maxBottlesPerYear - currentYearRecycled);
-            const errorMessage = `Recycling limit exceeded. You have recycled ${currentYearRecycled} bottles this year and can only recycle ${availableSlots} more (max ${maxBottlesPerYear}/year). Requested: ${requestedCount}`;
-            console.error(errorMessage);
-            this.errors.push(errorMessage);
-            
-            // Return error response instead of processing
-            return {
-              consumerId: eventData.consumerId,
-              eventId: eventData.eventId,
-              eventType: eventData.eventType,
-              totalPointsAwarded: 0,
-              pointBreakdown: [],
-              errors: this.errors,
-              resultingBalance: consumerService.getBalance(eventData.consumerId) // Return current balance unchanged
-            };
-          }
-        }
-      }
+      // Comprehensive validation using ValidationHelpers
+      ValidationHelpers.validateCompleteEvent(eventData, consumerService);
       
       // Set consumer market if provided in event data
       if (eventData.market) {
@@ -273,9 +255,7 @@ class RulesEngine {
       }
       
       // Fetch enriched consumer data from CDP with calculated attributes
-      console.log('Fetching enriched consumer data from CDP...');
       const cdpData = await CDPService.getConsumerAttributesForRules(eventData.consumerId);
-      console.log('CDP enriched attributes:', cdpData);
       
       // Merge CDP data with event data (CDP takes precedence for consumer attributes)
       const enrichedEventData = {
@@ -299,15 +279,6 @@ class RulesEngine {
         }
       };
       
-      console.log('Enriched event data with CDP:', {
-        consumerId: enrichedEventData.consumerId,
-        eventType: enrichedEventData.eventType,
-        isVIP: enrichedEventData.isVIP,
-        isBirthMonth: enrichedEventData.isBirthMonth,
-        market: enrichedEventData.market,
-        recycledCount: enrichedEventData.attributes.recycledCount
-      });
-      
       // Reset breakdown and errors for this processing
       this.rewardBreakdown = [];
       this.errors = [];
@@ -322,42 +293,31 @@ class RulesEngine {
       // Add productLine as a fact with default value to prevent "Undefined fact" errors
       this.engine.addFact('productLine', enrichedEventData.productLine || 'NONE');
       
-      // DEBUG: Log facts for debugging
-      console.log('=== DEBUG: Enriched Event Data ===');
-      console.log('EventType:', enrichedEventData.eventType);
-      console.log('Market:', enrichedEventData.market);
-      console.log('IsVIP:', enrichedEventData.isVIP);
-      console.log('IsBirthMonth:', enrichedEventData.isBirthMonth);
-      console.log('Full Event:', JSON.stringify(enrichedEventData, null, 2));
-      
       // Run the engine with the enriched event data - strictly following json-rules-engine patterns
       const engineResults = await this.engine.run(enrichedEventData);
-      console.log('Engine run completed. Events triggered:', engineResults.events.length);
-      console.log('Triggered events:', engineResults.events.map(e => ({type: e.type, params: e.params})));
+      logger.debug('Engine run completed', {
+        eventsTriggered: engineResults.events.length,
+        eventTypes: engineResults.events.map(e => e.type)
+      });
       
       // Calculate total points from breakdown
       const totalRewardsAwarded = this.rewardBreakdown.reduce((sum, item) => sum + item.points, 0);
       
       // Get current consumer balance and update it
       const currentBalance = await consumerService.getBalance(eventData.consumerId);
-      console.log('Current balance before update:', currentBalance);
+      logger.debug('Current balance before update', currentBalance);
       
       // Handle redemption vs earning differently
       let newTotal, newAvailable, newUsed;
       
-      console.log(`=== BALANCE CALCULATION DEBUG ===`);
-      console.log(`totalRewardsAwarded: ${totalRewardsAwarded}`);
-      console.log(`Is redemption (< 0): ${totalRewardsAwarded < 0}`);
-      
       if (totalRewardsAwarded < 0) {
         // Redemption: validate sufficient points before processing
         const redemptionAmount = Math.abs(totalRewardsAwarded);
-        console.log(`REDEMPTION PATH - redemptionAmount: ${redemptionAmount}`);
         
         // Validate sufficient available points
         if (currentBalance.available < redemptionAmount) {
           const errorMessage = `Insufficient points for redemption. Available: ${currentBalance.available}, Requested: ${redemptionAmount}`;
-          console.error(errorMessage);
+          logger.error(errorMessage);
           this.errors.push(errorMessage);
           
           // Return error response instead of processing
@@ -375,19 +335,14 @@ class RulesEngine {
         newTotal = currentBalance.total; // Total earned doesn't change
         newAvailable = Math.max(0, currentBalance.available - redemptionAmount);
         newUsed = currentBalance.used + redemptionAmount;
-        console.log(`Redemption logic: redemptionAmount=${redemptionAmount}, newTotal=${newTotal}, newAvailable=${newAvailable}, newUsed=${newUsed}`);
       } else {
         // Normal earning: add to total and available
-        console.log(`EARNING PATH - adding ${totalRewardsAwarded} points`);
         newTotal = currentBalance.total + totalRewardsAwarded;
         newAvailable = currentBalance.available + totalRewardsAwarded;
         newUsed = currentBalance.used;
-        console.log(`Earning logic: newTotal=${newTotal}, newAvailable=${newAvailable}, newUsed=${newUsed}`);
       }
       
       const newTransactionCount = (currentBalance.transactionCount || 0) + 1;
-      
-      console.log('New balance to update:', { total: newTotal, available: newAvailable, used: newUsed, transactionCount: newTransactionCount });
       
       // Update balance in service
       await consumerService.updateBalance(eventData.consumerId, {
@@ -420,11 +375,11 @@ class RulesEngine {
         originalEvent: eventData
       });
       
-      console.log('✅ Event processed successfully:', response);
+      logger.info('Event processed successfully', response);
       return response;
       
     } catch (error) {
-      console.error('Error processing event:', error);
+      logger.error('Error processing event', error);
       throw new Error(`Event processing failed: ${error.message}`);
     } finally {
       // Clear current event data
@@ -446,7 +401,7 @@ class RulesEngine {
    */
   addRule(rule) {
     this.engine.addRule(rule);
-    console.log(`✅ Added rule: ${rule.name || 'Unnamed rule'}`);
+    logger.info('Dynamic rule added', { ruleName: rule.name || 'Unnamed rule' });
   }
 
   /**
@@ -454,7 +409,7 @@ class RulesEngine {
    */
   removeRule(ruleId) {
     this.engine.removeRule(ruleId);
-    console.log(`✅ Removed rule: ${ruleId}`);
+    logger.info('Dynamic rule removed', { ruleId });
   }
 
   /**
@@ -469,7 +424,7 @@ class RulesEngine {
    */
   addError(error) {
     this.errors.push(error);
-    console.warn(`Added error: ${error}`);
+    logger.warn('Added error', { error });
   }
 
   /**
@@ -479,7 +434,7 @@ class RulesEngine {
     try {
       return await this.campaignService.getActiveCampaigns(market, timestamp);
     } catch (error) {
-      console.error('Error fetching active campaigns:', error);
+      logger.error('Error fetching active campaigns', error);
       return [];
     }
   }
@@ -495,7 +450,7 @@ class RulesEngine {
         const result = await this.processEvent(eventData);
         results.push(result);
       } catch (error) {
-        console.error(`Error processing event ${eventData.eventId}:`, error);
+        logger.error(`Error processing event ${eventData.eventId}`, error);
         results.push({
           eventId: eventData.eventId,
           error: error.message
@@ -512,7 +467,7 @@ class RulesEngine {
   clearState() {
     this.rewardBreakdown = [];
     this.errors = [];
-    console.log('Engine state cleared');
+    logger.debug('Engine state cleared');
   }
 
   /**

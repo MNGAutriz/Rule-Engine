@@ -11,6 +11,7 @@ class CDPService {
    */
   static async getEnrichedConsumerData(consumerId) {
     const consumerService = require('./consumerService');
+const { logger } = require('../src/utils');
     
     try {
       // Get base consumer data from CDP
@@ -39,17 +40,10 @@ class CDPService {
         }
       };
 
-      console.log(`CDP: Enriched data for ${consumerId}:`, {
-        tier: enrichedData.profile.tier,
-        isVIP: enrichedData.calculatedAttributes.isVIP,
-        isBirthMonth: enrichedData.calculatedAttributes.isBirthMonth,
-        recyclingBottles: enrichedData.engagement?.recyclingActivity?.thisYearBottlesRecycled || 0
-      });
-
       return enrichedData;
       
     } catch (error) {
-      console.error('CDP Service Error:', error.message);
+      logger.error('CDP Service Error', error);
       throw error;
     }
   }

@@ -15,11 +15,7 @@ class ValidationHelpers {
       'channel', 'consumerId'
     ];
     
-    // ProductLine is not required for all event types
-    const eventTypesRequiringProductLine = ['PURCHASE'];
-    if (eventTypesRequiringProductLine.includes(eventData.eventType) && !eventData.productLine) {
-      requiredFields.push('productLine');
-    }
+    // ProductLine is optional for all event types, including PURCHASE
     
     const missing = requiredFields.filter(field => !eventData[field]);
     
@@ -97,6 +93,177 @@ class ValidationHelpers {
     if (consumerId.length > 100) {
       throw new Error('Consumer ID cannot exceed 100 characters');
     }
+  }
+
+  /**
+   * Validate recycling event data and limits
+   */
+  static validateRecyclingEvent(eventData, consumerService) {
+    if (eventData.eventType !== 'RECYCLE') {
+      return; // Not a recycling event, skip validation
+    }
+
+    // Validate required fields for recycling
+    if (!eventData.attributes?.recycledCount) {
+      throw new Error('recycledCount is required for RECYCLE events');
+    }
+
+    const recycledCount = eventData.attributes.recycledCount;
+
+    // Validate recycledCount is a positive number
+    if (!Number.isInteger(recycledCount) || recycledCount <= 0) {
+      throw new Error('recycledCount must be a positive integer');
+    }
+
+    if (recycledCount > 10) {
+      throw new Error('Cannot recycle more than 10 bottles in a single event');
+    }
+
+    // Check yearly bottle limits
+    const user = consumerService.getConsumerById(eventData.consumerId);
+    if (user && user.engagement?.recyclingActivity) {
+      const recyclingActivity = user.engagement.recyclingActivity;
+      const maxBottlesPerYear = 5; // As defined in transaction rules
+      const currentYearRecycled = recyclingActivity.thisYearBottlesRecycled || 0;
+      const proposedTotal = currentYearRecycled + recycledCount;
+      
+      if (proposedTotal > maxBottlesPerYear) {
+        const availableSlots = Math.max(0, maxBottlesPerYear - currentYearRecycled);
+        throw new Error(`Recycling limit exceeded. You have recycled ${currentYearRecycled} bottles this year and can only recycle ${availableSlots} more (max ${maxBottlesPerYear}/year). Requested: ${recycledCount}`);
+      }
+    }
+  }
+
+  /**
+   * Validate redemption event data and available points
+   */
+  static validateRedemptionEvent(eventData, consumerService) {
+    if (eventData.eventType !== 'REDEMPTION') {
+      return; // Not a redemption event, skip validation
+    }
+
+    // Validate required fields for redemption
+    if (!eventData.attributes?.redemptionPoints) {
+      throw new Error('redemptionPoints is required for REDEMPTION events');
+    }
+
+    const redemptionPoints = eventData.attributes.redemptionPoints;
+
+    // Validate redemptionPoints is a positive number
+    if (!Number.isInteger(redemptionPoints) || redemptionPoints <= 0) {
+      throw new Error('redemptionPoints must be a positive integer');
+    }
+
+    if (redemptionPoints > 100000) {
+      throw new Error('Cannot redeem more than 100,000 points in a single transaction');
+    }
+
+    // Check available balance
+    const currentBalance = consumerService.getBalance(eventData.consumerId);
+    if (currentBalance.available < redemptionPoints) {
+      throw new Error(`Insufficient points for redemption. Available: ${currentBalance.available}, Requested: ${redemptionPoints}`);
+    }
+  }
+
+  /**
+   * Validate purchase event data
+   */
+  static validatePurchaseEvent(eventData) {
+    if (eventData.eventType !== 'PURCHASE') {
+      return; // Not a purchase event, skip validation
+    }
+
+    // Validate required fields for purchase
+    if (!eventData.attributes?.amount) {
+      throw new Error('amount is required for PURCHASE events');
+    }
+
+    const amount = eventData.attributes.amount;
+
+    // Validate amount is a positive number
+    if (typeof amount !== 'number' || amount <= 0) {
+      throw new Error('amount must be a positive number');
+    }
+
+    if (amount > 1000000) {
+      throw new Error('Purchase amount cannot exceed 1,000,000');
+    }
+  }
+
+  /**
+   * Validate consultation event data
+   */
+  static validateConsultationEvent(eventData) {
+    if (eventData.eventType !== 'CONSULTATION') {
+      return; // Not a consultation event, skip validation
+    }
+
+    // Validate consultation type if provided
+    if (eventData.attributes?.consultationType) {
+      const validTypes = ['BEAUTY_CONSULTATION', 'PRODUCT_RECOMMENDATION', 'SKIN_ANALYSIS', 'VIRTUAL_CONSULTATION'];
+      if (!validTypes.includes(eventData.attributes.consultationType)) {
+        throw new Error(`Invalid consultation type: ${eventData.attributes.consultationType}. Must be one of: ${validTypes.join(', ')}`);
+      }
+    }
+  }
+
+  /**
+   * Validate adjustment event data
+   */
+  static validateAdjustmentEvent(eventData) {
+    if (eventData.eventType !== 'ADJUSTMENT') {
+      return; // Not an adjustment event, skip validation
+    }
+
+    // Validate required fields for adjustment
+    if (!eventData.attributes?.adjustmentPoints) {
+      throw new Error('adjustmentPoints is required for ADJUSTMENT events');
+    }
+
+    if (!eventData.attributes?.reason) {
+      throw new Error('reason is required for ADJUSTMENT events');
+    }
+
+    const adjustmentPoints = eventData.attributes.adjustmentPoints;
+    const reason = eventData.attributes.reason;
+
+    // Validate adjustmentPoints is a number (can be negative)
+    if (typeof adjustmentPoints !== 'number') {
+      throw new Error('adjustmentPoints must be a number');
+    }
+
+    if (Math.abs(adjustmentPoints) > 50000) {
+      throw new Error('Adjustment cannot exceed 50,000 points in either direction');
+    }
+
+    // Validate reason - allow predefined reasons or custom text
+    const validReasons = ['CUSTOMER_SERVICE', 'PROMOTION_CORRECTION', 'SYSTEM_ERROR', 'MANAGER_OVERRIDE'];
+    
+    // If reason is not in predefined list, treat it as custom reason (which is allowed)
+    // Custom reasons should be descriptive and not empty
+    if (!validReasons.includes(reason)) {
+      if (!reason || reason.trim().length < 5) {
+        throw new Error('Custom adjustment reason must be at least 5 characters long and descriptive');
+      }
+      if (reason.trim().length > 200) {
+        throw new Error('Adjustment reason cannot exceed 200 characters');
+      }
+    }
+  }
+
+  /**
+   * Comprehensive event validation - validates all event types
+   */
+  static validateCompleteEvent(eventData, consumerService) {
+    // First validate basic event structure
+    this.validateEventData(eventData);
+
+    // Then validate event-specific data
+    this.validateRecyclingEvent(eventData, consumerService);
+    this.validateRedemptionEvent(eventData, consumerService);
+    this.validatePurchaseEvent(eventData);
+    this.validateConsultationEvent(eventData);
+    this.validateAdjustmentEvent(eventData);
   }
 }
 

@@ -1,5 +1,6 @@
 const db = require('./mockDatabase');
 const PointsExpirationService = require('./PointsExpirationService');
+const { logger } = require('../src/utils');
 
 const expirationService = new PointsExpirationService();
 
@@ -20,14 +21,10 @@ function getBalance(id) {
 }
 
 function updateBalance(id, balanceData) {
-  console.log(`=== UPDATING BALANCE FOR ${id} ===`);
-  console.log(`Balance data:`, balanceData);
-  
   const users = db.load('users.json');
   
   // Initialize user if doesn't exist
   if (!users[id]) {
-    console.log(`Creating new user: ${id}`);
     users[id] = {
       consumerId: id,
       balance: { total: 0, available: 0, used: 0, transactionCount: 1 }
@@ -36,12 +33,10 @@ function updateBalance(id, balanceData) {
   
   // Initialize balance if doesn't exist
   if (!users[id].balance) {
-    console.log(`Creating new balance for user: ${id}`);
     users[id].balance = { total: 0, available: 0, used: 0, transactionCount: 1 };
   }
   
   const oldBalance = { ...users[id].balance };
-  console.log(`Previous balance:`, oldBalance);
   
   // Update balance with new data
   users[id].balance = {
@@ -51,12 +46,15 @@ function updateBalance(id, balanceData) {
     transactionCount: balanceData.transactionCount || oldBalance.transactionCount || 1
   };
   
-  console.log(`New balance:`, users[id].balance);
-  
   // Save to file
   db.save('users.json', users);
   
-  console.log(`=== BALANCE UPDATE COMPLETE ===`);
+  logger.info('Balance updated for consumer', { 
+    consumerId: id, 
+    previousTotal: oldBalance.total, 
+    newTotal: users[id].balance.total 
+  });
+  
   return users[id].balance;
 }
 
@@ -139,28 +137,6 @@ function getConsumerProfile(consumerId) {
   return profile;
 }
 
-function updateConsumerProfile(consumerId, profileData) {
-  if (!cdpMockData[consumerId]) {
-    cdpMockData[consumerId] = { consumerId };
-  }
-  
-  Object.assign(cdpMockData[consumerId], profileData);
-  return cdpMockData[consumerId];
-}
-
-// Helper method to check if consumer has made purchases within timeframe
-function hasPurchaseWithinDays(consumerId, days) {
-  const events = db.load('events.json');
-  const cutoffDate = new Date();
-  cutoffDate.setDate(cutoffDate.getDate() - days);
-  
-  return events.some(event => 
-    event.consumerId === consumerId && 
-    event.eventType === 'PURCHASE' && 
-    new Date(event.timestamp) >= cutoffDate
-  );
-}
-
 // Helper method to count purchases for a consumer
 function getPurchaseCount(consumerId) {
   // First try to get from user profile (authoritative source)
@@ -207,7 +183,7 @@ function resetPurchaseCount(consumerId, targetCount) {
     db.save('events.json', filteredEvents);
   }
   
-  console.log(`Reset purchase count for ${consumerId} to ${targetCount}`);
+  logger.info('Reset purchase count for consumer', { consumerId, targetCount });
   return targetCount;
 }
 
@@ -217,7 +193,7 @@ function resetBalance(consumerId, balanceData) {
   if (users[consumerId]) {
     users[consumerId].balance = balanceData;
     db.save('users.json', users);
-    console.log(`Reset balance for ${consumerId}:`, balanceData);
+    logger.info('Reset balance for consumer', { consumerId, balanceData });
   }
   return balanceData;
 }
@@ -251,7 +227,6 @@ function updateLastOrderDate(consumerId, eventType, timestamp) {
     }
     
     db.save('users.json', users);
-    console.log(`Updated last order date for ${consumerId}: ${timestamp}`);
   }
 }
 
@@ -273,7 +248,8 @@ function setConsumerMarket(consumerId, market) {
   
   users[consumerId].profile.market = market;
   db.save('users.json', users);
-  console.log(`Set market for ${consumerId}: ${market}`);
+  
+  logger.info('Market updated for consumer', { consumerId, market });
   return users[consumerId];
 }
 
@@ -297,7 +273,6 @@ function getExpirationDetails(consumerId, market = null) {
 function getConsumerAttributes(consumerId) {
   const consumer = getConsumerById(consumerId);
   if (!consumer) {
-    console.log(`Consumer ${consumerId} not found in CDP, using default attributes`);
     return {
       isVIP: false,
       isBirthMonth: false,
@@ -339,9 +314,10 @@ module.exports = {
   getConsumerPoints,
   getConsumerHistory,
   getConsumerProfile,
-  updateConsumerProfile,
   getPurchaseCount,
   getDaysSinceFirstPurchase,
+  resetPurchaseCount,
+  resetBalance,
   updateLastOrderDate,
   setConsumerMarket,
   getExpirationDetails,

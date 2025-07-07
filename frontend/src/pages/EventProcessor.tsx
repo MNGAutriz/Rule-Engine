@@ -20,11 +20,12 @@ const EventProcessor: React.FC = () => {
   const [validationLoading, setValidationLoading] = useState(false);
   const [recyclingValidationMessage, setRecyclingValidationMessage] = useState<string | null>(null);
   const [recyclingValidationLoading, setRecyclingValidationLoading] = useState(false);
+  const [customAdjustmentReason, setCustomAdjustmentReason] = useState<string>('');
+  const [showCustomReasonField, setShowCustomReasonField] = useState<boolean>(false);
   const [eventData, setEventData] = useState<Partial<EventData>>({
     eventType: 'PURCHASE',
     market: 'HK',
     channel: 'STORE',
-    productLine: 'PREMIUM_SERIES',
     consumerId: 'user_hk_standard',
     context: { 
       storeId: 'STORE_HK_001',
@@ -100,6 +101,10 @@ const EventProcessor: React.FC = () => {
       
       // Auto-populate default values for different event types based on POSTMAN tests
       if (field === 'eventType') {
+        // Reset custom reason states when changing event types
+        setShowCustomReasonField(false);
+        setCustomAdjustmentReason('');
+        
         switch (value) {
           case 'PURCHASE':
             updated.attributes = {
@@ -108,48 +113,54 @@ const EventProcessor: React.FC = () => {
               currency: updated.attributes?.currency || (defaults?.marketDefaults[updated.market || 'HK']?.currency || 'HKD'),
               skuList: updated.attributes?.skuList || (defaults?.marketDefaults[updated.market || 'HK']?.skus.slice(0, 1) || ['SK_HK_001'])
             };
-            // Ensure productLine is set for Purchase events
-            if (!updated.productLine) {
-              updated.productLine = 'PREMIUM_SERIES';
-            }
+            // ProductLine stays at top level and is optional
             break;
           case 'CONSULTATION':
             updated.attributes = {
               consultationType: defaults?.consultationTypes?.[0] || 'SKIN_ANALYSIS',
               skinTestDate: new Date().toISOString().split('T')[0] // Today's date
             };
-            // Remove product line for consultation events
-            updated.productLine = '';
+            // Clear productLine for consultation events
+            delete updated.productLine;
             break;
           case 'ADJUSTMENT':
             updated.attributes = {
-              adjustedPoints: 1000,
-              reason: 'Customer service compensation'
+              adjustmentPoints: 1000,
+              reason: 'CUSTOMER_SERVICE'
             };
             updated.context = {
               ...updated.context,
               adminId: 'ADMIN_001'
             };
-            // Keep default channel as STORE for adjustments
+            // Reset custom reason states for adjustment
+            setShowCustomReasonField(false);
+            setCustomAdjustmentReason('');
+            // Clear productLine for adjustment events
+            delete updated.productLine;
             break;
           case 'RECYCLE':
             updated.attributes = {
               recycledCount: 3
             };
+            // Clear productLine for recycle events
+            delete updated.productLine;
             break;
           case 'REDEMPTION':
             updated.attributes = {
               redemptionPoints: 500
             };
+            // Clear productLine for redemption events
+            delete updated.productLine;
             break;
           case 'REGISTRATION':
-            // Registration events use STORE channel, no product line, empty campaign code and storeId, and empty attributes
-            updated.productLine = ''; // No product line for registration
+            // Registration events use STORE channel, no attributes and empty storeId and campaignCode
             updated.attributes = {}; // Registration events have no attributes
             updated.context = {
               storeId: '', // Store ID is optional for registration
               campaignCode: '' // Empty campaign code for registration
             };
+            // Clear productLine for registration events
+            delete updated.productLine;
             break;
         }
         
@@ -264,9 +275,6 @@ const EventProcessor: React.FC = () => {
       }
 
       if (eventData.eventType === 'PURCHASE') {
-        if (!eventData.productLine) {
-          throw new Error('Product Line is required for Purchase events');
-        }
         if (!eventData.attributes?.amount || eventData.attributes.amount <= 0) {
           throw new Error('Amount must be greater than 0 for Purchase events');
         }
@@ -288,7 +296,7 @@ const EventProcessor: React.FC = () => {
       }
 
       if (eventData.eventType === 'ADJUSTMENT') {
-        if (!eventData.attributes?.adjustedPoints || eventData.attributes.adjustedPoints <= 0) {
+        if (!eventData.attributes?.adjustmentPoints || eventData.attributes.adjustmentPoints <= 0) {
           throw new Error('Adjusted Points is required for Adjustment events');
         }
         if (!eventData.attributes?.reason) {
@@ -334,8 +342,6 @@ const EventProcessor: React.FC = () => {
           skinTestDate: processEventData.attributes?.skinTestDate,
           consultationType: processEventData.attributes?.consultationType
         };
-        // Remove product line for consultation events
-        delete processEventData.productLine;
       }
 
       // For RECYCLE events, only keep recycledCount in attributes
@@ -352,14 +358,12 @@ const EventProcessor: React.FC = () => {
         };
       }
 
-      // For ADJUSTMENT events, only keep adjustedPoints and reason in attributes
+      // For ADJUSTMENT events, only keep adjustmentPoints and reason in attributes
       if (eventData.eventType === 'ADJUSTMENT') {
         processEventData.attributes = {
-          adjustedPoints: processEventData.attributes?.adjustedPoints,
+          adjustmentPoints: processEventData.attributes?.adjustmentPoints,
           reason: processEventData.attributes?.reason
         };
-        // Remove product line for adjustment events
-        delete processEventData.productLine;
         // Ensure context has adminId instead of storeId
         processEventData.context = {
           adminId: processEventData.context?.adminId || 'ADMIN_001'
@@ -385,7 +389,6 @@ const EventProcessor: React.FC = () => {
       eventType: 'PURCHASE',
       market: 'HK',
       channel: 'STORE',
-      productLine: 'PREMIUM_SERIES',
       consumerId: 'user_hk_standard',
       context: { 
         storeId: 'HK_STORE_001',
@@ -400,6 +403,26 @@ const EventProcessor: React.FC = () => {
     setEventData(defaultData);
     setResult(null);
     setError(null);
+  };
+
+  // Helper function to handle adjustment reason selection
+  const handleAdjustmentReasonChange = (reasonValue: string) => {
+    if (reasonValue === 'OTHERS') {
+      setShowCustomReasonField(true);
+      setCustomAdjustmentReason('');
+      // Clear the reason in eventData until user types custom reason
+      handleNestedChange('attributes', 'reason', '');
+    } else {
+      setShowCustomReasonField(false);
+      setCustomAdjustmentReason('');
+      // Set the selected predefined reason
+      handleNestedChange('attributes', 'reason', reasonValue);
+    }
+  };
+
+  const handleCustomReasonChange = (customReason: string) => {
+    setCustomAdjustmentReason(customReason);
+    handleNestedChange('attributes', 'reason', customReason);
   };
 
   return (
@@ -548,27 +571,7 @@ const EventProcessor: React.FC = () => {
                   </Select>
                 </div>
 
-                {/* Product Line - not needed for REGISTRATION, CONSULTATION, RECYCLE, or ADJUSTMENT events */}
-                {eventData.eventType !== 'REGISTRATION' && eventData.eventType !== 'CONSULTATION' && eventData.eventType !== 'RECYCLE' && eventData.eventType !== 'ADJUSTMENT' && (
-                  <div className="space-y-2">
-                    <Label htmlFor="productLine" className="text-sm font-semibold text-gray-700">Product Line</Label>
-                    <Select
-                      value={eventData.productLine}
-                      onValueChange={(value) => handleInputChange('productLine', value)}
-                    >
-                      <SelectTrigger className="border-black focus:border-black">
-                        <SelectValue />
-                      </SelectTrigger>
-                      <SelectContent>
-                        <SelectItem value="PREMIUM_SERIES">Premium Series</SelectItem>
-                        <SelectItem value="STANDARD_SERIES">Standard Series</SelectItem>
-                        <SelectItem value="BASIC_SERIES">Basic Series</SelectItem>
-                        <SelectItem value="LUXURY_SERIES">Luxury Series</SelectItem>
-                        <SelectItem value="ECONOMY_SERIES">Economy Series</SelectItem>
-                      </SelectContent>
-                    </Select>
-                  </div>
-                )}
+
               </div>
 
               {/* Context Information */}
@@ -653,6 +656,23 @@ const EventProcessor: React.FC = () => {
                         className="border-black focus:border-black"
                         placeholder="SK_HK_001, SK_HK_002"
                       />
+                    </div>
+                    <div className="space-y-2">
+                      <Label className="text-sm font-semibold text-gray-700">Product Line (Optional)</Label>
+                      <Select
+                        value={eventData.productLine || undefined}
+                        onValueChange={(value) => handleInputChange('productLine', value)}
+                      >
+                        <SelectTrigger className="border-black focus:border-black">
+                          <SelectValue placeholder="Select product line (optional)" />
+                        </SelectTrigger>
+                        <SelectContent>
+                          <SelectItem value="SKINCARE">Skincare</SelectItem>
+                          <SelectItem value="MAKEUP">Makeup</SelectItem>
+                          <SelectItem value="FRAGRANCE">Fragrance</SelectItem>
+                          <SelectItem value="HAIRCARE">Haircare</SelectItem>
+                        </SelectContent>
+                      </Select>
                     </div>
                   </div>
                 )}
@@ -793,33 +813,66 @@ const EventProcessor: React.FC = () => {
                   </div>
                 )}
                 
-                {/* Adjustment Events - Only needs adjusted points, reason, and admin ID */}
+                {/* Adjustment Events - Enhanced form with proper backend reasons */}
                 {eventData.eventType === 'ADJUSTMENT' && (
                   <div className="space-y-4">
                     <h3 className="text-lg font-semibold text-gray-800 flex items-center">
                       <Sparkles className="mr-2 h-5 w-5 text-purple-500" />
-                      Adjustment Attributes
+                      Manual Adjustment Details
                     </h3>
-                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                       <div className="space-y-2">
-                        <Label className="text-sm font-semibold text-gray-700">Adjusted Points *</Label>
+                        <Label className="text-sm font-semibold text-gray-700">Adjustment Points *</Label>
                         <Input
                           type="number"
-                          value={eventData.attributes?.adjustedPoints || ''}
-                          onChange={(e) => handleNestedChange('attributes', 'adjustedPoints', Number(e.target.value))}
+                          value={eventData.attributes?.adjustmentPoints || ''}
+                          onChange={(e) => handleNestedChange('attributes', 'adjustmentPoints', Number(e.target.value))}
                           className="border-black focus:border-black"
-                          placeholder="1000"
+                          placeholder="Enter points (e.g., 1000 for credit, -500 for debit)"
                         />
+                        <p className="text-xs text-gray-500">Positive values add points, negative values deduct points</p>
                       </div>
                       <div className="space-y-2">
-                        <Label className="text-sm font-semibold text-gray-700">Reason *</Label>
-                        <Input
-                          value={eventData.attributes?.reason || ''}
-                          onChange={(e) => handleNestedChange('attributes', 'reason', e.target.value)}
-                          className="border-black focus:border-black"
-                          placeholder="Customer service compensation"
-                        />
+                        <Label className="text-sm font-semibold text-gray-700">Adjustment Reason *</Label>
+                        <Select
+                          value={showCustomReasonField ? 'OTHERS' : (eventData.attributes?.reason || '')}
+                          onValueChange={handleAdjustmentReasonChange}
+                        >
+                          <SelectTrigger className="border-black focus:border-black">
+                            <SelectValue placeholder="Select adjustment reason" />
+                          </SelectTrigger>
+                          <SelectContent>
+                            <SelectItem value="CUSTOMER_SERVICE">Customer Service Compensation</SelectItem>
+                            <SelectItem value="PROMOTION_CORRECTION">Promotion Correction</SelectItem>
+                            <SelectItem value="SYSTEM_ERROR">System Error Fix</SelectItem>
+                            <SelectItem value="MANAGER_OVERRIDE">Manager Override</SelectItem>
+                            <SelectItem value="OTHERS">Others (Custom Reason)</SelectItem>
+                          </SelectContent>
+                        </Select>
+                        {showCustomReasonField && (
+                          <div className="mt-2 space-y-1">
+                            <Input
+                              value={customAdjustmentReason}
+                              onChange={(e) => handleCustomReasonChange(e.target.value)}
+                              className="border-black focus:border-black"
+                              placeholder="Please specify the custom reason for this adjustment"
+                            />
+                            <p className="text-xs text-gray-500">Provide a detailed explanation for this manual adjustment</p>
+                          </div>
+                        )}
                       </div>
+                    </div>
+                    
+                    {/* Admin context */}
+                    <div className="space-y-2">
+                      <Label className="text-sm font-semibold text-gray-700">Administrator ID</Label>
+                      <Input
+                        value={eventData.context?.adminId || 'ADMIN_001'}
+                        onChange={(e) => handleNestedChange('context', 'adminId', e.target.value)}
+                        className="border-black focus:border-black"
+                        placeholder="Administrator performing this adjustment"
+                      />
+                      <p className="text-xs text-gray-500">ID of the administrator or system performing this adjustment</p>
                     </div>
                   </div>
                 )}

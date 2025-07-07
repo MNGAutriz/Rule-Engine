@@ -159,7 +159,7 @@ class CalculationHelpers {
    * Calculate skin test and time-limited rewards
    */
   static calculateSkinTestReward(market, params) {
-    // TODO: In a real implementation, we'd check if the skin test is within the allowed timeframe
+    // In a real implementation, we'd check if the skin test is within the allowed timeframe
     // For now, just return the bonus if skinTestBonus is defined
     return Math.floor(params.skinTestBonus || 0);
   }

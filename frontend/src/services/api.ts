@@ -115,21 +115,20 @@ export interface DefaultsResponse {
 export interface RecyclingValidationResponse {
   valid: boolean;
   currentYearRecycled: number;
-  requestedRecycling: number;
+  requested: number;
   maxPerYear: number;
   availableSlots?: number;
   remainingSlots?: number;
-  exceedsBy?: number;
   message: string;
   error?: string;
 }
 
 export interface RedemptionValidationResponse {
   valid: boolean;
-  availablePoints: number;
-  requestedPoints: number;
-  shortfall?: number;
+  available: number;
+  requested: number;
   remainingAfterRedemption?: number;
+  shortfall?: number;
   message: string;
   error?: string;
 }

@@ -1,4 +1,5 @@
 const consumerService = require('../services/consumerService');
+const { logger } = require('../src/utils');
 
 /**
  * Facts Engine - Manages dynamic fact computation for the rules engine
@@ -266,10 +267,10 @@ class FactsEngine {
       engine.addFact(factName, factFunction);
     }
     
-    // DEBUG: Log some key facts to ensure they're working
-    console.log('=== DEBUG: Facts Added ===');
-    console.log('Total facts added:', this.factDefinitions.size);
-    console.log('Key facts:', ['eventType', 'market', 'context.storeId']);
+    logger.debug('Facts engine initialization complete', {
+      totalFacts: this.factDefinitions.size,
+      keyFacts: ['eventType', 'market', 'context.storeId']
+    });
   }
 
   /**
