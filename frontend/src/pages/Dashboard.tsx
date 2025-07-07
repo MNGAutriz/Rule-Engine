@@ -169,7 +169,7 @@ const Dashboard: React.FC = () => {
     transaction: rules.filter(r => 
       ['INTERACTION_REGISTRY_POINT', 'ORDER_BASE_POINT', 'ORDER_MULTIPLE_POINT_LIMIT', 
        'FLEXIBLE_CAMPAIGN_BONUS', 'INTERACTION_ADJUST_POINT_TIMES_PER_YEAR', 
-       'CONSULTATION_BONUS', 'INTERACTION_ADJUST_POINT_BY_MANAGER'].includes(r.event.type)
+       'CONSULTATION_BONUS', 'INTERACTION_ADJUST_POINT_BY_MANAGER', 'REDEMPTION_DEDUCTION'].includes(r.event.type)
     ),
     consumer: rules.filter(r => 
       ['FIRST_PURCHASE_BIRTH_MONTH_BONUS', 'FLEXIBLE_VIP_MULTIPLIER'].includes(r.event.type)

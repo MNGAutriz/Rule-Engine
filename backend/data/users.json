@@ -13,7 +13,7 @@
       "firstPurchaseDate": "2024-01-20T10:00:00Z",
       "totalPurchases": 25,
       "totalSpent": 50000,
-      "lastPurchaseDate": "2025-07-07T10:12:37.538Z",
+      "lastPurchaseDate": "2025-07-07T12:06:22.239Z",
       "consultationsCompleted": 5,
       "lastConsultationDate": "2025-06-15T14:30:00Z",
       "recyclingActivity": {
@@ -34,10 +34,10 @@
       "skinType": "COMBINATION"
     },
     "balance": {
-      "total": 9646873,
-      "available": 9582749,
+      "total": 9650623,
+      "available": 9586499,
       "used": 64124,
-      "transactionCount": 153
+      "transactionCount": 155
     }
   },
   "user_hk_standard": {
@@ -73,10 +73,10 @@
       "skinType": "DRY"
     },
     "balance": {
-      "total": 153950,
-      "available": 147350,
-      "used": 6600,
-      "transactionCount": 29
+      "total": 156950,
+      "available": 148850,
+      "used": 8100,
+      "transactionCount": 35
     }
   },
   "user_tw_vip": {
@@ -193,10 +193,10 @@
       "skinType": "NORMAL"
     },
     "balance": {
-      "total": 58525,
-      "available": 58525,
+      "total": 58675,
+      "available": 58675,
       "used": 0,
-      "transactionCount": 23
+      "transactionCount": 24
     }
   },
   "user_jp_standard": {
@@ -764,6 +764,18 @@
       "available": 1150,
       "used": 0,
       "transactionCount": 24
+    }
+  },
+  "lalala": {
+    "consumerId": "lalala",
+    "profile": {
+      "market": "JP"
+    },
+    "balance": {
+      "total": 3150,
+      "available": 3150,
+      "used": 0,
+      "transactionCount": 13
     }
   }
 }
