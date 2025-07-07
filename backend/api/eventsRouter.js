@@ -43,7 +43,7 @@ router.post('/process', async (req, res) => {
         total: result.resultingBalance?.total || 0,
         available: result.resultingBalance?.available || 0,
         used: result.resultingBalance?.used || 0,
-        accountVersion: result.resultingBalance?.accountVersion || 1
+        transactionCount: result.resultingBalance?.transactionCount || 1
       }
     };
     

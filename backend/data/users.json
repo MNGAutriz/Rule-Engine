@@ -13,7 +13,7 @@
       "firstPurchaseDate": "2024-01-20T10:00:00Z",
       "totalPurchases": 25,
       "totalSpent": 50000,
-      "lastPurchaseDate": "2025-07-07T04:00:46.250Z",
+      "lastPurchaseDate": "2025-07-07T05:03:13.644Z",
       "consultationsCompleted": 5,
       "lastConsultationDate": "2025-06-15T14:30:00Z",
       "recyclingActivity": {
@@ -34,10 +34,10 @@
       "skinType": "COMBINATION"
     },
     "balance": {
-      "total": 9293324,
-      "available": 9293324,
-      "used": 0,
-      "accountVersion": 115
+      "total": 9398018,
+      "available": 9334394,
+      "used": 63624,
+      "transactionCount": 72
     }
   },
   "user_hk_standard": {
@@ -73,10 +73,10 @@
       "skinType": "DRY"
     },
     "balance": {
-      "total": 139148,
-      "available": 139148,
-      "used": 0,
-      "accountVersion": 87
+      "total": 135500,
+      "available": 134500,
+      "used": 1000,
+      "transactionCount": 2
     }
   },
   "user_tw_vip": {
@@ -116,7 +116,7 @@
       "total": 39000,
       "available": 39000,
       "used": 0,
-      "accountVersion": 9
+      "transactionCount": 9
     }
   },
   "user_tw_standard_birthday": {
@@ -155,7 +155,7 @@
       "total": 17593,
       "available": 17593,
       "used": 0,
-      "accountVersion": 8
+      "transactionCount": 8
     }
   },
   "user_jp_vip": {
@@ -193,10 +193,10 @@
       "skinType": "NORMAL"
     },
     "balance": {
-      "total": 20150,
-      "available": 20150,
+      "total": 20575,
+      "available": 20575,
       "used": 0,
-      "accountVersion": 15
+      "transactionCount": 19
     }
   },
   "user_jp_standard": {
@@ -236,7 +236,7 @@
       "total": 11600,
       "available": 11600,
       "used": 0,
-      "accountVersion": 13
+      "transactionCount": 13
     }
   },
   "user_jp_new_registration": {
@@ -274,7 +274,7 @@
       "total": 6300,
       "available": 6300,
       "used": 0,
-      "accountVersion": 26
+      "transactionCount": 26
     }
   },
   "user_hk_high_spender": {
@@ -314,7 +314,7 @@
       "total": 201400,
       "available": 201400,
       "used": 0,
-      "accountVersion": 9
+      "transactionCount": 9
     }
   },
   "user_tw_essence_lover": {
@@ -353,7 +353,7 @@
       "total": 5575,
       "available": 5575,
       "used": 0,
-      "accountVersion": 12
+      "transactionCount": 12
     }
   },
   "user_jp_eco_warrior": {
@@ -393,7 +393,7 @@
       "total": 9800,
       "available": 9800,
       "used": 0,
-      "accountVersion": 19
+      "transactionCount": 19
     }
   },
   "user_jp_new_registration2": {
@@ -457,7 +457,7 @@
       "total": 32300,
       "available": 32300,
       "used": 0,
-      "accountVersion": 7
+      "transactionCount": 7
     }
   },
   "user_jp_birth_month": {
@@ -496,7 +496,7 @@
       "total": 800,
       "available": 800,
       "used": 0,
-      "accountVersion": 1
+      "transactionCount": 1
     }
   },
   "CONSUMER_JP_001": {
@@ -547,7 +547,7 @@
       "total": 225,
       "available": 225,
       "used": 0,
-      "accountVersion": 5
+      "transactionCount": 5
     }
   },
   "user_hk_birth_month": {
@@ -586,7 +586,7 @@
       "total": 14400,
       "available": 14400,
       "used": 0,
-      "accountVersion": 5
+      "transactionCount": 5
     }
   },
   "user_hk_premium": {
@@ -625,7 +625,7 @@
       "total": 75900,
       "available": 75900,
       "used": 0,
-      "accountVersion": 4
+      "transactionCount": 4
     }
   },
   "user_tw_standard": {
@@ -637,7 +637,7 @@
       "total": 6000,
       "available": 6000,
       "used": 0,
-      "accountVersion": 4
+      "transactionCount": 4
     },
     "engagement": {
       "lastPurchaseDate": "2025-07-06T15:25:46.473Z"
@@ -652,7 +652,7 @@
       "total": 8879,
       "available": 8879,
       "used": 0,
-      "accountVersion": 3
+      "transactionCount": 3
     },
     "engagement": {
       "lastPurchaseDate": "2025-07-06T16:03:58.170Z"
@@ -667,7 +667,7 @@
       "total": 3225,
       "available": 3225,
       "used": 0,
-      "accountVersion": 3
+      "transactionCount": 3
     },
     "engagement": {
       "lastPurchaseDate": "2025-07-06T16:05:22.100Z"
@@ -682,7 +682,7 @@
       "total": 6000,
       "available": 6000,
       "used": 0,
-      "accountVersion": 1
+      "transactionCount": 1
     },
     "engagement": {
       "lastPurchaseDate": "2025-07-06T08:48:32.867Z"
@@ -697,7 +697,7 @@
       "total": 17600,
       "available": 17600,
       "used": 0,
-      "accountVersion": 1
+      "transactionCount": 1
     },
     "engagement": {
       "lastPurchaseDate": "2025-07-06T08:48:36.606Z"
@@ -712,7 +712,7 @@
       "total": 750,
       "available": 750,
       "used": 0,
-      "accountVersion": 5
+      "transactionCount": 5
     }
   },
   "z": {
@@ -724,7 +724,7 @@
       "total": 150,
       "available": 150,
       "used": 0,
-      "accountVersion": 1
+      "transactionCount": 1
     }
   },
   "PUR_JP_CAM_001": {
@@ -736,7 +736,7 @@
       "total": 1338,
       "available": 1338,
       "used": 0,
-      "accountVersion": 6
+      "transactionCount": 6
     },
     "engagement": {
       "lastPurchaseDate": "2025-07-06T15:04:04.631Z"
@@ -751,7 +751,7 @@
       "total": 1050,
       "available": 1050,
       "used": 0,
-      "accountVersion": 7
+      "transactionCount": 7
     }
   }
 }

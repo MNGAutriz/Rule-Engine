@@ -63,7 +63,7 @@ export interface EventResponse {
     total: number;
     available: number;
     used: number;
-    accountVersion: number;
+    transactionCount: number;
   };
 }
 
@@ -84,7 +84,7 @@ export interface Consumer {
     total: number;
     available: number;
     used: number;
-    accountVersion: number;
+    transactionCount: number;
   };
 }
 
@@ -212,7 +212,7 @@ export const consumersApi = {
               total: points.total,
               available: points.available,
               used: points.used,
-              accountVersion: points.accountVersion
+              transactionCount: points.transactionCount
             }
           });
         } catch (error) {
@@ -240,7 +240,7 @@ export const consumersApi = {
               total: points.total,
               available: points.available,
               used: points.used,
-              accountVersion: points.accountVersion
+              transactionCount: points.transactionCount
             }
           });
         } catch (error) {
@@ -264,7 +264,7 @@ export const consumersApi = {
         total: points.total,
         available: points.available,
         used: points.used,
-        accountVersion: points.accountVersion
+        transactionCount: points.transactionCount
       }
     };
   },

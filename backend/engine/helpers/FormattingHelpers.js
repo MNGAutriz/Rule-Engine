@@ -21,7 +21,8 @@ class FormattingHelpers {
       'INTERACTION_ADJUST_POINT_TIMES_PER_YEAR': 'ENGAGEMENT_ACTIVITY',
       'CONSULTATION_BONUS': 'CONSULTATION',
       'FIRST_PURCHASE_BIRTH_MONTH_BONUS': 'PERSONAL_MILESTONE',
-      'INTERACTION_ADJUST_POINT_BY_MANAGER': 'MANUAL_ADJUSTMENT'
+      'INTERACTION_ADJUST_POINT_BY_MANAGER': 'MANUAL_ADJUSTMENT',
+      'REDEMPTION_DEDUCTION': 'REDEMPTION'
     };
 
     return categories[ruleId] || 'OTHER';
@@ -43,7 +44,8 @@ class FormattingHelpers {
       'INTERACTION_ADJUST_POINT_TIMES_PER_YEAR': `Engagement activity reward (+${rewardPoints} MD)`,
       'CONSULTATION_BONUS': `Beauty consultation completion bonus (+${rewardPoints} MD)`,
       'FIRST_PURCHASE_BIRTH_MONTH_BONUS': `Birthday month special bonus (+${rewardPoints} MD)`,
-      'INTERACTION_ADJUST_POINT_BY_MANAGER': `Manual account adjustment (+${rewardPoints} MD)`
+      'INTERACTION_ADJUST_POINT_BY_MANAGER': `Manual account adjustment (+${rewardPoints} MD)`,
+      'REDEMPTION_DEDUCTION': `Points redeemed for rewards (${rewardPoints} MD)`
     };
 
     return descriptions[ruleId] || `${ruleId} reward applied (+${rewardPoints} MD)`;
@@ -104,7 +106,8 @@ class FormattingHelpers {
       'INTERACTION_ADJUST_POINT_TIMES_PER_YEAR': 'ACTIVITY_REWARD',
       'CONSULTATION_BONUS': 'CONSULTATION_REWARD',
       'FIRST_PURCHASE_BIRTH_MONTH_BONUS': 'TIMED_MULTIPLIER',
-      'INTERACTION_ADJUST_POINT_BY_MANAGER': 'MANUAL_ADJUSTMENT'
+      'INTERACTION_ADJUST_POINT_BY_MANAGER': 'MANUAL_ADJUSTMENT',
+      'REDEMPTION_DEDUCTION': 'POINT_DEDUCTION'
     };
     return types[ruleId] || 'UNKNOWN';
   }
@@ -169,6 +172,10 @@ class FormattingHelpers {
       case 'INTERACTION_ADJUST_POINT_BY_MANAGER':
         return 'adjustedPoints (manual override)';
       
+      case 'REDEMPTION_DEDUCTION':
+        const redemptionAmount = Math.abs(params.redemptionPoints || params.amount || 0);
+        return `redemptionPoints = -${redemptionAmount}`;
+      
       default:
         return 'Unknown calculation method';
     }
@@ -194,6 +201,7 @@ class FormattingHelpers {
     if (params.baseRate !== undefined) inputs.baseRate = params.baseRate;
     if (params.pointsPerBottle !== undefined) inputs.pointsPerBottle = params.pointsPerBottle;
     if (params.maxPerYear !== undefined) inputs.maxPerYear = params.maxPerYear;
+    if (params.redemptionPoints !== undefined) inputs.redemptionPoints = params.redemptionPoints;
 
     return inputs;
   }
@@ -213,7 +221,7 @@ class FormattingHelpers {
         total: newBalance.total,
         available: newBalance.available,
         used: newBalance.used,
-        accountVersion: newBalance.accountVersion
+        transactionCount: newBalance.transactionCount
       }
     };
   }

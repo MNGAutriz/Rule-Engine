@@ -59,6 +59,9 @@ class FactsEngine {
     this.factDefinitions.set('attributes.adjustedPoints', (params, almanac) => {
       return almanac.factValue('attributes').then(attributes => attributes?.adjustedPoints || 0);
     });
+    this.factDefinitions.set('attributes.redemptionPoints', (params, almanac) => {
+      return almanac.factValue('attributes').then(attributes => attributes?.redemptionPoints || 0);
+    });
     this.factDefinitions.set('attributes.giftValue', (params, almanac) => {
       return almanac.factValue('attributes').then(attributes => attributes?.giftValue || 0);
     });
@@ -221,6 +224,19 @@ class FactsEngine {
       const skuList = params.attributes?.skuList || [];
       const requiredSkus = params.skuList || almanac.factValue('ruleParams.skuList') || [];
       return requiredSkus.every(sku => skuList.includes(sku));
+    });
+
+    // Convenience shortcuts for common attributes
+    this.factDefinitions.set('redemptionPoints', (params, almanac) => {
+      return almanac.factValue('attributes').then(attributes => attributes?.redemptionPoints || 0);
+    });
+    
+    this.factDefinitions.set('transactionAmount', (params, almanac) => {
+      return almanac.factValue('attributes').then(attributes => attributes?.amount || 0);
+    });
+    
+    this.factDefinitions.set('discountedAmount', (params, almanac) => {
+      return almanac.factValue('attributes').then(attributes => attributes?.srpAmount || attributes?.amount || 0);
     });
 
     // Amount-based facts (pure functions with calculations)

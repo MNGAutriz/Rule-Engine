@@ -31,7 +31,7 @@ router.get('/points', async (req, res) => {
       expirationPolicy: pointsData.expirationPolicy,
       market: pointsData.market,
       timezone: pointsData.timezone,
-      accountVersion: pointsData.accountVersion
+      transactionCount: pointsData.transactionCount
     };
     
     res.json(response);

@@ -935,8 +935,8 @@ const EventProcessor: React.FC = () => {
                         </div>
                         <div className="flex flex-col items-center justify-center p-4 bg-purple-50 rounded-lg border border-purple-100 min-h-[120px]">
                           <Database className="h-6 w-6 text-purple-500 mb-2" />
-                          <p className="text-2xl font-bold text-purple-600">v{result.resultingBalance.accountVersion}</p>
-                          <p className="text-sm text-gray-600 mt-1 whitespace-nowrap">Version</p>
+                            <p className="text-2xl font-bold text-purple-600">{result.resultingBalance.transactionCount}</p>
+                          <p className="text-sm text-gray-600 mt-1 whitespace-nowrap">Total Transactions</p>
                         </div>
                       </div>
                     </div>

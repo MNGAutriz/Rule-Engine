@@ -135,5 +135,21 @@
       }
     },
     "priority": 1
+  },
+  {
+    "name": "Point Redemption - All Markets",
+    "conditions": {
+      "all": [
+        { "fact": "eventType", "operator": "equal", "value": "REDEMPTION" },
+        { "fact": "redemptionPoints", "operator": "greaterThan", "value": 0 }
+      ]
+    },
+    "event": {
+      "type": "REDEMPTION_DEDUCTION",
+      "params": {
+        "description": "Points redeemed for rewards"
+      }
+    },
+    "priority": 1
   }
 ]

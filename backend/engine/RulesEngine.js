@@ -96,6 +96,7 @@ class RulesEngine {
     this.engine.on('INTERACTION_ADJUST_POINT_TIMES_PER_YEAR', this.createDynamicEventHandler('INTERACTION_ADJUST_POINT_TIMES_PER_YEAR'));
     this.engine.on('CONSULTATION_BONUS', this.createDynamicEventHandler('CONSULTATION_BONUS'));
     this.engine.on('INTERACTION_ADJUST_POINT_BY_MANAGER', this.createDynamicEventHandler('INTERACTION_ADJUST_POINT_BY_MANAGER'));
+    this.engine.on('REDEMPTION_DEDUCTION', this.createDynamicEventHandler('REDEMPTION_DEDUCTION')); // Add redemption handler
     
     // Consumer attribute event handlers (from consumer-attribute-rules.json)
     this.engine.on('FIRST_PURCHASE_BIRTH_MONTH_BONUS', this.createDynamicEventHandler('FIRST_PURCHASE_BIRTH_MONTH_BONUS'));
@@ -194,6 +195,13 @@ class RulesEngine {
             
           case 'INTERACTION_ADJUST_POINT_BY_MANAGER':
             rewardPoints = adjustmentValue;
+            break;
+            
+          case 'REDEMPTION_DEDUCTION':
+            const redemptionPoints = enrichedEventData.attributes?.redemptionPoints || params.redemptionPoints || 0;
+            rewardPoints = CalculationHelpers.calculateRedemptionDeduction(market, redemptionPoints, params);
+            // Add redemptionPoints to params for proper formula display
+            params.redemptionPoints = redemptionPoints;
             break;
             
           default:
@@ -302,17 +310,42 @@ class RulesEngine {
       
       // Get current consumer balance and update it
       const currentBalance = await consumerService.getBalance(eventData.consumerId);
-      const newTotal = currentBalance.total + totalRewardsAwarded;
-      const newAvailable = Math.max(0, currentBalance.available + totalRewardsAwarded);
-      const newUsed = currentBalance.used;
-      const newAccountVersion = (currentBalance.accountVersion || 0) + 1;
+      console.log('Current balance before update:', currentBalance);
+      
+      // Handle redemption vs earning differently
+      let newTotal, newAvailable, newUsed;
+      
+      console.log(`=== BALANCE CALCULATION DEBUG ===`);
+      console.log(`totalRewardsAwarded: ${totalRewardsAwarded}`);
+      console.log(`Is redemption (< 0): ${totalRewardsAwarded < 0}`);
+      
+      if (totalRewardsAwarded < 0) {
+        // Redemption: deduct from available, add to used, keep total unchanged
+        const redemptionAmount = Math.abs(totalRewardsAwarded);
+        console.log(`REDEMPTION PATH - redemptionAmount: ${redemptionAmount}`);
+        newTotal = currentBalance.total; // Total earned doesn't change
+        newAvailable = Math.max(0, currentBalance.available - redemptionAmount);
+        newUsed = currentBalance.used + redemptionAmount;
+        console.log(`Redemption logic: redemptionAmount=${redemptionAmount}, newTotal=${newTotal}, newAvailable=${newAvailable}, newUsed=${newUsed}`);
+      } else {
+        // Normal earning: add to total and available
+        console.log(`EARNING PATH - adding ${totalRewardsAwarded} points`);
+        newTotal = currentBalance.total + totalRewardsAwarded;
+        newAvailable = currentBalance.available + totalRewardsAwarded;
+        newUsed = currentBalance.used;
+        console.log(`Earning logic: newTotal=${newTotal}, newAvailable=${newAvailable}, newUsed=${newUsed}`);
+      }
+      
+      const newTransactionCount = (currentBalance.transactionCount || 0) + 1;
+      
+      console.log('New balance to update:', { total: newTotal, available: newAvailable, used: newUsed, transactionCount: newTransactionCount });
       
       // Update balance in service
       await consumerService.updateBalance(eventData.consumerId, {
         total: newTotal,
         available: newAvailable,
         used: newUsed,
-        accountVersion: newAccountVersion
+        transactionCount: newTransactionCount
       });
       
       // Build response following the exact generalized output template
@@ -327,7 +360,7 @@ class RulesEngine {
           total: newTotal,
           available: newAvailable,
           used: newUsed,
-          accountVersion: newAccountVersion
+          transactionCount: newTransactionCount
         }
       };
       

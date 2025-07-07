@@ -189,6 +189,16 @@ class CalculationHelpers {
     const multiplier = params.multiplier || 1.0;
     return Math.floor(baseReward * (multiplier - 1.0));
   }
+
+  /**
+   * Calculate redemption points (negative points to deduct from balance)
+   * Redemption is basically a deduction of points from the user's balance
+   */
+  static calculateRedemptionDeduction(market, redemptionPoints, params) {
+    // Redemption should always be negative to deduct from balance
+    const pointsToRedeem = Math.abs(redemptionPoints || params.redemptionPoints || 0);
+    return -pointsToRedeem; // Return negative value to deduct from balance
+  }
 }
 
 module.exports = CalculationHelpers;
