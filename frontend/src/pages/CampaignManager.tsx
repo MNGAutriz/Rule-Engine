@@ -115,52 +115,74 @@ const CampaignManager: React.FC = () => {
           </p>
         </div>
 
-        {/* Stats Cards with Different Gradients */}
+        {/* Stats Cards with Bright Gradient Design */}
         <div className="grid grid-cols-1 md:grid-cols-4 gap-6">
-          <Card className="border-0 shadow-lg bg-gradient-to-br from-indigo-500 to-indigo-600 text-white transform hover:scale-105 transition-all duration-300 cursor-pointer">
-            <CardContent className="p-6">
-              <div className="flex items-center justify-between">
-                <div>
-                  <p className="text-indigo-100 text-sm font-medium">Active Campaigns</p>
-                  <p className="text-2xl font-bold">{campaigns.filter(c => getStatusText(c) === 'Active').length}</p>
-                </div>
-                <PlayCircle className="h-8 w-8 text-indigo-200" />
+          {/* Active Campaigns Card - Indigo Gradient */}
+          <Card className="bg-gradient-to-br from-indigo-500 to-indigo-600 text-white border-0 shadow-lg hover:shadow-xl transition-all duration-300 hover:scale-105 cursor-pointer">
+            <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-3">
+              <CardTitle className="text-sm font-semibold text-indigo-100 uppercase tracking-wider">Active Campaigns</CardTitle>
+              <div className="p-3 bg-white/20 rounded-xl">
+                <PlayCircle className="h-6 w-6 text-white" />
+              </div>
+            </CardHeader>
+            <CardContent>
+              <div className="text-4xl font-bold mb-2">
+                {campaigns.filter(c => getStatusText(c) === 'Active').length}
+              </div>
+              <div className="flex items-center text-indigo-100">
+                <Activity className="h-4 w-4 mr-1" />
+                <span className="text-sm">Currently running</span>
               </div>
             </CardContent>
           </Card>
 
-          <Card className="border-0 shadow-lg bg-gradient-to-br from-pink-500 to-pink-600 text-white transform hover:scale-105 transition-all duration-300 cursor-pointer">
-            <CardContent className="p-6">
-              <div className="flex items-center justify-between">
-                <div>
-                  <p className="text-pink-100 text-sm font-medium">Total Campaigns</p>
-                  <p className="text-2xl font-bold">{campaigns.length}</p>
-                </div>
-                <Target className="h-8 w-8 text-pink-200" />
+          {/* Total Campaigns Card - Pink Gradient */}
+          <Card className="bg-gradient-to-br from-pink-500 to-pink-600 text-white border-0 shadow-lg hover:shadow-xl transition-all duration-300 hover:scale-105 cursor-pointer">
+            <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-3">
+              <CardTitle className="text-sm font-semibold text-pink-100 uppercase tracking-wider">Total Campaigns</CardTitle>
+              <div className="p-3 bg-white/20 rounded-xl">
+                <Target className="h-6 w-6 text-white" />
+              </div>
+            </CardHeader>
+            <CardContent>
+              <div className="text-4xl font-bold mb-2">{campaigns.length}</div>
+              <div className="flex items-center text-pink-100">
+                <CheckCircle className="h-4 w-4 mr-1" />
+                <span className="text-sm">All time campaigns</span>
               </div>
             </CardContent>
           </Card>
 
-          <Card className="border-0 shadow-lg bg-gradient-to-br from-amber-500 to-amber-600 text-white transform hover:scale-105 transition-all duration-300 cursor-pointer">
-            <CardContent className="p-6">
-              <div className="flex items-center justify-between">
-                <div>
-                  <p className="text-amber-100 text-sm font-medium">Markets</p>
-                  <p className="text-2xl font-bold">3</p>
-                </div>
-                <Globe className="h-8 w-8 text-amber-200" />
+          {/* Markets Card - Amber Gradient */}
+          <Card className="bg-gradient-to-br from-amber-500 to-amber-600 text-white border-0 shadow-lg hover:shadow-xl transition-all duration-300 hover:scale-105 cursor-pointer">
+            <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-3">
+              <CardTitle className="text-sm font-semibold text-amber-100 uppercase tracking-wider">Markets</CardTitle>
+              <div className="p-3 bg-white/20 rounded-xl">
+                <Globe className="h-6 w-6 text-white" />
+              </div>
+            </CardHeader>
+            <CardContent>
+              <div className="text-4xl font-bold mb-2">3</div>
+              <div className="flex items-center text-amber-100">
+                <Globe className="h-4 w-4 mr-1" />
+                <span className="text-sm">Global coverage</span>
               </div>
             </CardContent>
           </Card>
 
-          <Card className="border-0 shadow-lg bg-gradient-to-br from-red-500 to-red-600 text-white transform hover:scale-105 transition-all duration-300 cursor-pointer">
-            <CardContent className="p-6">
-              <div className="flex items-center justify-between">
-                <div>
-                  <p className="text-red-100 text-sm font-medium">Performance</p>
-                  <p className="text-2xl font-bold">98.5%</p>
-                </div>
-                <TrendingUp className="h-8 w-8 text-red-200" />
+          {/* Performance Card - Red Gradient */}
+          <Card className="bg-gradient-to-br from-red-500 to-red-600 text-white border-0 shadow-lg hover:shadow-xl transition-all duration-300 hover:scale-105 cursor-pointer">
+            <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-3">
+              <CardTitle className="text-sm font-semibold text-red-100 uppercase tracking-wider">Performance</CardTitle>
+              <div className="p-3 bg-white/20 rounded-xl">
+                <TrendingUp className="h-6 w-6 text-white" />
+              </div>
+            </CardHeader>
+            <CardContent>
+              <div className="text-4xl font-bold mb-2">98.5%</div>
+              <div className="flex items-center text-red-100">
+                <TrendingUp className="h-4 w-4 mr-1" />
+                <span className="text-sm">Success rate</span>
               </div>
             </CardContent>
           </Card>

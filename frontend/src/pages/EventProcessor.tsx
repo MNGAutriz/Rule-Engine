@@ -4,29 +4,11 @@ import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
+import LoadingButton from '@/components/LoadingButton';
+import ValidationMessage from '@/components/ValidationMessage';
 import { eventsApi, defaultsApi, consumersApi } from '@/services/api';
 import type { EventData, EventResponse, DefaultsResponse, RedemptionValidationResponse, RecyclingValidationResponse } from '@/services/api';
-import { 
-  RefreshCw, 
-  AlertCircle, 
-  CheckCircle, 
-  Zap, 
-  Clock, 
-  Code, 
-  Settings, 
-  Activity,
-  Sparkles,
-  Cpu,
-  Database,
-  Send,
-  Calendar,
-  Award,
-  TrendingUp,
-  User,
-  CreditCard,
-  Target,
-  Info
-} from 'lucide-react';
+import { RefreshCw, CheckCircle, Activity,Calendar,Zap,Settings, Database, Code, Sparkles, Send, Cpu, AlertCircle, Clock, Award, CreditCard, TrendingUp, Info, User, Target} from 'lucide-react';
 
 const EventProcessor: React.FC = () => {
   const [defaults, setDefaults] = useState<DefaultsResponse | null>(null);
@@ -437,52 +419,72 @@ const EventProcessor: React.FC = () => {
           </p>
         </div>
 
-        {/* Stats Cards with Same Gradients as Dashboard */}
+        {/* Stats Cards with Bright Gradient Design */}
         <div className="grid grid-cols-1 md:grid-cols-4 gap-6">
-          <Card className="border-0 shadow-lg bg-gradient-to-br from-orange-500 to-orange-600 text-white transform hover:scale-105 transition-all duration-300 cursor-pointer">
-            <CardContent className="p-6">
-              <div className="flex items-center justify-between">
-                <div>
-                  <p className="text-orange-100 text-sm font-medium">Processing Speed</p>
-                  <p className="text-2xl font-bold">~15ms</p>
-                </div>
-                <Activity className="h-8 w-8 text-orange-200" />
+          {/* Processing Speed Card - Orange Gradient */}
+          <Card className="bg-gradient-to-br from-orange-500 to-orange-600 text-white border-0 shadow-lg hover:shadow-xl transition-all duration-300 hover:scale-105 cursor-pointer">
+            <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-3">
+              <CardTitle className="text-sm font-semibold text-orange-100 uppercase tracking-wider">Processing Speed</CardTitle>
+              <div className="p-3 bg-white/20 rounded-xl">
+                <Activity className="h-6 w-6 text-white" />
+              </div>
+            </CardHeader>
+            <CardContent>
+              <div className="text-4xl font-bold mb-2">~15ms</div>
+              <div className="flex items-center text-orange-100">
+                <Zap className="h-4 w-4 mr-1" />
+                <span className="text-sm">Average response time</span>
               </div>
             </CardContent>
           </Card>
 
-          <Card className="border-0 shadow-lg bg-gradient-to-br from-emerald-500 to-emerald-600 text-white transform hover:scale-105 transition-all duration-300 cursor-pointer">
-            <CardContent className="p-6">
-              <div className="flex items-center justify-between">
-                <div>
-                  <p className="text-emerald-100 text-sm font-medium">Rules Engine</p>
-                  <p className="text-2xl font-bold">Active</p>
-                </div>
-                <Settings className="h-8 w-8 text-emerald-200" />
+          {/* Rules Engine Card - Emerald Gradient */}
+          <Card className="bg-gradient-to-br from-emerald-500 to-emerald-600 text-white border-0 shadow-lg hover:shadow-xl transition-all duration-300 hover:scale-105 cursor-pointer">
+            <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-3">
+              <CardTitle className="text-sm font-semibold text-emerald-100 uppercase tracking-wider">Rules Engine</CardTitle>
+              <div className="p-3 bg-white/20 rounded-xl">
+                <Settings className="h-6 w-6 text-white" />
+              </div>
+            </CardHeader>
+            <CardContent>
+              <div className="text-4xl font-bold mb-2">Active</div>
+              <div className="flex items-center text-emerald-100">
+                <CheckCircle className="h-4 w-4 mr-1" />
+                <span className="text-sm">System operational</span>
               </div>
             </CardContent>
           </Card>
 
-          <Card className="border-0 shadow-lg bg-gradient-to-br from-purple-500 to-purple-600 text-white transform hover:scale-105 transition-all duration-300 cursor-pointer">
-            <CardContent className="p-6">
-              <div className="flex items-center justify-between">
-                <div>
-                  <p className="text-purple-100 text-sm font-medium">Success Rate</p>
-                  <p className="text-2xl font-bold">99.9%</p>
-                </div>
-                <CheckCircle className="h-8 w-8 text-purple-200" />
+          {/* Success Rate Card - Purple Gradient */}
+          <Card className="bg-gradient-to-br from-purple-500 to-purple-600 text-white border-0 shadow-lg hover:shadow-xl transition-all duration-300 hover:scale-105 cursor-pointer">
+            <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-3">
+              <CardTitle className="text-sm font-semibold text-purple-100 uppercase tracking-wider">Success Rate</CardTitle>
+              <div className="p-3 bg-white/20 rounded-xl">
+                <CheckCircle className="h-6 w-6 text-white" />
+              </div>
+            </CardHeader>
+            <CardContent>
+              <div className="text-4xl font-bold mb-2">99.9%</div>
+              <div className="flex items-center text-purple-100">
+                <TrendingUp className="h-4 w-4 mr-1" />
+                <span className="text-sm">Event processing</span>
               </div>
             </CardContent>
           </Card>
 
-          <Card className="border-0 shadow-lg bg-gradient-to-br from-red-500 to-red-600 text-white transform hover:scale-105 transition-all duration-300 cursor-pointer">
-            <CardContent className="p-6">
-              <div className="flex items-center justify-between">
-                <div>
-                  <p className="text-red-100 text-sm font-medium">Database</p>
-                  <p className="text-2xl font-bold">Online</p>
-                </div>
-                <Database className="h-8 w-8 text-red-200" />
+          {/* Database Card - Red Gradient */}
+          <Card className="bg-gradient-to-br from-red-500 to-red-600 text-white border-0 shadow-lg hover:shadow-xl transition-all duration-300 hover:scale-105 cursor-pointer">
+            <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-3">
+              <CardTitle className="text-sm font-semibold text-red-100 uppercase tracking-wider">Database</CardTitle>
+              <div className="p-3 bg-white/20 rounded-xl">
+                <Database className="h-6 w-6 text-white" />
+              </div>
+            </CardHeader>
+            <CardContent>
+              <div className="text-4xl font-bold mb-2">Online</div>
+              <div className="flex items-center text-red-100">
+                <Activity className="h-4 w-4 mr-1" />
+                <span className="text-sm">Connection stable</span>
               </div>
             </CardContent>
           </Card>
@@ -742,37 +744,25 @@ const EventProcessor: React.FC = () => {
                         />
                       </div>
                       <div className="space-y-2 flex flex-col justify-end">
-                        <Button
-                          type="button"
+                        <LoadingButton
+                          loading={validationLoading}
+                          disabled={!eventData.consumerId || !eventData.attributes?.redemptionPoints}
                           onClick={() => {
                             if (eventData.consumerId && eventData.attributes?.redemptionPoints) {
                               validateRedemptionPoints(eventData.consumerId, eventData.attributes.redemptionPoints);
                             }
                           }}
-                          disabled={!eventData.consumerId || !eventData.attributes?.redemptionPoints || validationLoading}
+                          loadingText="Validating..."
                           className="bg-blue-600 hover:bg-blue-700 text-white h-10"
                         >
-                          {validationLoading ? (
-                            <>
-                              <RefreshCw className="mr-2 h-4 w-4 animate-spin" />
-                              Validating...
-                            </>
-                          ) : (
-                            'Validate Redemption'
-                          )}
-                        </Button>
+                          Validate Redemption
+                        </LoadingButton>
                       </div>
                     </div>
                     
                     {/* Validation Message */}
                     {validationMessage && (
-                      <div className={`p-3 rounded-md text-sm ${
-                        validationMessage.includes('✅') 
-                          ? 'bg-green-50 text-green-800 border border-green-200' 
-                          : 'bg-red-50 text-red-800 border border-red-200'
-                      }`}>
-                        {validationMessage}
-                      </div>
+                      <ValidationMessage message={validationMessage} />
                     )}
                   </div>
                 )}
@@ -795,37 +785,25 @@ const EventProcessor: React.FC = () => {
                         />
                       </div>
                       <div className="space-y-2 flex flex-col justify-end">
-                        <Button
-                          type="button"
+                        <LoadingButton
+                          loading={recyclingValidationLoading}
+                          disabled={!eventData.consumerId || !eventData.attributes?.recycledCount}
                           onClick={() => {
                             if (eventData.consumerId && eventData.attributes?.recycledCount) {
                               validateRecyclingCount(eventData.consumerId, eventData.attributes.recycledCount);
                             }
                           }}
-                          disabled={!eventData.consumerId || !eventData.attributes?.recycledCount || recyclingValidationLoading}
+                          loadingText="Validating..."
                           className="bg-green-600 hover:bg-green-700 text-white h-10"
                         >
-                          {recyclingValidationLoading ? (
-                            <>
-                              <RefreshCw className="mr-2 h-4 w-4 animate-spin" />
-                              Validating...
-                            </>
-                          ) : (
-                            'Validate Recycling'
-                          )}
-                        </Button>
+                          Validate Recycling
+                        </LoadingButton>
                       </div>
                     </div>
                     
                     {/* Recycling Validation Message */}
                     {recyclingValidationMessage && (
-                      <div className={`p-3 rounded-md text-sm ${
-                        recyclingValidationMessage.includes('✅') 
-                          ? 'bg-green-50 text-green-800 border border-green-200' 
-                          : 'bg-red-50 text-red-800 border border-red-200'
-                      }`}>
-                        {recyclingValidationMessage}
-                      </div>
+                      <ValidationMessage message={recyclingValidationMessage} />
                     )}
                     
                     <div className="space-y-2">
@@ -898,23 +876,15 @@ const EventProcessor: React.FC = () => {
 
               {/* Action Buttons */}
               <div className="flex gap-4 pt-4">
-                <Button
+                <LoadingButton
+                  loading={loading}
                   onClick={handleProcessEvent}
-                  disabled={loading}
+                  loadingText="Processing..."
                   className="flex-1 bg-blue-600 hover:bg-blue-700 text-white shadow-lg transform hover:scale-105 transition-all duration-300 cursor-pointer"
                 >
-                  {loading ? (
-                    <>
-                      <RefreshCw className="mr-2 h-4 w-4 animate-spin" />
-                      Processing...
-                    </>
-                  ) : (
-                    <>
-                      <Send className="mr-2 h-4 w-4" />
-                      Process Event
-                    </>
-                  )}
-                </Button>
+                  <Send className="mr-2 h-4 w-4" />
+                  Process Event
+                </LoadingButton>
                 <Button
                   onClick={resetForm}
                   variant="outline"

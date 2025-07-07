@@ -6,7 +6,6 @@ import { rulesApi, eventsApi, consumersApi, defaultsApi } from '@/services/api';
 import type { Rule, EventData } from '@/services/api';
 import { 
   RefreshCw, 
-  Play, 
   Users, 
   Crown, 
   TrendingUp, 
@@ -15,18 +14,15 @@ import {
   Award,
   BarChart3,
   Activity,
-  Globe,
-  CheckCircle,
-  ArrowUpRight,
-  Calendar,
-  FileText,
-  Star,
-  Shield,
-  Gift,
-  ShoppingCart,
   ShoppingBasket,
+  CheckCircle,
   Clock,
-  Eye
+  Eye,
+  Shield,
+  FileText,
+  Globe,
+  Calendar,
+  Gift
 } from 'lucide-react';
 
 const Dashboard: React.FC = () => {
@@ -393,7 +389,7 @@ const Dashboard: React.FC = () => {
                 )}
               </div>
               <div className="flex items-center text-orange-100">
-                <ArrowUpRight className="h-4 w-4 mr-1" />
+                <TrendingUp className="h-4 w-4 mr-1" />
                 <span className="text-sm">Active business rules</span>
               </div>
             </CardContent>
