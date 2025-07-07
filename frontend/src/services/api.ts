@@ -25,7 +25,6 @@ export interface Rule {
   category?: string;
   markets?: string[];
   channels?: string[];
-  productLines?: string[];
 }
 
 export interface RuleResponse {
@@ -45,7 +44,6 @@ export interface EventData {
   consumerId: string;
   context: any;
   attributes: any;
-  productLine?: string;
 }
 
 export interface EventResponse {
@@ -92,7 +90,6 @@ export interface DefaultsResponse {
   markets: string[];
   channels: string[];
   eventTypes: string[];
-  productLines: string[];
   currencies: Array<{
     code: string;
     name: string;
@@ -315,7 +312,6 @@ export const campaignsApi = {
     startDate?: string;
     endDate?: string;
     channel?: string;
-    productLine?: string;
   }) => {
     const params = new URLSearchParams();
     if (filters) {

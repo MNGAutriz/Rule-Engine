@@ -15,8 +15,6 @@ class ValidationHelpers {
       'channel', 'consumerId'
     ];
     
-    // ProductLine is optional for all event types, including PURCHASE
-    
     const missing = requiredFields.filter(field => !eventData[field]);
     
     if (missing.length > 0) {

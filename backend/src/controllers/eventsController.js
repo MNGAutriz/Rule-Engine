@@ -10,7 +10,7 @@ class EventsController {
    */
   static async processEvent(req, res, next) {
     try {
-      const { eventId, eventType, timestamp, market, channel, productLine, consumerId, context, attributes } = req.body;
+      const { eventId, eventType, timestamp, market, channel, consumerId, context, attributes } = req.body;
 
       // Sanitize event data
       const sanitizedEventData = EventValidators.sanitizeEventData(req.body);
@@ -38,11 +38,6 @@ class EventsController {
         context: context || {},
         attributes: attributes || {}
       };
-
-      // Only add productLine if it's provided
-      if (productLine) {
-        eventData.productLine = productLine;
-      }
 
       const rulesEngine = new RulesEngine();
       const result = await rulesEngine.processEvent(eventData);

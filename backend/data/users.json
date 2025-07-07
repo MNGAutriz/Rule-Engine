@@ -43,7 +43,7 @@
       "firstPurchaseDate": "2024-01-20T10:00:00Z",
       "totalPurchases": 25,
       "totalSpent": 50000,
-      "lastPurchaseDate": "2025-07-07T15:23:04.816Z",
+      "lastPurchaseDate": "2025-07-07T15:38:44.288Z",
       "consultationsCompleted": 5,
       "lastConsultationDate": "2025-06-15T14:30:00Z",
       "recyclingActivity": {
@@ -64,10 +64,10 @@
       "skinType": "COMBINATION"
     },
     "balance": {
-      "total": 9831541,
-      "available": 9748817,
+      "total": 9974353,
+      "available": 9891629,
       "used": 82724,
-      "transactionCount": 288
+      "transactionCount": 305
     }
   },
   "user_hk_standard": {
@@ -223,10 +223,10 @@
       "skinType": "NORMAL"
     },
     "balance": {
-      "total": 99650,
-      "available": 88651,
+      "total": 99950,
+      "available": 88951,
       "used": 10999,
-      "transactionCount": 46
+      "transactionCount": 48
     }
   },
   "user_jp_standard": {
@@ -1058,6 +1058,18 @@
       "available": 325,
       "used": 1000,
       "transactionCount": 7
+    }
+  },
+  "fafa": {
+    "consumerId": "fafa",
+    "profile": {
+      "market": "JP"
+    },
+    "balance": {
+      "total": 226,
+      "available": 214,
+      "used": 12,
+      "transactionCount": 4
     }
   }
 }

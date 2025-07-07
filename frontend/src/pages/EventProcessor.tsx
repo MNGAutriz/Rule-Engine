@@ -113,15 +113,12 @@ const EventProcessor: React.FC = () => {
               currency: updated.attributes?.currency || (defaults?.marketDefaults[updated.market || 'HK']?.currency || 'HKD'),
               skuList: updated.attributes?.skuList || (defaults?.marketDefaults[updated.market || 'HK']?.skus.slice(0, 1) || ['SK_HK_001'])
             };
-            // ProductLine stays at top level and is optional
             break;
           case 'CONSULTATION':
             updated.attributes = {
               consultationType: defaults?.consultationTypes?.[0] || 'SKIN_ANALYSIS',
               skinTestDate: new Date().toISOString().split('T')[0] // Today's date
             };
-            // Clear productLine for consultation events
-            delete updated.productLine;
             break;
           case 'ADJUSTMENT':
             updated.attributes = {
@@ -135,22 +132,16 @@ const EventProcessor: React.FC = () => {
             // Reset custom reason states for adjustment
             setShowCustomReasonField(false);
             setCustomAdjustmentReason('');
-            // Clear productLine for adjustment events
-            delete updated.productLine;
             break;
           case 'RECYCLE':
             updated.attributes = {
               recycledCount: 3
             };
-            // Clear productLine for recycle events
-            delete updated.productLine;
             break;
           case 'REDEMPTION':
             updated.attributes = {
               redemptionPoints: 500
             };
-            // Clear productLine for redemption events
-            delete updated.productLine;
             break;
           case 'REGISTRATION':
             // Registration events use STORE channel, no attributes and empty storeId and campaignCode
@@ -159,8 +150,6 @@ const EventProcessor: React.FC = () => {
               storeId: '', // Store ID is optional for registration
               campaignCode: '' // Empty campaign code for registration
             };
-            // Clear productLine for registration events
-            delete updated.productLine;
             break;
         }
         
@@ -656,23 +645,6 @@ const EventProcessor: React.FC = () => {
                         className="border-black focus:border-black"
                         placeholder="SK_HK_001, SK_HK_002"
                       />
-                    </div>
-                    <div className="space-y-2">
-                      <Label className="text-sm font-semibold text-gray-700">Product Line (Optional)</Label>
-                      <Select
-                        value={eventData.productLine || undefined}
-                        onValueChange={(value) => handleInputChange('productLine', value)}
-                      >
-                        <SelectTrigger className="border-black focus:border-black">
-                          <SelectValue placeholder="Select product line (optional)" />
-                        </SelectTrigger>
-                        <SelectContent>
-                          <SelectItem value="SKINCARE">Skincare</SelectItem>
-                          <SelectItem value="MAKEUP">Makeup</SelectItem>
-                          <SelectItem value="FRAGRANCE">Fragrance</SelectItem>
-                          <SelectItem value="HAIRCARE">Haircare</SelectItem>
-                        </SelectContent>
-                      </Select>
                     </div>
                   </div>
                 )}

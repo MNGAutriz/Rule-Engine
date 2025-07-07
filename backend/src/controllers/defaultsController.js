@@ -44,7 +44,6 @@ class DefaultsController {
         markets: ['HK', 'JP', 'TW'],
         channels: ['ONLINE', 'STORE', 'MOBILE', 'ECOMMERCE'],
         eventTypes: ['PURCHASE', 'REGISTRATION', 'RECYCLE', 'CONSULTATION', 'ADJUSTMENT', 'REDEMPTION'],
-        productLines: ['PREMIUM_SERIES', 'STANDARD_SERIES', 'BASIC_SERIES', 'ESSENCE_SERIES', 'LUXURY_SERIES'],
         currencies: [
           { code: 'HKD', name: 'Hong Kong Dollar', symbol: 'HK$' },
           { code: 'JPY', name: 'Japanese Yen', symbol: '¥' },

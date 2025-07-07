@@ -14,7 +14,6 @@ class CampaignService {
         name: 'Summer Double Points',
         market: 'HK',
         channel: 'LINE',
-        productLine: 'PREMIUM_SERIES',
         startDate: '2025-06-01T00:00:00Z',
         endDate: '2025-07-15T23:59:59Z',
         ruleIds: ['FLEXIBLE_CAMPAIGN_BONUS'],
@@ -29,7 +28,6 @@ class CampaignService {
         name: 'Birthday Month Special',
         market: 'JP',
         channel: 'ALL',
-        productLine: 'PREMIUM_SERIES',
         startDate: '2025-01-01T00:00:00Z',
         endDate: '2025-12-31T23:59:59Z',
         ruleIds: ['FIRST_PURCHASE_BIRTH_MONTH_BONUS'],
@@ -44,7 +42,6 @@ class CampaignService {
         name: 'VIP Exclusive Multiplier',
         market: 'TW',
         channel: 'COUNTER',
-        productLine: 'PREMIUM_SERIES',
         startDate: '2025-06-01T00:00:00Z',
         endDate: '2025-08-31T23:59:59Z',
         ruleIds: ['FLEXIBLE_VIP_MULTIPLIER'],
@@ -59,7 +56,6 @@ class CampaignService {
         name: 'Product Combo Bonus',
         market: 'HK',
         channel: 'ALL',
-        productLine: 'ESSENCE_SERIES',
         startDate: '2025-06-15T00:00:00Z',
         endDate: '2025-07-31T23:59:59Z',
         ruleIds: ['FLEXIBLE_COMBO_PRODUCT_MULTIPLIER'],
@@ -93,12 +89,6 @@ class CampaignService {
     if (filters.channel) {
       activeCampaigns = activeCampaigns.filter(c => 
         c.channel === filters.channel || c.channel === 'ALL'
-      );
-    }
-    
-    if (filters.productLine) {
-      activeCampaigns = activeCampaigns.filter(c => 
-        c.productLine === filters.productLine || c.productLine === 'ALL'
       );
     }
     
@@ -201,7 +191,7 @@ class CampaignService {
    * Get campaigns applicable to an event
    */
   async getApplicableCampaigns(eventData) {
-    const { market, channel, productLine, timestamp } = eventData;
+    const { market, channel, timestamp } = eventData;
     const eventDate = new Date(timestamp);
     
     return this.campaigns.filter(campaign => {
@@ -212,8 +202,7 @@ class CampaignService {
              startDate <= eventDate &&
              endDate >= eventDate &&
              (campaign.market === market || campaign.market === 'ALL') &&
-             (campaign.channel === channel || campaign.channel === 'ALL') &&
-             (campaign.productLine === productLine || campaign.productLine === 'ALL');
+             (campaign.channel === channel || campaign.channel === 'ALL');
     });
   }
 }

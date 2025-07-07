@@ -11,16 +11,15 @@ class CampaignController {
    */
   async getActiveCampaigns(req, res, next) {
     try {
-      const { startDate, endDate, market, channel, productLine } = req.query;
+      const { startDate, endDate, market, channel } = req.query;
       
-      logger.info('Fetching active campaigns', { market, channel, productLine });
+      logger.info('Fetching active campaigns', { market, channel });
       
       const filters = {
         startDate,
         endDate,
         market,
-        channel,
-        productLine
+        channel
       };
       
       const activeCampaigns = await this.campaignService.getActiveCampaigns(filters);
@@ -31,7 +30,6 @@ class CampaignController {
         name: campaign.name,
         market: campaign.market,
         channel: campaign.channel,
-        productLine: campaign.productLine,
         startDate: campaign.startDate,
         endDate: campaign.endDate,
         status: campaign.status,

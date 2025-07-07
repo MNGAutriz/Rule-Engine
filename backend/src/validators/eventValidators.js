@@ -77,7 +77,7 @@ class EventValidators {
     // Event-specific validations
     switch (eventData.eventType) {
       case 'PURCHASE':
-        // productLine is optional for PURCHASE events
+        // productLine is removed - no longer used
         if (!eventData.attributes?.amount) errors.push('amount is required for PURCHASE events');
         break;
       case 'RECYCLE':
@@ -109,7 +109,6 @@ class EventValidators {
     if (sanitized.consumerId) sanitized.consumerId = sanitized.consumerId.trim();
     if (sanitized.eventType) sanitized.eventType = sanitized.eventType.trim().toUpperCase();
     if (sanitized.channel) sanitized.channel = sanitized.channel.trim().toUpperCase();
-    if (sanitized.productLine) sanitized.productLine = sanitized.productLine.trim();
 
     // Convert numeric fields
     if (sanitized.attributes) {

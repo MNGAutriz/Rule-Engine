@@ -43,8 +43,7 @@ const CampaignManager: React.FC = () => {
     market: '',
     channel: '',
     startDate: '',
-    endDate: '',
-    productLine: ''
+    endDate: ''
   });
 
   useEffect(() => {
@@ -84,8 +83,7 @@ const CampaignManager: React.FC = () => {
       market: '',
       channel: '',
       startDate: '',
-      endDate: '',
-      productLine: ''
+      endDate: ''
     };
     setFilters(emptyFilters);
     loadCampaigns(emptyFilters);
@@ -229,24 +227,6 @@ const CampaignManager: React.FC = () => {
                   onChange={(e) => handleFilterChange('endDate', e.target.value)}
                   className="border-blue-200 focus:border-blue-500"
                 />
-              </div>
-
-              <div className="space-y-2">
-                <Label htmlFor="productLine" className="text-sm font-semibold text-gray-700">Product Line</Label>
-                <Select
-                  value={filters.productLine}
-                  onValueChange={(value) => handleFilterChange('productLine', value)}
-                >
-                  <SelectTrigger className="border-blue-200 focus:border-blue-500">
-                    <SelectValue placeholder="All Products" />
-                  </SelectTrigger>
-                  <SelectContent>
-                    <SelectItem value="">All Products</SelectItem>
-                    <SelectItem value="PREMIUM_SERIES">Premium Series</SelectItem>
-                    <SelectItem value="STANDARD_SERIES">Standard Series</SelectItem>
-                    <SelectItem value="LUXURY_SERIES">Luxury Series</SelectItem>
-                  </SelectContent>
-                </Select>
               </div>
             </div>
 

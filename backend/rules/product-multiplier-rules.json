@@ -17,23 +17,6 @@
     "priority": 4
   },
   {
-    "name": "Essence Series Multiplier",
-    "conditions": {
-      "all": [
-        { "fact": "eventType", "operator": "equal", "value": "PURCHASE" },
-        { "fact": "productLine", "operator": "equal", "value": "ESSENCE_SERIES" }
-      ]
-    },
-    "event": {
-      "type": "FLEXIBLE_PRODUCT_MULTIPLIER",
-      "params": {
-        "multiplier": 1.2,
-        "description": "Product multiplier - Essence series 1.2x"
-      }
-    },
-    "priority": 6
-  },
-  {
     "name": "Moisture Set Combo Bonus",
     "conditions": {
       "all": [

@@ -290,8 +290,10 @@ class RulesEngine {
       this.engine.addFact('transactionAmount', enrichedEventData.transactionAmount || 0);
       this.engine.addFact('discountedAmount', enrichedEventData.discountedAmount || enrichedEventData.transactionAmount || 0);
       
-      // Add productLine as a fact with default value to prevent "Undefined fact" errors
-      this.engine.addFact('productLine', enrichedEventData.productLine || 'NONE');
+      // Add basic facts to engine for rule evaluation
+      this.engine.addFact('eventType', enrichedEventData.eventType);
+      this.engine.addFact('market', enrichedEventData.market);
+      this.engine.addFact('channel', enrichedEventData.channel);
       
       // Run the engine with the enriched event data - strictly following json-rules-engine patterns
       const engineResults = await this.engine.run(enrichedEventData);

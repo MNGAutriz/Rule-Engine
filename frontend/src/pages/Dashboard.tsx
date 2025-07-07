@@ -138,7 +138,6 @@ const Dashboard: React.FC = () => {
       timestamp: new Date().toISOString(),
       market: selectedMarket,
       channel: 'STORE',
-      productLine: 'PREMIUM_SERIES',
       consumerId: `user_${selectedMarket.toLowerCase()}_standard`,
       context: { storeId: `${selectedMarket}_STORE_001` },
       attributes: {
