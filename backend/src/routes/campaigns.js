@@ -3,16 +3,16 @@ const router = express.Router();
 const CampaignController = require('../controllers/campaignController');
 
 /**
+ * GET /api/campaigns
+ * Get all campaigns
+ */
+router.get('/', CampaignController.getAllCampaigns);
+
+/**
  * GET /api/campaigns/active?startDate={optional}&endDate={optional}
  * Return currently active campaigns scoped by optional date range
  */
 router.get('/active', CampaignController.getActiveCampaigns);
-
-/**
- * GET /api/campaigns/:campaignCode/analytics
- * Get campaign performance analytics
- */
-router.get('/:campaignCode/analytics', CampaignController.getCampaignAnalytics);
 
 /**
  * POST /api/campaigns
@@ -31,5 +31,11 @@ router.put('/:campaignCode', CampaignController.updateCampaign);
  * Delete a campaign
  */
 router.delete('/:campaignCode', CampaignController.deleteCampaign);
+
+/**
+ * GET /api/campaigns/:campaignCode/analytics
+ * Get campaign performance analytics
+ */
+router.get('/:campaignCode/analytics', CampaignController.getCampaignAnalytics);
 
 module.exports = router;

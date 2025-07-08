@@ -1,4 +1,6 @@
 const { v4: uuidv4 } = require('uuid');
+const fs = require('fs');
+const path = require('path');
 
 /**
  * Campaign Service - Manages campaign data and business logic
@@ -6,8 +8,51 @@ const { v4: uuidv4 } = require('uuid');
  */
 class CampaignService {
   constructor() {
-    // Mock campaign data - in production this would be from database
-    this.campaigns = [
+    this.campaignsFile = path.join(__dirname, '../data/campaigns.json');
+    this.campaigns = [];
+    this.loadCampaigns();
+  }
+
+  /**
+   * Load campaigns from JSON file
+   */
+  loadCampaigns() {
+    try {
+      if (fs.existsSync(this.campaignsFile)) {
+        const data = fs.readFileSync(this.campaignsFile, 'utf8');
+        this.campaigns = JSON.parse(data);
+      } else {
+        // Initialize with default campaigns
+        this.campaigns = this.getDefaultCampaigns();
+        this.saveCampaigns();
+      }
+    } catch (error) {
+      console.error('Error loading campaigns:', error);
+      this.campaigns = this.getDefaultCampaigns();
+      this.saveCampaigns();
+    }
+  }
+
+  /**
+   * Save campaigns to JSON file
+   */
+  saveCampaigns() {
+    try {
+      const dir = path.dirname(this.campaignsFile);
+      if (!fs.existsSync(dir)) {
+        fs.mkdirSync(dir, { recursive: true });
+      }
+      fs.writeFileSync(this.campaignsFile, JSON.stringify(this.campaigns, null, 2));
+    } catch (error) {
+      console.error('Error saving campaigns:', error);
+    }
+  }
+
+  /**
+   * Get default campaigns
+   */
+  getDefaultCampaigns() {
+    return [
       {
         campaignId: 'c0a1b2c3-d4e5-6789-hk01-abcde123456f',
         campaignCode: 'CAMP2025SUMMER',
@@ -127,6 +172,27 @@ class CampaignService {
   }
 
   /**
+   * Get all campaigns
+   */
+  async getAllCampaigns() {
+    return this.campaigns.map(campaign => ({
+      campaignId: campaign.campaignId,
+      campaignCode: campaign.campaignCode,
+      name: campaign.name,
+      market: campaign.market,
+      channel: campaign.channel,
+      brand: campaign.brand || 'P&G',
+      startDate: campaign.startDate,
+      endDate: campaign.endDate,
+      ruleIds: campaign.ruleIds,
+      isActive: campaign.isActive,
+      priority: campaign.priority,
+      description: campaign.description,
+      terms: campaign.terms
+    }));
+  }
+
+  /**
    * Get campaign by ID
    */
   async getCampaignById(campaignId) {
@@ -137,40 +203,88 @@ class CampaignService {
    * Get campaign by code
    */
   async getCampaignByCode(campaignCode) {
-    return this.campaigns.find(c => c.campaignCode === campaignCode) || null;
+    return this.campaigns.find(c => c.campaignCode === campaignCode);
   }
 
   /**
    * Create a new campaign
    */
   async createCampaign(campaignData) {
+    // Validate required fields
+    if (!campaignData.campaignCode || !campaignData.name) {
+      throw new Error('Campaign code and name are required');
+    }
+
+    // Check if campaign code already exists
+    const existingCampaign = this.campaigns.find(c => c.campaignCode === campaignData.campaignCode);
+    if (existingCampaign) {
+      throw new Error('Campaign code already exists');
+    }
+
+    // Create new campaign
     const newCampaign = {
       campaignId: uuidv4(),
+      campaignCode: campaignData.campaignCode,
+      name: campaignData.name,
+      market: campaignData.market || 'ALL',
+      channel: campaignData.channel || 'ALL',
+      brand: campaignData.brand || 'P&G',
+      startDate: campaignData.startDate,
+      endDate: campaignData.endDate,
+      ruleIds: campaignData.ruleIds || [],
       isActive: true,
-      priority: campaignData.priority || 10,
-      ...campaignData
+      priority: campaignData.priority || this.campaigns.length + 1,
+      description: campaignData.description || '',
+      terms: campaignData.terms || ''
     };
 
+    // Add to campaigns array
     this.campaigns.push(newCampaign);
+    this.saveCampaigns();
+
     return newCampaign;
   }
 
   /**
    * Update an existing campaign
    */
-  async updateCampaign(campaignId, updateData) {
-    const campaignIndex = this.campaigns.findIndex(c => c.campaignId === campaignId);
-    
+  async updateCampaign(campaignCode, updateData) {
+    const campaignIndex = this.campaigns.findIndex(c => c.campaignCode === campaignCode);
     if (campaignIndex === -1) {
-      return null;
+      throw new Error('Campaign not found');
     }
 
+    // If campaignCode is being changed, check for duplicates
+    if (updateData.campaignCode && updateData.campaignCode !== campaignCode) {
+      const existingCampaign = this.campaigns.find(c => c.campaignCode === updateData.campaignCode);
+      if (existingCampaign) {
+        throw new Error('Campaign code already exists');
+      }
+    }
+
+    // Update campaign
     this.campaigns[campaignIndex] = {
       ...this.campaigns[campaignIndex],
       ...updateData
     };
 
+    this.saveCampaigns();
     return this.campaigns[campaignIndex];
+  }
+
+  /**
+   * Delete a campaign
+   */
+  async deleteCampaign(campaignCode) {
+    const campaignIndex = this.campaigns.findIndex(c => c.campaignCode === campaignCode);
+    if (campaignIndex === -1) {
+      throw new Error('Campaign not found');
+    }
+
+    const deletedCampaign = this.campaigns.splice(campaignIndex, 1)[0];
+    this.saveCampaigns();
+
+    return deletedCampaign;
   }
 
   /**

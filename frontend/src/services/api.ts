@@ -316,6 +316,12 @@ export const consumersApi = {
 
 // Campaigns API - Updated to match backend endpoints
 export const campaignsApi = {
+  // Get all campaigns
+  getAllCampaigns: async () => {
+    const response = await api.get('/api/campaigns');
+    return response.data;
+  },
+
   // Get active campaigns
   getActiveCampaigns: async (filters?: {
     market?: string;
@@ -331,6 +337,64 @@ export const campaignsApi = {
     }
     
     const response = await api.get(`/api/campaigns/active${params.toString() ? '?' + params.toString() : ''}`);
+    return response.data;
+  },
+
+  // Create a new campaign
+  createCampaign: async (campaignData: {
+    campaignCode: string;
+    name: string;
+    market: string;
+    channel: string;
+    brand?: string;
+    startDate: string;
+    endDate: string;
+    ruleIds?: string[];
+    priority?: number;
+    description?: string;
+    terms?: string;
+  }) => {
+    const response = await api.post('/api/campaigns', campaignData);
+    return response.data;
+  },
+
+  // Update an existing campaign
+  updateCampaign: async (campaignCode: string, updateData: {
+    campaignCode?: string;
+    name?: string;
+    market?: string;
+    channel?: string;
+    brand?: string;
+    startDate?: string;
+    endDate?: string;
+    ruleIds?: string[];
+    priority?: number;
+    description?: string;
+    terms?: string;
+  }) => {
+    const response = await api.put(`/api/campaigns/${campaignCode}`, updateData);
+    return response.data;
+  },
+
+  // Delete a campaign
+  deleteCampaign: async (campaignCode: string) => {
+    const response = await api.delete(`/api/campaigns/${campaignCode}`);
+    return response.data;
+  },
+
+  // Get campaign analytics
+  getCampaignAnalytics: async (campaignCode: string, filters?: {
+    startDate?: string;
+    endDate?: string;
+  }) => {
+    const params = new URLSearchParams();
+    if (filters) {
+      Object.entries(filters).forEach(([key, value]) => {
+        if (value) params.append(key, value);
+      });
+    }
+    
+    const response = await api.get(`/api/campaigns/${campaignCode}/analytics${params.toString() ? '?' + params.toString() : ''}`);
     return response.data;
   },
 
