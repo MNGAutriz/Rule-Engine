@@ -43,7 +43,7 @@
       "firstPurchaseDate": "2024-01-20T10:00:00Z",
       "totalPurchases": 25,
       "totalSpent": 50000,
-      "lastPurchaseDate": "2025-07-08T00:40:31.699Z",
+      "lastPurchaseDate": "2025-07-08T02:45:34.279Z",
       "consultationsCompleted": 5,
       "lastConsultationDate": "2025-06-15T14:30:00Z",
       "recyclingActivity": {
@@ -64,10 +64,10 @@
       "skinType": "COMBINATION"
     },
     "balance": {
-      "total": 9989353,
-      "available": 9906629,
+      "total": 9996853,
+      "available": 9914129,
       "used": 82724,
-      "transactionCount": 312
+      "transactionCount": 314
     }
   },
   "user_hk_standard": {
@@ -1082,6 +1082,21 @@
       "available": 308,
       "used": 1000,
       "transactionCount": 7
+    }
+  },
+  "martina": {
+    "consumerId": "martina",
+    "profile": {
+      "market": "JP"
+    },
+    "balance": {
+      "total": 22500,
+      "available": 22500,
+      "used": 0,
+      "transactionCount": 1
+    },
+    "engagement": {
+      "lastPurchaseDate": "2025-07-08T02:47:04.557Z"
     }
   }
 }

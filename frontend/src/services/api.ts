@@ -130,7 +130,7 @@ export interface RedemptionValidationResponse {
   error?: string;
 }
 
-// Rules Management API - Updated
+// Rules Management API
 export const rulesApi = {
   // Get all rules
   getAllRules: async (): Promise<RuleResponse> => {
@@ -188,6 +188,12 @@ export const eventsApi = {
 
 // Consumers API - Updated to match backend structure
 export const consumersApi = {
+  // Get available consumers for dropdown/samples
+  getAvailableConsumers: async () => {
+    const response = await api.get('/consumers/available');
+    return response.data;
+  },
+
   // Get consumer points
   getConsumerPoints: async (consumerId: string) => {
     const response = await api.get(`/api/consumer/points?consumerId=${consumerId}`);

@@ -21,7 +21,8 @@ import {
   Users,
   Activity,
   ChevronLeft,
-  ChevronRight
+  ChevronRight,
+  Info
 } from 'lucide-react';
 
 interface ConsumerPoints {
@@ -54,6 +55,13 @@ interface PaginationInfo {
   limit: number;
   hasNext: boolean;
   hasPrev: boolean;
+}
+
+interface AvailableConsumer {
+  consumerId: string;
+  market: string;
+  tier: string;
+  totalPoints: number;
 }
 
 interface HistoryResponse {
@@ -351,14 +359,101 @@ const ConsumerQuery: React.FC = () => {
           </CardContent>
         </Card>
 
-        {/* Welcome Screen - Show when no search has been performed */}
+        {/* Feature Overview - Show when no search has been performed */}
         {!hasSearched && !loading && (
-          <div className="text-center py-12">
-            <div className="inline-flex items-center justify-center w-16 h-16 rounded-full bg-blue-100 mb-4">
-              <Search className="h-8 w-8 text-blue-600" />
+          <div className="space-y-8">
+            {/* Feature Grid */}
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+              <Card className="border-2 border-blue-200 bg-gradient-to-br from-blue-50 to-indigo-50 hover:shadow-lg transition-all duration-300">
+                <CardHeader className="text-center pb-4">
+                  <div className="w-16 h-16 bg-blue-100 rounded-full flex items-center justify-center mx-auto mb-4">
+                    <Award className="h-8 w-8 text-blue-600" />
+                  </div>
+                  <CardTitle className="text-lg font-bold text-blue-800">Points & Balance</CardTitle>
+                  <CardDescription className="text-blue-600">
+                    View comprehensive points data including total earned, available balance, and used points with real-time calculations
+                  </CardDescription>
+                </CardHeader>
+              </Card>
+              
+              <Card className="border-2 border-green-200 bg-gradient-to-br from-green-50 to-emerald-50 hover:shadow-lg transition-all duration-300">
+                <CardHeader className="text-center pb-4">
+                  <div className="w-16 h-16 bg-green-100 rounded-full flex items-center justify-center mx-auto mb-4">
+                    <History className="h-8 w-8 text-green-600" />
+                  </div>
+                  <CardTitle className="text-lg font-bold text-green-800">Transaction History</CardTitle>
+                  <CardDescription className="text-green-600">
+                    Complete chronological record of all consumer activities with detailed breakdowns and pagination support
+                  </CardDescription>
+                </CardHeader>
+              </Card>
+              
+              <Card className="border-2 border-purple-200 bg-gradient-to-br from-purple-50 to-pink-50 hover:shadow-lg transition-all duration-300">
+                <CardHeader className="text-center pb-4">
+                  <div className="w-16 h-16 bg-purple-100 rounded-full flex items-center justify-center mx-auto mb-4">
+                    <Clock className="h-8 w-8 text-purple-600" />
+                  </div>
+                  <CardTitle className="text-lg font-bold text-purple-800">Expiration Tracking</CardTitle>
+                  <CardDescription className="text-purple-600">
+                    Monitor points expiration dates, policies, and status with intelligent alerts and market-specific rules
+                  </CardDescription>
+                </CardHeader>
+              </Card>
             </div>
-            <h3 className="text-xl font-semibold text-gray-600 mb-2">Ready to Search</h3>
-            <p className="text-gray-500">Enter a Consumer ID above to view their points and transaction history.</p>
+
+            {/* Instructions */}
+            <Card className="border-2 border-gray-200 bg-gradient-to-br from-gray-50 to-slate-50">
+              <CardHeader className="text-center">
+                <CardTitle className="flex items-center justify-center text-gray-800 text-xl">
+                  <Info className="mr-3 h-6 w-6" />
+                  How to Use
+                </CardTitle>
+              </CardHeader>
+              <CardContent>
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+                  <div className="space-y-4">
+                    <div className="flex items-start space-x-4">
+                      <div className="w-8 h-8 bg-blue-100 rounded-full flex items-center justify-center flex-shrink-0">
+                        <span className="text-sm font-bold text-blue-700">1</span>
+                      </div>
+                      <div>
+                        <h4 className="font-semibold text-gray-900">Enter Consumer ID</h4>
+                        <p className="text-sm text-gray-600">Type any valid Consumer ID in the search field above</p>
+                      </div>
+                    </div>
+                    <div className="flex items-start space-x-4">
+                      <div className="w-8 h-8 bg-blue-100 rounded-full flex items-center justify-center flex-shrink-0">
+                        <span className="text-sm font-bold text-blue-700">2</span>
+                      </div>
+                      <div>
+                        <h4 className="font-semibold text-gray-900">View Comprehensive Data</h4>
+                        <p className="text-sm text-gray-600">Access detailed points information, market details, and expiration status</p>
+                      </div>
+                    </div>
+                  </div>
+                  <div className="space-y-4">
+                    <div className="flex items-start space-x-4">
+                      <div className="w-8 h-8 bg-blue-100 rounded-full flex items-center justify-center flex-shrink-0">
+                        <span className="text-sm font-bold text-blue-700">3</span>
+                      </div>
+                      <div>
+                        <h4 className="font-semibold text-gray-900">Explore Transaction History</h4>
+                        <p className="text-sm text-gray-600">Browse through paginated transaction records with detailed breakdowns</p>
+                      </div>
+                    </div>
+                    <div className="flex items-start space-x-4">
+                      <div className="w-8 h-8 bg-blue-100 rounded-full flex items-center justify-center flex-shrink-0">
+                        <span className="text-sm font-bold text-blue-700">4</span>
+                      </div>
+                      <div>
+                        <h4 className="font-semibold text-gray-900">Monitor Expiration</h4>
+                        <p className="text-sm text-gray-600">Track points expiration dates and understand policy implications</p>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </CardContent>
+            </Card>
           </div>
         )}
 
@@ -517,7 +612,7 @@ const ConsumerQuery: React.FC = () => {
                       </div>
                     </>
                   ) : (
-                    <div className="text-center py-8">
+                     <div className="text-center py-8">
                       <Clock className="h-12 w-12 mx-auto mb-3 text-gray-300" />
                       <p className="text-gray-500">No expiration data available</p>
                     </div>
