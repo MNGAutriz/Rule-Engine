@@ -29,7 +29,7 @@
       "type": "FLEXIBLE_COMBO_PRODUCT_MULTIPLIER",
       "params": {
         "bonus": 250,
-        "description": "Product combo bonus - Moisture set +250 MD"
+        "description": "Product combo bonus - Moisture set"
       }
     },
     "priority": 2
@@ -46,7 +46,7 @@
       "type": "FLEXIBLE_COMBO_PRODUCT_MULTIPLIER",
       "params": {
         "bonus": 400,
-        "description": "Product combo bonus - Full regimen +400 MD"
+        "description": "Product combo bonus - Full regimen"
       }
     },
     "priority": 2

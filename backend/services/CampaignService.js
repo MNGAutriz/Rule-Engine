@@ -63,9 +63,7 @@ class CampaignService {
         endDate: '2025-07-15T23:59:59Z',
         ruleIds: ['FLEXIBLE_CAMPAIGN_BONUS'],
         isActive: true,
-        priority: 1,
-        description: 'Summer campaign with fixed bonus points',
-        terms: 'Valid for purchases above HKD 500'
+        description: 'Summer campaign with fixed bonus points for purchases above HKD 500'
       },
       {
         campaignId: 'c1b2c3d4-e5f6-7890-jp02-bcdef234567g',
@@ -77,9 +75,7 @@ class CampaignService {
         endDate: '2025-12-31T23:59:59Z',
         ruleIds: ['FIRST_PURCHASE_BIRTH_MONTH_BONUS'],
         isActive: true,
-        priority: 2,
-        description: 'Birthday month bonus for first purchase',
-        terms: 'Valid only during customer birth month'
+        description: 'Birthday month bonus for first purchase - valid only during customer birth month'
       },
       {
         campaignId: 'c2c3d4e5-f6g7-8901-tw03-cdefg345678h',
@@ -91,9 +87,7 @@ class CampaignService {
         endDate: '2025-08-31T23:59:59Z',
         ruleIds: ['FLEXIBLE_VIP_MULTIPLIER'],
         isActive: true,
-        priority: 3,
-        description: 'VIP customers get 2x points at VIP counters',
-        terms: 'Valid only at designated VIP store locations'
+        description: 'VIP customers get 2x points at VIP counters - valid only at designated VIP store locations'
       },
       {
         campaignId: 'c3d4e5f6-g7h8-9012-hk04-defgh456789i',
@@ -105,34 +99,56 @@ class CampaignService {
         endDate: '2025-07-31T23:59:59Z',
         ruleIds: ['FLEXIBLE_COMBO_PRODUCT_MULTIPLIER'],
         isActive: true,
-        priority: 2,
-        description: 'Bonus points for purchasing product combinations',
-        terms: 'Must purchase all items in combo set'
+        description: 'Bonus points for purchasing product combinations - must purchase all items in combo set'
       }
     ];
+  }
+
+  /**
+   * Determine campaign status based on dates
+   */
+  getCampaignStatus(campaign) {
+    const now = new Date();
+    const startDate = new Date(campaign.startDate);
+    const endDate = new Date(campaign.endDate);
+    
+    if (now < startDate) return 'Upcoming';
+    if (now > endDate) return 'Ended';
+    return 'Active';
+  }
+
+  /**
+   * Auto-update campaign active status based on dates
+   */
+  updateCampaignActiveStatus(campaign) {
+    const now = new Date();
+    const startDate = new Date(campaign.startDate);
+    const endDate = new Date(campaign.endDate);
+    
+    // Campaign is considered active only if current time is within start and end dates
+    campaign.isActive = (startDate <= now && endDate >= now);
+    return campaign;
   }
 
   /**
    * Get active campaigns with optional filters
    */
   async getActiveCampaigns(filters = {}) {
-    const now = new Date();
-    let activeCampaigns = this.campaigns.filter(campaign => {
-      const startDate = new Date(campaign.startDate);
-      const endDate = new Date(campaign.endDate);
-      
-      return campaign.isActive && startDate <= now && endDate >= now;
-    });
+    // Update all campaigns' active status based on current date
+    this.campaigns = this.campaigns.map(campaign => this.updateCampaignActiveStatus(campaign));
+    this.saveCampaigns();
+
+    let filteredCampaigns = [...this.campaigns];
 
     // Apply filters
-    if (filters.market) {
-      activeCampaigns = activeCampaigns.filter(c => 
+    if (filters.market && filters.market !== 'all') {
+      filteredCampaigns = filteredCampaigns.filter(c => 
         c.market === filters.market || c.market === 'ALL'
       );
     }
     
-    if (filters.channel) {
-      activeCampaigns = activeCampaigns.filter(c => 
+    if (filters.channel && filters.channel !== 'all') {
+      filteredCampaigns = filteredCampaigns.filter(c => 
         c.channel === filters.channel || c.channel === 'ALL'
       );
     }
@@ -142,7 +158,7 @@ class CampaignService {
       const filterStart = filters.startDate ? new Date(filters.startDate) : new Date('1900-01-01');
       const filterEnd = filters.endDate ? new Date(filters.endDate) : new Date('2100-12-31');
       
-      activeCampaigns = activeCampaigns.filter(campaign => {
+      filteredCampaigns = filteredCampaigns.filter(campaign => {
         const campaignStart = new Date(campaign.startDate);
         const campaignEnd = new Date(campaign.endDate);
         
@@ -151,23 +167,19 @@ class CampaignService {
       });
     }
 
-    // Sort by priority
-    activeCampaigns.sort((a, b) => a.priority - b.priority);
-
     // Format response to match expected structure
-    return activeCampaigns.map(campaign => ({
+    return filteredCampaigns.map(campaign => ({
       campaignCode: campaign.campaignCode,
       campaignId: campaign.campaignId,
       name: campaign.name,
       market: campaign.market,
       channel: campaign.channel,
-      brand: "SK-II", // Default brand
       startDate: campaign.startDate,
       endDate: campaign.endDate,
-      ruleIds: campaign.ruleIds,
-      active: campaign.isActive,
-      priority: campaign.priority,
-      description: campaign.description
+      ruleIds: campaign.ruleIds || [],
+      isActive: campaign.isActive,
+      description: campaign.description || '',
+      status: this.getCampaignStatus(campaign)
     }));
   }
 
@@ -175,20 +187,22 @@ class CampaignService {
    * Get all campaigns
    */
   async getAllCampaigns() {
+    // Update all campaigns' active status based on current date
+    this.campaigns = this.campaigns.map(campaign => this.updateCampaignActiveStatus(campaign));
+    this.saveCampaigns();
+
     return this.campaigns.map(campaign => ({
       campaignId: campaign.campaignId,
       campaignCode: campaign.campaignCode,
       name: campaign.name,
       market: campaign.market,
       channel: campaign.channel,
-      brand: campaign.brand || 'P&G',
       startDate: campaign.startDate,
       endDate: campaign.endDate,
-      ruleIds: campaign.ruleIds,
+      ruleIds: campaign.ruleIds || [],
       isActive: campaign.isActive,
-      priority: campaign.priority,
-      description: campaign.description,
-      terms: campaign.terms
+      description: campaign.description || '',
+      status: this.getCampaignStatus(campaign)
     }));
   }
 
@@ -215,6 +229,18 @@ class CampaignService {
       throw new Error('Campaign code and name are required');
     }
 
+    if (!campaignData.startDate || !campaignData.endDate) {
+      throw new Error('Start date and end date are required');
+    }
+
+    // Validate dates
+    const startDate = new Date(campaignData.startDate);
+    const endDate = new Date(campaignData.endDate);
+    
+    if (startDate >= endDate) {
+      throw new Error('End date must be after start date');
+    }
+
     // Check if campaign code already exists
     const existingCampaign = this.campaigns.find(c => c.campaignCode === campaignData.campaignCode);
     if (existingCampaign) {
@@ -228,21 +254,24 @@ class CampaignService {
       name: campaignData.name,
       market: campaignData.market || 'ALL',
       channel: campaignData.channel || 'ALL',
-      brand: campaignData.brand || 'P&G',
       startDate: campaignData.startDate,
       endDate: campaignData.endDate,
       ruleIds: campaignData.ruleIds || [],
-      isActive: true,
-      priority: campaignData.priority || this.campaigns.length + 1,
-      description: campaignData.description || '',
-      terms: campaignData.terms || ''
+      description: campaignData.description || ''
     };
+
+    // Auto-determine active status based on dates
+    this.updateCampaignActiveStatus(newCampaign);
 
     // Add to campaigns array
     this.campaigns.push(newCampaign);
     this.saveCampaigns();
 
-    return newCampaign;
+    // Return campaign with status field
+    return {
+      ...newCampaign,
+      status: this.getCampaignStatus(newCampaign)
+    };
   }
 
   /**
@@ -252,6 +281,16 @@ class CampaignService {
     const campaignIndex = this.campaigns.findIndex(c => c.campaignCode === campaignCode);
     if (campaignIndex === -1) {
       throw new Error('Campaign not found');
+    }
+
+    // Validate required fields
+    if (updateData.startDate && updateData.endDate) {
+      const startDate = new Date(updateData.startDate);
+      const endDate = new Date(updateData.endDate);
+      
+      if (startDate >= endDate) {
+        throw new Error('End date must be after start date');
+      }
     }
 
     // If campaignCode is being changed, check for duplicates
@@ -268,8 +307,15 @@ class CampaignService {
       ...updateData
     };
 
+    // Auto-determine active status based on dates
+    this.updateCampaignActiveStatus(this.campaigns[campaignIndex]);
+
     this.saveCampaigns();
-    return this.campaigns[campaignIndex];
+    // Return campaign with status field
+    return {
+      ...this.campaigns[campaignIndex],
+      status: this.getCampaignStatus(this.campaigns[campaignIndex])
+    };
   }
 
   /**

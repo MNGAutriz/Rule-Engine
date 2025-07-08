@@ -10,13 +10,10 @@ interface Campaign {
   name: string;
   market: string;
   channel: string;
-  brand: string;
   startDate: string;
   endDate: string;
   ruleIds: string[];
-  priority?: number;
   description?: string;
-  terms?: string;
 }
 
 interface CampaignFormProps {
@@ -37,12 +34,9 @@ const CampaignForm: React.FC<CampaignFormProps> = ({
     name: '',
     market: 'HK',
     channel: 'ALL',
-    brand: 'P&G',
     startDate: '',
     endDate: '',
-    priority: 1,
     description: '',
-    terms: '',
     ruleIds: [] as string[]
   });
 
@@ -62,12 +56,9 @@ const CampaignForm: React.FC<CampaignFormProps> = ({
         name: campaign.name || '',
         market: campaign.market || 'HK',
         channel: campaign.channel || 'ALL',
-        brand: campaign.brand || 'P&G',
         startDate: formatDateForInput(campaign.startDate),
         endDate: formatDateForInput(campaign.endDate),
-        priority: campaign.priority || 1,
         description: campaign.description || '',
-        terms: campaign.terms || '',
         ruleIds: campaign.ruleIds || []
       });
     }
@@ -162,45 +153,44 @@ const CampaignForm: React.FC<CampaignFormProps> = ({
   };
 
   return (
-    <div className="fixed inset-0 bg-black bg-opacity-20 backdrop-blur-sm flex items-center justify-center z-50 p-4">
-      <div className="bg-white bg-opacity-15 backdrop-blur-xl rounded-3xl shadow-2xl w-full max-w-4xl max-h-[90vh] overflow-hidden border border-white border-opacity-30">
-        {/* Modal Header */}
-        <div className="bg-gradient-to-r from-blue-600 to-blue-700 px-6 py-6 flex items-center justify-between">
-          <div className="flex items-center gap-4">
-            <div className="bg-white p-3 rounded-2xl shadow-lg">
-              <Target className="h-7 w-7 text-blue-600" />
-            </div>
-            <div>
-              <h2 className="text-2xl font-bold text-white">
-                {campaign ? 'Edit Campaign' : 'Create New Campaign'}
-              </h2>
-              <p className="text-blue-100 text-sm mt-1">
-                {campaign ? 'Update campaign details' : 'Configure your new loyalty campaign'}
-              </p>
-            </div>
+    <div className="bg-white/95 backdrop-blur-md rounded-2xl shadow-2xl w-full max-w-4xl max-h-[90vh] overflow-hidden border border-gray-200">
+      {/* Modal Header */}
+      <div className="bg-gradient-to-r from-blue-600 to-blue-700 px-6 py-4 flex items-center justify-between">
+        <div className="flex items-center gap-3">
+          <div className="bg-white p-2 rounded-xl shadow-lg">
+            <Target className="h-5 w-5 text-blue-600" />
           </div>
-          <Button
-            variant="ghost"
-            size="sm"
-            onClick={onCancel}
-            className="h-11 w-11 p-0 text-white hover:bg-white hover:bg-opacity-20 rounded-xl transition-all duration-200"
-          >
-            <X className="h-6 w-6" />
-          </Button>
+          <div>
+            <h2 className="text-xl font-bold text-white">
+              Create New Campaign
+            </h2>
+            <p className="text-blue-100 text-sm">
+              Configure your new loyalty campaign
+            </p>
+          </div>
         </div>
+        <Button
+          variant="ghost"
+          size="sm"
+          onClick={onCancel}
+          className="h-9 w-9 p-0 text-white hover:bg-white/20 rounded-lg transition-all duration-200"
+        >
+          <X className="h-5 w-5" />
+        </Button>
+      </div>
 
-        {/* Modal Content */}
-        <div className="overflow-y-auto max-h-[calc(90vh-120px)] bg-white bg-opacity-10 backdrop-blur-md">
-          <div className="p-8">
-            <form onSubmit={handleSubmit} className="space-y-8">
-              {/* Basic Information Section */}
-              <div className="bg-white bg-opacity-20 backdrop-blur-md rounded-2xl p-6 border border-white border-opacity-30 shadow-lg">
-                <h3 className="text-lg font-semibold text-gray-900 mb-6 flex items-center gap-3">
-                  <div className="bg-white p-2.5 rounded-xl shadow-md border border-gray-200">
-                    <Calendar className="h-5 w-5 text-blue-600" />
-                  </div>
-                  Basic Information
-                </h3>
+      {/* Modal Content */}
+      <div className="overflow-y-auto max-h-[calc(90vh-80px)] bg-white">
+        <div className="p-6">
+          <form onSubmit={handleSubmit} className="space-y-6">
+            {/* Basic Information Section */}
+            <div className="bg-gray-50 rounded-xl p-5 border border-gray-200">
+              <h3 className="text-lg font-semibold text-gray-900 mb-4 flex items-center gap-2">
+                <div className="bg-blue-100 p-2 rounded-lg">
+                  <Calendar className="h-4 w-4 text-blue-600" />
+                </div>
+                Basic Information
+              </h3>
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                   <div className="space-y-3">
                     <Label htmlFor="campaignCode" className="text-sm font-semibold text-gray-800">
@@ -288,8 +278,9 @@ const CampaignForm: React.FC<CampaignFormProps> = ({
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                   <div className="space-y-3">
                     <Label htmlFor="startDate" className="text-sm font-semibold text-gray-800">
-                      Start Date *
+                      Start Date & Time *
                     </Label>
+                    <p className="text-xs text-gray-600 mb-2">When the campaign begins</p>
                     <Input
                       id="startDate"
                       type="datetime-local"
@@ -307,8 +298,9 @@ const CampaignForm: React.FC<CampaignFormProps> = ({
 
                   <div className="space-y-3">
                     <Label htmlFor="endDate" className="text-sm font-semibold text-gray-800">
-                      End Date *
+                      End Date & Time *
                     </Label>
+                    <p className="text-xs text-gray-600 mb-2">When the campaign expires</p>
                     <Input
                       id="endDate"
                       type="datetime-local"
@@ -400,19 +392,6 @@ const CampaignForm: React.FC<CampaignFormProps> = ({
                       className="w-full p-4 border-2 border-gray-400 rounded-xl resize-none h-24 focus:border-orange-500 focus:ring-0 transition-colors bg-white bg-opacity-70 backdrop-blur-sm"
                     />
                   </div>
-
-                  <div className="space-y-3">
-                    <Label htmlFor="terms" className="text-sm font-semibold text-gray-800">
-                      Terms & Conditions
-                    </Label>
-                    <textarea
-                      id="terms"
-                      value={formData.terms}
-                      onChange={(e) => handleInputChange('terms', e.target.value)}
-                      placeholder="Terms and conditions..."
-                      className="w-full p-4 border-2 border-gray-400 rounded-xl resize-none h-24 focus:border-orange-500 focus:ring-0 transition-colors bg-white bg-opacity-70 backdrop-blur-sm"
-                    />
-                  </div>
                 </div>
               </div>
 
@@ -435,12 +414,12 @@ const CampaignForm: React.FC<CampaignFormProps> = ({
                   {loading ? (
                     <>
                       <div className="animate-spin rounded-full h-4 w-4 border-2 border-white border-t-transparent" />
-                      Saving...
+                      Creating...
                     </>
                   ) : (
                     <>
                       <Save className="h-4 w-4" />
-                      {campaign ? 'Update Campaign' : 'Create Campaign'}
+                      Create Campaign
                     </>
                   )}
                 </Button>
@@ -448,7 +427,6 @@ const CampaignForm: React.FC<CampaignFormProps> = ({
             </form>
           </div>
         </div>
-      </div>
     </div>
   );
 };

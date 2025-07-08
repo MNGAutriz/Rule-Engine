@@ -3,18 +3,16 @@
     "campaignId": "c0a1b2c3-d4e5-6789-hk01-abcde123456f",
     "campaignCode": "CAMP2025SUMMER",
     "name": "Summer Double Points",
-    "market": "HK",
+    "market": "JP",
     "channel": "ALL",
     "brand": "P&G",
-    "startDate": "2020-05-31T08:00:00.000Z",
-    "endDate": "2021-11-15T07:59:00.000Z",
+    "startDate": "2020-05-31T00:00:00.000Z",
+    "endDate": "2021-11-14T23:59:00.000Z",
     "ruleIds": [
       "FLEXIBLE_CAMPAIGN_BONUS"
     ],
-    "isActive": true,
-    "priority": 1,
-    "description": "fasfasfasfas",
-    "terms": "fas"
+    "isActive": false,
+    "description": "Summer campaign with fixed bonus points for purchases above HKD 500"
   },
   {
     "campaignId": "c2c3d4e5-f6g7-8901-tw03-cdefg345678h",
@@ -22,33 +20,29 @@
     "name": "VIP Exclusive Multiplier",
     "market": "HK",
     "channel": "ALL",
-    "brand": "P&G",
-    "startDate": "2025-05-30T16:00:00.000Z",
-    "endDate": "2025-08-30T15:59:00.000Z",
+    "brand": "SK-II",
+    "startDate": "2025-05-29T08:00:00.000Z",
+    "endDate": "2025-08-29T07:59:00.000Z",
     "ruleIds": [
       "FLEXIBLE_VIP_MULTIPLIER"
     ],
     "isActive": true,
-    "priority": 3,
-    "description": "VIP customers get 2x points at designated VIP counters",
-    "terms": "Valid only at designated VIP store locations. VIP status required."
+    "description": "VIP customers get 2x points at VIP counters - valid only at designated VIP store locations"
   },
   {
     "campaignId": "c3d4e5f6-g7h8-9012-hk04-defgh456789i",
     "campaignCode": "CAMP2025COMBO",
     "name": "Product Combo Bonus",
     "market": "HK",
-    "channel": "COUNTER",
+    "channel": "",
     "brand": "P&G",
-    "startDate": "2025-07-01T00:00:00Z",
-    "endDate": "2025-09-30T23:59:59Z",
+    "startDate": "2025-06-30T16:00:00.000Z",
+    "endDate": "2025-09-30T15:59:00.000Z",
     "ruleIds": [
       "COMBO_PURCHASE_BONUS"
     ],
     "isActive": true,
-    "priority": 4,
-    "description": "Buy 2 or more products and get bonus points",
-    "terms": "Minimum 2 products required. Bonus calculated on total purchase amount."
+    "description": "Buy 2 or more products and get bonus points - minimum 2 products required, bonus calculated on total purchase amount"
   },
   {
     "campaignId": "c4e5f6g7-h8i9-0123-jp05-efghi567890j",
@@ -63,42 +57,36 @@
       "FIRST_PURCHASE_NEWUSER_BONUS"
     ],
     "isActive": true,
-    "priority": 5,
-    "description": "Welcome bonus for new customers on their first purchase",
-    "terms": "Valid only for first-time customers. One-time bonus per customer."
+    "description": "Welcome bonus for new customers on their first purchase - valid only for first-time customers, one-time bonus per customer"
   },
   {
-    "campaignId": "3e61315c-254c-48ad-9118-c0879658a0a3",
+    "campaignId": "493e05a7-d55e-49cb-ab98-1c33e48b72b6",
     "campaignCode": "TAIWAN_SAMPLE",
-    "name": "SAMPLE RULE",
+    "name": "Sample Rule for Taiwan",
     "market": "TW",
-    "channel": "LINE",
-    "brand": "P&G",
-    "startDate": "2025-07-04T08:52:00.000Z",
-    "endDate": "2025-07-09T21:52:00.000Z",
-    "ruleIds": [
-      "SAMPLE_RULE"
-    ],
-    "isActive": true,
-    "priority": 1,
-    "description": "SAMPLE_RULE",
-    "terms": "SAMPLE_RULE FOR TAIWAN"
-  },
-  {
-    "campaignId": "08db04d3-d76c-4a6a-893f-1ea1f63f07cd",
-    "campaignCode": "DASD",
-    "name": "asdasdasdasdas",
-    "market": "HK",
     "channel": "ALL",
     "brand": "P&G",
-    "startDate": "2025-04-02T07:19:00.000Z",
-    "endDate": "2025-07-24T11:19:00.000Z",
+    "startDate": "2025-07-13T16:12:00.000Z",
+    "endDate": "2025-07-29T16:12:00.000Z",
     "ruleIds": [
-      "das"
+      "TAIWAN_CAMPAIGNz"
     ],
-    "isActive": true,
-    "priority": 1,
-    "description": "das",
-    "terms": "das"
+    "description": "This is a sample run for taiwan",
+    "isActive": false
+  },
+  {
+    "campaignId": "f281ac16-7928-47de-9f88-0ecfcfcd7891",
+    "campaignCode": "CAMPAIGN_CODEEEE",
+    "name": "LAAAVAAA",
+    "market": "JP",
+    "channel": "ALL",
+    "brand": "P&G",
+    "startDate": "2025-06-30T09:46:00.000Z",
+    "endDate": "2025-07-23T11:46:00.000Z",
+    "ruleIds": [
+      "FIRST_PURCHASE_NEWUSER_BONUS"
+    ],
+    "description": "",
+    "isActive": true
   }
 ]

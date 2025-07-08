@@ -21,6 +21,18 @@ router.get('/active', CampaignController.getActiveCampaigns);
 router.post('/', CampaignController.createCampaign);
 
 /**
+ * GET /api/campaigns/:campaignCode/analytics
+ * Get campaign performance analytics
+ */
+router.get('/:campaignCode/analytics', CampaignController.getCampaignAnalytics);
+
+/**
+ * GET /api/campaigns/:campaignCode
+ * Get a specific campaign by code
+ */
+router.get('/:campaignCode', CampaignController.getCampaignByCode);
+
+/**
  * PUT /api/campaigns/:campaignCode
  * Update an existing campaign
  */
@@ -31,11 +43,5 @@ router.put('/:campaignCode', CampaignController.updateCampaign);
  * Delete a campaign
  */
 router.delete('/:campaignCode', CampaignController.deleteCampaign);
-
-/**
- * GET /api/campaigns/:campaignCode/analytics
- * Get campaign performance analytics
- */
-router.get('/:campaignCode/analytics', CampaignController.getCampaignAnalytics);
 
 module.exports = router;

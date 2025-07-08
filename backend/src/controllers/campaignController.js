@@ -40,19 +40,8 @@ class CampaignController {
       
       const activeCampaigns = await this.campaignService.getActiveCampaigns(filters);
       
-      // Format response to match generalized template exactly
-      const response = activeCampaigns.map(campaign => ({
-        campaignCode: campaign.campaignCode,
-        name: campaign.name,
-        market: campaign.market,
-        channel: campaign.channel,
-        brand: campaign.brand || 'P&G',
-        startDate: campaign.startDate,
-        endDate: campaign.endDate,
-        ruleIds: campaign.ruleIds || []
-      }));
-      
-      res.json(response);
+      // Return full campaign objects with all fields
+      res.json(activeCampaigns);
     } catch (error) {
       logger.error('Error fetching active campaigns', error);
       next(error);
@@ -70,11 +59,7 @@ class CampaignController {
       
       const result = await this.campaignService.createCampaign(campaignData);
       
-      res.status(201).json({
-        success: true,
-        message: 'Campaign created successfully',
-        campaign: result
-      });
+      res.status(201).json(result);
     } catch (error) {
       logger.error('Error creating campaign', error);
       if (error.message === 'Campaign code already exists') {
@@ -99,11 +84,7 @@ class CampaignController {
       
       const result = await this.campaignService.updateCampaign(campaignCode, updateData);
       
-      res.json({
-        success: true,
-        message: 'Campaign updated successfully',
-        campaign: result
-      });
+      res.json(result);
     } catch (error) {
       logger.error('Error updating campaign', error);
       if (error.message === 'Campaign not found') {
@@ -150,6 +131,35 @@ class CampaignController {
   }
 
   /**
+   * Get a specific campaign by code
+   */
+  async getCampaignByCode(req, res, next) {
+    try {
+      const { campaignCode } = req.params;
+      
+      logger.info('Fetching campaign by code', { campaignCode });
+      
+      const campaign = await this.campaignService.getCampaignByCode(campaignCode);
+      
+      if (!campaign) {
+        return res.status(404).json({
+          success: false,
+          message: 'Campaign not found'
+        });
+      }
+      
+      // Return campaign with status field
+      res.json({
+        ...campaign,
+        status: this.campaignService.getCampaignStatus(campaign)
+      });
+    } catch (error) {
+      logger.error('Error fetching campaign by code', error);
+      next(error);
+    }
+  }
+
+  /**
    * Get campaign performance analytics
    */
   async getCampaignAnalytics(req, res, next) {
@@ -182,6 +192,7 @@ const campaignController = new CampaignController();
 module.exports = {
   getAllCampaigns: campaignController.getAllCampaigns.bind(campaignController),
   getActiveCampaigns: campaignController.getActiveCampaigns.bind(campaignController),
+  getCampaignByCode: campaignController.getCampaignByCode.bind(campaignController),
   createCampaign: campaignController.createCampaign.bind(campaignController),
   updateCampaign: campaignController.updateCampaign.bind(campaignController),
   deleteCampaign: campaignController.deleteCampaign.bind(campaignController),

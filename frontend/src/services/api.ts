@@ -346,13 +346,10 @@ export const campaignsApi = {
     name: string;
     market: string;
     channel: string;
-    brand?: string;
     startDate: string;
     endDate: string;
     ruleIds?: string[];
-    priority?: number;
     description?: string;
-    terms?: string;
   }) => {
     const response = await api.post('/api/campaigns', campaignData);
     return response.data;
@@ -364,13 +361,10 @@ export const campaignsApi = {
     name?: string;
     market?: string;
     channel?: string;
-    brand?: string;
     startDate?: string;
     endDate?: string;
     ruleIds?: string[];
-    priority?: number;
     description?: string;
-    terms?: string;
   }) => {
     const response = await api.put(`/api/campaigns/${campaignCode}`, updateData);
     return response.data;
