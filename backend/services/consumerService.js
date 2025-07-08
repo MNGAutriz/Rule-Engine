@@ -113,20 +113,53 @@ function getConsumerHistory(consumerId, options = {}) {
   // Sort by timestamp descending (most recent first)
   history.sort((a, b) => new Date(b.timestamp) - new Date(a.timestamp));
   
-  // Apply limit
-  if (options.limit) {
-    history = history.slice(0, options.limit);
-  }
+  // Always use pagination - default to page 1, limit 5 if not specified
+  const page = parseInt(options.page) || 1;
+  const limit = parseInt(options.limit) || 5;
+  const offset = (page - 1) * limit;
+  const totalCount = history.length;
+  const totalPages = Math.ceil(totalCount / limit);
   
-  // Format for API response to match the expected format
-  return history.map(event => ({
-    eventId: event.eventId,
-    timestamp: event.timestamp,
-    eventType: event.eventType,
-    points: event.totalPointsAwarded || 0,
-    ruleId: event.pointBreakdown?.[0]?.ruleId || 'UNKNOWN',
-    description: event.pointBreakdown?.[0]?.description || 'Points awarded'
-  }));
+  // Apply pagination
+  const paginatedHistory = history.slice(offset, offset + limit);
+  
+  // Format for API response with proper points display
+  const formattedHistory = paginatedHistory.map(event => {
+    // Determine points based on event type and data
+    let pointsAwarded = 0;
+    let pointsUsed = 0;
+    
+    if (event.eventType === 'REDEMPTION' && event.totalPointsUsed) {
+      pointsUsed = Math.abs(event.totalPointsUsed);
+    } else if (event.totalPointsAwarded) {
+      pointsAwarded = event.totalPointsAwarded;
+    }
+    
+    return {
+      eventId: event.eventId,
+      eventType: event.eventType,
+      timestamp: event.timestamp,
+      pointsAwarded: pointsAwarded,
+      pointsUsed: pointsUsed,
+      description: event.pointBreakdown?.[0]?.description || 
+                  (event.eventType === 'REDEMPTION' ? 'Points redeemed' : 'Points awarded'),
+      market: event.market || 'JP',
+      channel: event.channel || 'ONLINE'
+    };
+  });
+  
+  // Always return paginated response
+  return {
+    transactions: formattedHistory,
+    pagination: {
+      currentPage: page,
+      totalPages: totalPages,
+      totalCount: totalCount,
+      limit: limit,
+      hasNext: page < totalPages,
+      hasPrev: page > 1
+    }
+  };
 }
 
 function getConsumerProfile(consumerId) {

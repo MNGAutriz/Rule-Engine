@@ -194,9 +194,13 @@ export const consumersApi = {
     return response.data;
   },
 
-  // Get consumer history
-  getConsumerHistory: async (consumerId: string) => {
-    const response = await api.get(`/api/consumer/history?consumerId=${consumerId}`);
+  // Get consumer history with pagination
+  getConsumerHistory: async (consumerId: string, page?: number, limit?: number) => {
+    let url = `/api/consumer/history?consumerId=${encodeURIComponent(consumerId)}`;
+    if (page) url += `&page=${page}`;
+    if (limit) url += `&limit=${limit}`;
+    
+    const response = await api.get(url);
     return response.data;
   },
 

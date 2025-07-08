@@ -43,7 +43,7 @@
       "firstPurchaseDate": "2024-01-20T10:00:00Z",
       "totalPurchases": 25,
       "totalSpent": 50000,
-      "lastPurchaseDate": "2025-07-07T16:49:05.169Z",
+      "lastPurchaseDate": "2025-07-08T00:40:31.699Z",
       "consultationsCompleted": 5,
       "lastConsultationDate": "2025-06-15T14:30:00Z",
       "recyclingActivity": {
@@ -64,10 +64,10 @@
       "skinType": "COMBINATION"
     },
     "balance": {
-      "total": 9981853,
-      "available": 9899129,
+      "total": 9989353,
+      "available": 9906629,
       "used": 82724,
-      "transactionCount": 309
+      "transactionCount": 312
     }
   },
   "user_hk_standard": {
@@ -84,7 +84,7 @@
       "firstPurchaseDate": "2025-02-15T12:00:00Z",
       "totalPurchases": 8,
       "totalSpent": 12000,
-      "lastPurchaseDate": "2025-07-07T15:12:20.065Z",
+      "lastPurchaseDate": "2025-07-07T17:00:14.865Z",
       "consultationsCompleted": 2,
       "lastConsultationDate": "2025-05-10T16:00:00Z",
       "recyclingActivity": {
@@ -103,10 +103,10 @@
       "skinType": "DRY"
     },
     "balance": {
-      "total": 162300,
-      "available": 154000,
+      "total": 274211,
+      "available": 265911,
       "used": 8300,
-      "transactionCount": 40
+      "transactionCount": 41
     }
   },
   "user_tw_vip": {
@@ -123,7 +123,7 @@
       "firstPurchaseDate": "2024-06-05T15:00:00Z",
       "totalPurchases": 18,
       "totalSpent": 35000,
-      "lastPurchaseDate": "2025-07-05T17:51:48.949Z",
+      "lastPurchaseDate": "2025-07-07T18:05:38.707Z",
       "consultationsCompleted": 3,
       "lastConsultationDate": "2025-06-01T14:00:00Z",
       "recyclingActivity": {
@@ -143,10 +143,10 @@
       "skinType": "OILY"
     },
     "balance": {
-      "total": 43675,
-      "available": 43175,
+      "total": 135075,
+      "available": 134575,
       "used": 500,
-      "transactionCount": 25
+      "transactionCount": 26
     }
   },
   "user_tw_standard_birthday": {
@@ -223,10 +223,10 @@
       "skinType": "NORMAL"
     },
     "balance": {
-      "total": 100100,
-      "available": 89101,
+      "total": 100250,
+      "available": 89251,
       "used": 10999,
-      "transactionCount": 49
+      "transactionCount": 50
     }
   },
   "user_jp_standard": {
@@ -1070,6 +1070,18 @@
       "available": 214,
       "used": 12,
       "transactionCount": 4
+    }
+  },
+  "fsafasfczxczx": {
+    "consumerId": "fsafasfczxczx",
+    "profile": {
+      "market": "JP"
+    },
+    "balance": {
+      "total": 1308,
+      "available": 308,
+      "used": 1000,
+      "transactionCount": 7
     }
   }
 }

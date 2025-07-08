@@ -45,7 +45,7 @@ class ConsumerController {
    */
   static async getHistory(req, res, next) {
     try {
-      const { consumerId } = req.query;
+      const { consumerId, page, limit, startDate, endDate } = req.query;
       
       if (!consumerId) {
         return res.status(400).json({
@@ -54,9 +54,27 @@ class ConsumerController {
         });
       }
       
-      logger.info('Fetching consumer history', { consumerId });
+      // Parse pagination parameters with defaults
+      const pageNum = parseInt(page) || 1;
+      const limitNum = parseInt(limit) || 5; // Default to 5 items per page
       
-      const historyData = await consumerService.getConsumerHistory(consumerId);
+      logger.info('Fetching consumer history', { 
+        consumerId, 
+        page: pageNum, 
+        limit: limitNum, 
+        startDate, 
+        endDate 
+      });
+      
+      const options = {
+        page: pageNum,
+        limit: limitNum
+      };
+      
+      if (startDate) options.startDate = startDate;
+      if (endDate) options.endDate = endDate;
+      
+      const historyData = await consumerService.getConsumerHistory(consumerId, options);
       
       res.json(historyData);
     } catch (error) {
