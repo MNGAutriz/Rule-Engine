@@ -34,10 +34,10 @@
     "campaignCode": "CAMP2025COMBO",
     "name": "Product Combo Bonus",
     "market": "HK",
-    "channel": "",
+    "channel": "LINE",
     "brand": "P&G",
-    "startDate": "2025-06-30T16:00:00.000Z",
-    "endDate": "2025-09-30T15:59:00.000Z",
+    "startDate": "2025-06-30T08:00:00.000Z",
+    "endDate": "2025-09-30T07:59:00.000Z",
     "ruleIds": [
       "COMBO_PURCHASE_BONUS"
     ],
