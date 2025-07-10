@@ -4,10 +4,11 @@ import Dashboard from '@/pages/Dashboard';
 import EventProcessor from '@/pages/EventProcessor';
 import CampaignManager from '@/pages/CampaignManager';
 import ConsumerQuery from '@/pages/ConsumerQuery';
-import { Crown, Play, BarChart3, Menu, Calendar, X, Users } from 'lucide-react';
+import RuleManagement from '@/pages/RuleManagement';
+import { Crown, Play, BarChart3, Menu, Calendar, X, Users, Settings } from 'lucide-react';
 
 const App: React.FC = () => {
-  const [currentPage, setCurrentPage] = useState<'dashboard' | 'events' | 'campaigns' | 'consumers'>('dashboard');
+  const [currentPage, setCurrentPage] = useState<'dashboard' | 'events' | 'campaigns' | 'consumers' | 'rules'>('dashboard');
   const [sidebarOpen, setSidebarOpen] = useState(true);
   const [isMobile, setIsMobile] = useState(false);
 
@@ -50,6 +51,12 @@ const App: React.FC = () => {
       name: 'Consumer Query',
       icon: Users,
       description: 'Consumer data lookup'
+    },
+    {
+      id: 'rules',
+      name: 'Rule Management',
+      icon: Settings,
+      description: 'Create and manage business rules'
     }
   ];
 
@@ -63,6 +70,8 @@ const App: React.FC = () => {
         return <CampaignManager />;
       case 'consumers':
         return <ConsumerQuery />;
+      case 'rules':
+        return <RuleManagement />;
       default:
         return <Dashboard />;
     }

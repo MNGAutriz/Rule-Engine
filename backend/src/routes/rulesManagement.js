@@ -26,10 +26,4 @@ router.put('/:ruleId', RulesManagementController.updateRule);
  */
 router.delete('/:ruleId', RulesManagementController.deleteRule);
 
-/**
- * POST /api/rules-management/test
- * Test a rule against sample data
- */
-router.post('/test', RulesManagementController.testRule);
-
 module.exports = router;

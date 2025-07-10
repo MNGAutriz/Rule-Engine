@@ -58,35 +58,5 @@
     ],
     "isActive": true,
     "description": "Welcome bonus for new customers on their first purchase - valid only for first-time customers, one-time bonus per customer"
-  },
-  {
-    "campaignId": "493e05a7-d55e-49cb-ab98-1c33e48b72b6",
-    "campaignCode": "TAIWAN_SAMPLE",
-    "name": "Sample Rule for Taiwan",
-    "market": "TW",
-    "channel": "ALL",
-    "brand": "P&G",
-    "startDate": "2025-07-13T16:12:00.000Z",
-    "endDate": "2025-07-29T16:12:00.000Z",
-    "ruleIds": [
-      "TAIWAN_CAMPAIGNz"
-    ],
-    "description": "This is a sample run for taiwan",
-    "isActive": false
-  },
-  {
-    "campaignId": "f281ac16-7928-47de-9f88-0ecfcfcd7891",
-    "campaignCode": "CAMPAIGN_CODEEEE",
-    "name": "LAAAVAAA",
-    "market": "JP",
-    "channel": "ALL",
-    "brand": "P&G",
-    "startDate": "2025-06-30T09:46:00.000Z",
-    "endDate": "2025-07-23T11:46:00.000Z",
-    "ruleIds": [
-      "FIRST_PURCHASE_NEWUSER_BONUS"
-    ],
-    "description": "",
-    "isActive": true
   }
 ]

@@ -130,8 +130,46 @@ export interface RedemptionValidationResponse {
   error?: string;
 }
 
-// Rules Management API
+// Rules API - Basic rules operations
 export const rulesApi = {
+  // Get all active rules
+  getActiveRules: async (): Promise<RuleResponse> => {
+    const response = await api.get('/api/rules/active');
+    return response.data;
+  },
+
+  // Get rule statistics
+  getRuleStatistics: async (): Promise<{
+    success: boolean;
+    statistics: {
+      totalRules: number;
+      activeRules: number;
+      inactiveRules: number;
+      rulesByCategory: Record<string, { total: number; active: number; inactive: number }>;
+      rulesByPriority: Record<number, number>;
+      eventTypes: string[];
+    };
+  }> => {
+    const response = await api.get('/api/rules/statistics');
+    return response.data;
+  },
+
+  // Validate a rule
+  validateRule: async (rule: Rule): Promise<{
+    success: boolean;
+    validation: {
+      valid: boolean;
+      errors: string[];
+      warnings: string[];
+    };
+  }> => {
+    const response = await api.post('/api/rules/validate', { rule });
+    return response.data;
+  },
+};
+
+// Legacy Rules Management API (keeping for backward compatibility)
+export const legacyRulesApi = {
   // Get all rules
   getAllRules: async (): Promise<RuleResponse> => {
     const response = await api.get('/api/rules-management');
@@ -399,6 +437,38 @@ export const campaignsApi = {
   },
 };
 
+// Rules Management API - CRUD operations for rules
+export const rulesManagementApi = {
+  // Get all rules with category information
+  getAllRules: async (): Promise<RuleResponse> => {
+    const response = await api.get('/api/rules-management');
+    return response.data;
+  },
+
+  // Add a new rule to a specific category
+  addRule: async (category: string, rule: Rule): Promise<RuleResponse> => {
+    const response = await api.post('/api/rules-management', {
+      category,
+      rule
+    });
+    return response.data;
+  },
+
+  // Update an existing rule
+  updateRule: async (ruleId: string, rule: Rule): Promise<RuleResponse> => {
+    const response = await api.put(`/api/rules-management/${ruleId}`, {
+      rule
+    });
+    return response.data;
+  },
+
+  // Delete a rule
+  deleteRule: async (ruleId: string): Promise<RuleResponse> => {
+    const response = await api.delete(`/api/rules-management/${ruleId}`);
+    return response.data;
+  },
+};
+
 // Defaults API - Get backend configuration data
 export const defaultsApi = {
   // Get all default configuration values
@@ -438,9 +508,11 @@ export const handleApiError = (error: any) => {
 // Default export for compatibility
 export default {
   rulesApi,
+  legacyRulesApi,
   eventsApi,
   consumersApi,
   campaignsApi,
+  rulesManagementApi,
   defaultsApi,
   api,
   handleApiError

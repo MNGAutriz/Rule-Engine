@@ -57,6 +57,54 @@ class RulesManagementController {
   }
 
   /**
+   * Process and validate rule data
+   */
+  processRuleData(rule) {
+    // Ensure basic structure exists
+    const processedRule = {
+      name: rule.name || '',
+      priority: typeof rule.priority === 'number' ? rule.priority : 1,
+      active: rule.active !== false,
+      conditions: rule.conditions || { all: [] },
+      event: rule.event || { type: '', params: {} },
+      markets: Array.isArray(rule.markets) ? rule.markets : [],
+      channels: Array.isArray(rule.channels) ? rule.channels : []
+    };
+
+    // Process event parameters
+    if (processedRule.event && processedRule.event.params) {
+      const params = processedRule.event.params;
+      
+      // Clean up undefined values
+      Object.keys(params).forEach(key => {
+        if (params[key] === undefined || params[key] === null || params[key] === '') {
+          delete params[key];
+        }
+      });
+
+      // Ensure numeric values are properly typed
+      if (params.multiplier && typeof params.multiplier === 'string') {
+        params.multiplier = parseFloat(params.multiplier);
+      }
+      if (params.bonus && typeof params.bonus === 'string') {
+        params.bonus = parseInt(params.bonus);
+      }
+      if (params.fixedBonus && typeof params.fixedBonus === 'string') {
+        params.fixedBonus = parseInt(params.fixedBonus);
+      }
+      if (params.registrationBonus && typeof params.registrationBonus === 'string') {
+        params.registrationBonus = parseInt(params.registrationBonus);
+      }
+      if (params.conversionRate && typeof params.conversionRate === 'string') {
+        params.conversionRate = parseFloat(params.conversionRate);
+      }
+    }
+
+    logger.info('Processed rule data', { processedRule });
+    return processedRule;
+  }
+
+  /**
    * Add a new rule to a specific category
    */
   async addRule(req, res, next) {
@@ -86,8 +134,9 @@ class RulesManagementController {
       const fileContent = await fs.readFile(filePath, 'utf8');
       const currentRules = JSON.parse(fileContent);
       
-      // Add new rule
-      currentRules.push(rule);
+      // Process and add new rule
+      const processedRule = this.processRuleData(rule);
+      currentRules.push(processedRule);
       
       // Write back to file
       await fs.writeFile(filePath, JSON.stringify(currentRules, null, 2));
@@ -149,8 +198,9 @@ class RulesManagementController {
         });
       }
       
-      // Update rule
-      currentRules[index] = rule;
+      // Process and update rule
+      const processedRule = this.processRuleData(rule);
+      currentRules[index] = processedRule;
       
       // Write back to file
       await fs.writeFile(filePath, JSON.stringify(currentRules, null, 2));
@@ -232,44 +282,6 @@ class RulesManagementController {
     }
   }
 
-  /**
-   * Test a rule against sample data
-   */
-  async testRule(req, res, next) {
-    try {
-      const { rule, testData } = req.body;
-      
-      if (!rule || !testData) {
-        return res.status(400).json({
-          error: 'Missing required parameters',
-          details: 'rule and testData objects are required'
-        });
-      }
-      
-      logger.info('Testing rule', { ruleName: rule.name });
-      
-      // Create a temporary rules engine with just this rule
-      const { Engine } = require('json-rules-engine');
-      const testEngine = new Engine();
-      
-      testEngine.addRule(rule);
-      
-      // Run the engine with test data
-      const results = await testEngine.run(testData);
-      
-      res.json({
-        success: true,
-        testResults: {
-          triggered: results.events.length > 0,
-          events: results.events,
-          facts: testData
-        }
-      });
-    } catch (error) {
-      logger.error('Error testing rule', error);
-      next(error);
-    }
-  }
 }
 
 // Create instance to maintain context
@@ -279,6 +291,5 @@ module.exports = {
   getAllRules: rulesManagementController.getAllRules.bind(rulesManagementController),
   addRule: rulesManagementController.addRule.bind(rulesManagementController),
   updateRule: rulesManagementController.updateRule.bind(rulesManagementController),
-  deleteRule: rulesManagementController.deleteRule.bind(rulesManagementController),
-  testRule: rulesManagementController.testRule.bind(rulesManagementController)
+  deleteRule: rulesManagementController.deleteRule.bind(rulesManagementController)
 };

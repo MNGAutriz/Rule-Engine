@@ -4,7 +4,7 @@ import { Button } from '@/components/ui/button';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { LoadingSpinner } from '@/components/common';
 import { RuleCard, StatsGrid } from '@/components/display';
-import { rulesApi, eventsApi, consumersApi, defaultsApi } from '@/services/api';
+import { rulesApi, rulesManagementApi, eventsApi, consumersApi, defaultsApi } from '@/services/api';
 import type { Rule, EventData } from '@/services/api';
 import { 
   RefreshCw, 
@@ -69,10 +69,25 @@ const Dashboard: React.FC = () => {
       setLoading(true);
       
       // Load rules data
-      const rulesResponse = await rulesApi.getAllRules();
+      const rulesResponse = await rulesManagementApi.getAllRules();
       if (rulesResponse.success && rulesResponse.rules) {
         setRules(rulesResponse.rules);
         setStats(prev => ({ ...prev, totalRules: rulesResponse.rules!.length }));
+      }
+
+      // Load rule statistics for better insights
+      try {
+        const ruleStatsResponse = await rulesApi.getRuleStatistics();
+        if (ruleStatsResponse.success) {
+          const ruleStats = ruleStatsResponse.statistics;
+          setStats(prev => ({ 
+            ...prev, 
+            totalRules: ruleStats.totalRules,
+            // Add more stats if needed
+          }));
+        }
+      } catch (error) {
+        console.warn('Could not load rule statistics:', error);
       }
 
       // Load defaults to get active markets
