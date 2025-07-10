@@ -118,69 +118,139 @@ class FactsEngine {
       return storeId.includes('VIP') || storeId.includes('PREMIUM');
     });
 
-    // Consumer-based facts (async functions)
+    // Consumer-based facts (async functions with error handling)
     this.factDefinitions.set('consumer', async (params, almanac) => {
-      let consumerId = params?.consumerId;
-      if (!consumerId && almanac) {
-        consumerId = await almanac.factValue('consumerId');
+      try {
+        let consumerId = params?.consumerId;
+        if (!consumerId && almanac) {
+          consumerId = await almanac.factValue('consumerId');
+        }
+        return await consumerService.getConsumerById(consumerId);
+      } catch (error) {
+        logger.debug('Consumer fact failed, returning null', { error: error.message });
+        return null;
       }
-      return await consumerService.getConsumerById(consumerId);
     });
 
     this.factDefinitions.set('purchaseCount', async (params, almanac) => {
-      // Get consumerId from almanac if not in params
-      let consumerId = params?.consumerId;
-      if (!consumerId && almanac) {
-        consumerId = await almanac.factValue('consumerId');
-      }
-      
-      if (!consumerId) {
+      try {
+        // Get consumerId from almanac if not in params
+        let consumerId = params?.consumerId;
+        if (!consumerId && almanac) {
+          consumerId = await almanac.factValue('consumerId');
+        }
+        
+        if (!consumerId) {
+          return 0;
+        }
+        
+        return await consumerService.getPurchaseCount(consumerId);
+      } catch (error) {
+        logger.debug('PurchaseCount fact failed, returning 0', { error: error.message });
         return 0;
       }
-      
-      return await consumerService.getPurchaseCount(consumerId);
     });
 
     this.factDefinitions.set('daysSinceFirstPurchase', async (params, almanac) => {
-      // Get consumerId from almanac if not in params
-      let consumerId = params?.consumerId;
-      if (!consumerId && almanac) {
-        consumerId = await almanac.factValue('consumerId');
+      try {
+        // Get consumerId from almanac if not in params
+        let consumerId = params?.consumerId;
+        if (!consumerId && almanac) {
+          consumerId = await almanac.factValue('consumerId');
+        }
+        
+        return await consumerService.getDaysSinceFirstPurchase(consumerId);
+      } catch (error) {
+        logger.debug('DaysSinceFirstPurchase fact failed, returning 0', { error: error.message });
+        return 0;
       }
-      
-      return await consumerService.getDaysSinceFirstPurchase(consumerId);
     });
 
     this.factDefinitions.set('isVIP', async (params, almanac) => {
-      let consumerId = params?.consumerId;
-      if (!consumerId && almanac) {
-        consumerId = await almanac.factValue('consumerId');
+      try {
+        let consumerId = params?.consumerId;
+        if (!consumerId && almanac) {
+          consumerId = await almanac.factValue('consumerId');
+        }
+        const consumer = await consumerService.getConsumerById(consumerId);
+        const tier = consumer?.profile?.tier || 'STANDARD';
+        return tier.includes('VIP') || tier.includes('PLATINUM');
+      } catch (error) {
+        logger.debug('IsVIP fact failed, returning false', { error: error.message });
+        return false;
       }
-      const consumer = await consumerService.getConsumerById(consumerId);
-      const tier = consumer?.profile?.tier || 'STANDARD';
-      return tier.includes('VIP') || tier.includes('PLATINUM');
     });
 
     this.factDefinitions.set('birthMonth', async (params, almanac) => {
-      let consumerId = params?.consumerId;
-      if (!consumerId && almanac) {
-        consumerId = await almanac.factValue('consumerId');
+      try {
+        let consumerId = params?.consumerId;
+        if (!consumerId && almanac) {
+          consumerId = await almanac.factValue('consumerId');
+        }
+        const consumer = await consumerService.getConsumerById(consumerId);
+        const birthDate = consumer?.profile?.birthDate;
+        return birthDate ? new Date(birthDate).getMonth() + 1 : null;
+      } catch (error) {
+        logger.debug('BirthMonth fact failed, returning null', { error: error.message });
+        return null;
       }
-      const consumer = await consumerService.getConsumerById(consumerId);
-      const birthDate = consumer?.profile?.birthDate;
-      return birthDate ? new Date(birthDate).getMonth() + 1 : null;
     });
 
     this.factDefinitions.set('isBirthMonth', async (params, almanac) => {
-      let consumerId = params?.consumerId;
-      if (!consumerId && almanac) {
-        consumerId = await almanac.factValue('consumerId');
+      try {
+        let consumerId = params?.consumerId;
+        if (!consumerId && almanac) {
+          consumerId = await almanac.factValue('consumerId');
+        }
+        const consumer = await consumerService.getConsumerById(consumerId);
+        const birthDate = consumer?.profile?.birthDate;
+        const birthMonth = birthDate ? new Date(birthDate).getMonth() + 1 : null;
+        const eventMonth = new Date(params.timestamp).getMonth() + 1;
+        return birthMonth === eventMonth;
+      } catch (error) {
+        logger.debug('IsBirthMonth fact failed, returning false', { error: error.message });
+        return false;
       }
-      const consumer = await consumerService.getConsumerById(consumerId);
-      const birthDate = consumer?.profile?.birthDate;
-      const birthMonth = birthDate ? new Date(birthDate).getMonth() + 1 : null;
-      const eventMonth = new Date(params.timestamp).getMonth() + 1;
-      return birthMonth === eventMonth;
+    });
+
+    // Age fact - calculates age from birthDate (optional, returns 0 if not available)
+    this.factDefinitions.set('age', async (params, almanac) => {
+      try {
+        let consumerId = params?.consumerId;
+        if (!consumerId && almanac) {
+          consumerId = await almanac.factValue('consumerId');
+        }
+        const consumer = await consumerService.getConsumerById(consumerId);
+        const birthDate = consumer?.profile?.birthDate;
+        if (!birthDate) {
+          return 0; // Default age if not available
+        }
+        const today = new Date();
+        const birth = new Date(birthDate);
+        let age = today.getFullYear() - birth.getFullYear();
+        const monthDiff = today.getMonth() - birth.getMonth();
+        if (monthDiff < 0 || (monthDiff === 0 && today.getDate() < birth.getDate())) {
+          age--;
+        }
+        return age;
+      } catch (error) {
+        logger.debug('Age fact calculation failed, returning default', { error: error.message });
+        return 0; // Default age on any error
+      }
+    });
+
+    this.factDefinitions.set('lastPurchaseDate', async (params, almanac) => {
+      try {
+        let consumerId = params?.consumerId;
+        if (!consumerId && almanac) {
+          consumerId = await almanac.factValue('consumerId');
+        }
+        const consumer = await consumerService.getConsumerById(consumerId);
+        return consumer?.engagement?.lastPurchaseDate || null;
+      } catch (error) {
+        logger.debug('LastPurchaseDate fact calculation failed, returning null', { error: error.message });
+        return null; // Return null if consumer data is not available
+      }
     });
 
     // Note: tags system removed from user structure - facts kept for backward compatibility
@@ -190,16 +260,21 @@ class FactsEngine {
     });
 
     this.factDefinitions.set('isFirstPurchase', async (params, almanac) => {
-      let consumerId = params?.consumerId;
-      if (!consumerId && almanac) {
-        consumerId = await almanac.factValue('consumerId');
+      try {
+        let consumerId = params?.consumerId;
+        if (!consumerId && almanac) {
+          consumerId = await almanac.factValue('consumerId');
+        }
+        const purchaseCount = await consumerService.getPurchaseCount(consumerId);
+        return purchaseCount === 0;
+      } catch (error) {
+        logger.debug('IsFirstPurchase fact failed, returning false', { error: error.message });
+        return false;
       }
-      const purchaseCount = await consumerService.getPurchaseCount(consumerId);
-      return purchaseCount === 0;
     });
 
     this.factDefinitions.set('hasTag', async (params, almanac) => {
-      // Tags system removed - this fact always returns false for backward compatibility
+      // Tags system removed - this fact always responds false for backward compatibility
       return false;
     });
 
@@ -298,7 +373,15 @@ class FactsEngine {
    * Validate that all required facts are available for rules
    */
   validateFactsForRules(rules) {
-    const availableFacts = this.getAvailableFacts();
+    const definedFacts = this.getAvailableFacts();
+    
+    // Basic facts that are automatically available from event data top-level properties
+    const basicFacts = [
+      'eventId', 'consumerId', 'eventType', 'market', 'channel', 
+      'productLine', 'timestamp', 'context', 'attributes'
+    ];
+    
+    const availableFacts = [...definedFacts, ...basicFacts];
     const missingFacts = [];
 
     const checkCondition = (condition) => {

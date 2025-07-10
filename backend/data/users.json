@@ -43,7 +43,7 @@
       "firstPurchaseDate": "2024-01-20T10:00:00Z",
       "totalPurchases": 25,
       "totalSpent": 50000,
-      "lastPurchaseDate": "2025-07-10T01:58:00.744Z",
+      "lastPurchaseDate": "2025-07-10T02:53:59.733Z",
       "consultationsCompleted": 5,
       "lastConsultationDate": "2025-06-15T14:30:00Z",
       "recyclingActivity": {
@@ -64,10 +64,10 @@
       "skinType": "COMBINATION"
     },
     "balance": {
-      "total": 10038728,
-      "available": 9955804,
+      "total": 10068778,
+      "available": 9985854,
       "used": 82924,
-      "transactionCount": 330
+      "transactionCount": 333
     }
   },
   "user_hk_standard": {
@@ -84,7 +84,7 @@
       "firstPurchaseDate": "2025-02-15T12:00:00Z",
       "totalPurchases": 8,
       "totalSpent": 12000,
-      "lastPurchaseDate": "2025-07-07T17:00:14.865Z",
+      "lastPurchaseDate": "2025-07-10T02:52:27.756Z",
       "consultationsCompleted": 2,
       "lastConsultationDate": "2025-05-10T16:00:00Z",
       "recyclingActivity": {
@@ -103,10 +103,10 @@
       "skinType": "DRY"
     },
     "balance": {
-      "total": 274211,
-      "available": 265911,
+      "total": 280511,
+      "available": 272211,
       "used": 8300,
-      "transactionCount": 41
+      "transactionCount": 42
     }
   },
   "user_tw_vip": {
@@ -223,10 +223,10 @@
       "skinType": "NORMAL"
     },
     "balance": {
-      "total": 100637,
-      "available": 89538,
+      "total": 100787,
+      "available": 89688,
       "used": 11099,
-      "transactionCount": 55
+      "transactionCount": 56
     }
   },
   "user_jp_standard": {
@@ -1109,6 +1109,18 @@
       "available": 650,
       "used": 500,
       "transactionCount": 3
+    }
+  },
+  "user_jp_vipczx": {
+    "consumerId": "user_jp_vipczx",
+    "profile": {
+      "market": "JP"
+    },
+    "balance": {
+      "total": 1225,
+      "available": 725,
+      "used": 500,
+      "transactionCount": 4
     }
   }
 }

@@ -3,15 +3,15 @@
     "campaignId": "c0a1b2c3-d4e5-6789-hk01-abcde123456f",
     "campaignCode": "CAMP2025SUMMER",
     "name": "Summer Double Points",
-    "market": "JP",
+    "market": "HK",
     "channel": "ALL",
     "brand": "P&G",
-    "startDate": "2020-05-31T00:00:00.000Z",
-    "endDate": "2021-11-14T23:59:00.000Z",
+    "startDate": "2013-01-29T01:00:00.000Z",
+    "endDate": "2025-07-22T23:59:00.000Z",
     "ruleIds": [
       "FLEXIBLE_CAMPAIGN_BONUS"
     ],
-    "isActive": false,
+    "isActive": true,
     "description": "Summer campaign with fixed bonus points for purchases above HKD 500"
   },
   {
