@@ -48,5 +48,34 @@
       }
     },
     "priority": 4
+  },
+  {
+    "name": "czx",
+    "priority": 1,
+    "active": true,
+    "conditions": {
+      "all": [
+        {
+          "fact": "age",
+          "operator": "equal",
+          "value": "12"
+        },
+        {
+          "fact": "lastPurchaseDate",
+          "operator": "notIn",
+          "value": "true"
+        }
+      ]
+    },
+    "event": {
+      "type": "REGISTRATION",
+      "params": {}
+    },
+    "markets": [
+      "HK"
+    ],
+    "channels": [
+      "STORE"
+    ]
   }
 ]

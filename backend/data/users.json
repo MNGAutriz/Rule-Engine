@@ -43,7 +43,7 @@
       "firstPurchaseDate": "2024-01-20T10:00:00Z",
       "totalPurchases": 25,
       "totalSpent": 50000,
-      "lastPurchaseDate": "2025-07-10T01:56:19.568Z",
+      "lastPurchaseDate": "2025-07-10T01:58:00.744Z",
       "consultationsCompleted": 5,
       "lastConsultationDate": "2025-06-15T14:30:00Z",
       "recyclingActivity": {
@@ -64,10 +64,10 @@
       "skinType": "COMBINATION"
     },
     "balance": {
-      "total": 10034978,
-      "available": 9952054,
+      "total": 10038728,
+      "available": 9955804,
       "used": 82924,
-      "transactionCount": 329
+      "transactionCount": 330
     }
   },
   "user_hk_standard": {

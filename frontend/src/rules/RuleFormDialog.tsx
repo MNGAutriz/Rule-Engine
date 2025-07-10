@@ -15,7 +15,8 @@ import {
   Tag, 
   Activity,
   Settings,
-  Check
+  Check,
+  AlertCircle
 } from 'lucide-react';
 
 interface RuleFormDialogProps {
@@ -139,6 +140,8 @@ const RuleFormDialog: React.FC<RuleFormDialogProps> = ({
     channels: []
   });
 
+  const [errors, setErrors] = useState<Record<string, string>>({});
+
   const [defaults, setDefaults] = useState<any>({
     markets: [],
     channels: [],
@@ -154,9 +157,42 @@ const RuleFormDialog: React.FC<RuleFormDialogProps> = ({
     eventType: false
   });
 
+  // Helper function to extract values from rule conditions
+  const extractFromConditions = (conditions: any, factName: string): string[] => {
+    if (!conditions?.all || !Array.isArray(conditions.all)) return [];
+    
+    const values: string[] = [];
+    conditions.all.forEach((condition: any) => {
+      if (condition.fact === factName) {
+        if (condition.operator === 'equal' && condition.value) {
+          values.push(condition.value);
+        } else if (condition.operator === 'in' && Array.isArray(condition.value)) {
+          values.push(...condition.value);
+        }
+      }
+    });
+    
+    return [...new Set(values)]; // Remove duplicates
+  };
+
   useEffect(() => {
+    console.log('🔄 RuleFormDialog useEffect triggered:', { 
+      isOpen, 
+      hasInitialRule: !!initialRule,
+      initialRuleName: initialRule?.name,
+      initialRuleMarkets: initialRule?.markets,
+      initialRuleChannels: initialRule?.channels,
+      initialRuleEventType: initialRule?.event?.type
+    });
+    
     loadDefaults();
+    
     if (initialRule) {
+      // Extract markets and channels from conditions if not explicitly stored
+      const marketsFromConditions = extractFromConditions(initialRule.conditions, 'market');
+      const channelsFromConditions = extractFromConditions(initialRule.conditions, 'channel');
+      const eventTypesFromConditions = extractFromConditions(initialRule.conditions, 'eventType');
+      
       // When editing, load all existing rule data with defensive checks
       const safeRule = {
         name: initialRule.name || '',
@@ -165,7 +201,7 @@ const RuleFormDialog: React.FC<RuleFormDialogProps> = ({
         active: initialRule.active !== false,
         conditions: initialRule.conditions || { all: [] },
         event: {
-          type: initialRule.event?.type || '',
+          type: initialRule.event?.type || (eventTypesFromConditions.length > 0 ? eventTypesFromConditions[0] : ''),
           params: {
             // Ensure all common event params are included
             description: initialRule.event?.params?.description || '',
@@ -175,16 +211,24 @@ const RuleFormDialog: React.FC<RuleFormDialogProps> = ({
             ...(initialRule.event?.params || {})
           }
         },
-        markets: Array.isArray(initialRule.markets) ? initialRule.markets : [],
-        channels: Array.isArray(initialRule.channels) ? initialRule.channels : []
+        // Use explicit fields if available, otherwise extract from conditions
+        markets: Array.isArray(initialRule.markets) && initialRule.markets.length > 0 
+          ? initialRule.markets 
+          : marketsFromConditions,
+        channels: Array.isArray(initialRule.channels) && initialRule.channels.length > 0 
+          ? initialRule.channels 
+          : channelsFromConditions
       };
       
       console.log('🔧 Loading rule for editing:', {
         name: safeRule.name,
         category: safeRule.category,
         markets: safeRule.markets,
+        marketsFromConditions,
         channels: safeRule.channels,
+        channelsFromConditions,
         eventType: safeRule.event?.type,
+        eventTypesFromConditions,
         eventParamsKeys: Object.keys(safeRule.event?.params || {})
       });
       setFormData(safeRule);
@@ -210,33 +254,163 @@ const RuleFormDialog: React.FC<RuleFormDialogProps> = ({
 
   const loadDefaults = async () => {
     try {
+      console.log('📡 Loading defaults...');
       const response = await defaultsApi.getDefaults();
+      console.log('✅ Defaults loaded:', {
+        markets: response.markets,
+        channels: response.channels,
+        eventTypes: response.eventTypes
+      });
       setDefaults(response);
     } catch (error) {
-      console.error('Error loading defaults:', error);
+      console.error('❌ Error loading defaults:', error);
     }
+  };
+
+  const validateForm = () => {
+    const newErrors: Record<string, string> = {};
+
+    // Rule name validation
+    if (!formData.name?.trim()) {
+      newErrors.name = 'Rule name is required';
+    }
+
+    // Category validation (only for new rules)
+    if (!formData.category && !initialRule) {
+      newErrors.category = 'Rule category is required';
+    }
+
+    // Event type validation
+    if (!formData.event?.type?.trim()) {
+      newErrors.eventType = 'Event type is required';
+    }
+
+    // Priority validation
+    if (!formData.priority || formData.priority < 1) {
+      newErrors.priority = 'Priority must be at least 1';
+    }
+
+    // Conditions validation
+    if (!formData.conditions?.all?.length) {
+      newErrors.conditions = 'At least one condition is required';
+    } else {
+      // Check if all conditions are properly filled
+      const invalidConditions = formData.conditions.all.some((condition: any) => 
+        !condition.fact || !condition.operator || (condition.value === '' || condition.value === null || condition.value === undefined)
+      );
+      if (invalidConditions) {
+        newErrors.conditions = 'All conditions must have fact, operator, and value filled';
+      }
+    }
+
+    // Markets validation (at least one market required)
+    if (!formData.markets?.length) {
+      newErrors.markets = 'At least one market must be selected';
+    }
+
+    // Channels validation (at least one channel required)
+    if (!formData.channels?.length) {
+      newErrors.channels = 'At least one channel must be selected';
+    }
+
+    setErrors(newErrors);
+    return Object.keys(newErrors).length === 0;
+  };
+
+  const handleInputChange = (field: string, value: any) => {
+    setFormData((prev: any) => ({ ...prev, [field]: value }));
+    
+    // Clear error when user starts typing
+    if (errors[field]) {
+      setErrors(prev => ({
+        ...prev,
+        [field]: ''
+      }));
+    }
+  };
+
+  const handleEventChange = (field: string, value: any) => {
+    setFormData((prev: any) => ({
+      ...prev,
+      event: {
+        ...prev.event,
+        [field]: value
+      }
+    }));
+    
+    // Clear event type error
+    if (field === 'type' && errors.eventType) {
+      setErrors(prev => ({
+        ...prev,
+        eventType: ''
+      }));
+    }
+  };
+
+  // Helper function to sync markets, channels, and event types with conditions
+  const syncConditionsWithFormData = (currentFormData: any) => {
+    let updatedConditions = { ...currentFormData.conditions };
+    if (!updatedConditions.all) updatedConditions.all = [];
+
+    // Remove existing market, channel, and eventType conditions
+    updatedConditions.all = updatedConditions.all.filter((condition: any) => 
+      !['market', 'channel', 'eventType'].includes(condition.fact)
+    );
+
+    // Add market conditions
+    if (currentFormData.markets && currentFormData.markets.length > 0) {
+      if (currentFormData.markets.length === 1) {
+        updatedConditions.all.unshift({
+          fact: 'market',
+          operator: 'equal',
+          value: currentFormData.markets[0]
+        });
+      } else {
+        updatedConditions.all.unshift({
+          fact: 'market',
+          operator: 'in',
+          value: currentFormData.markets
+        });
+      }
+    }
+
+    // Add channel conditions
+    if (currentFormData.channels && currentFormData.channels.length > 0) {
+      if (currentFormData.channels.length === 1) {
+        updatedConditions.all.unshift({
+          fact: 'channel',
+          operator: 'equal',
+          value: currentFormData.channels[0]
+        });
+      } else {
+        updatedConditions.all.unshift({
+          fact: 'channel',
+          operator: 'in',
+          value: currentFormData.channels
+        });
+      }
+    }
+
+    // Add event type condition
+    if (currentFormData.event?.type) {
+      updatedConditions.all.unshift({
+        fact: 'eventType',
+        operator: 'equal',
+        value: currentFormData.event.type
+      });
+    }
+
+    return updatedConditions;
   };
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     
-    // Basic validation
-    if (!formData.name?.trim()) {
-      alert('Please enter a rule name');
+    if (!validateForm()) {
       return;
     }
     
-    if (!formData.category && !initialRule) {
-      alert('Please select a rule category');
-      return;
-    }
-    
-    if (!formData.event?.type?.trim()) {
-      alert('Please select an event type');
-      return;
-    }
-    
-    // Clean up the form data before submission
+    // Clean up the form data before submission and sync conditions
     const cleanedFormData = {
       ...formData,
       name: formData.name.trim(),
@@ -246,9 +420,16 @@ const RuleFormDialog: React.FC<RuleFormDialogProps> = ({
         params: formData.event.params || {}
       }
     };
+
+    // Sync conditions with markets, channels, and event types
+    cleanedFormData.conditions = syncConditionsWithFormData(cleanedFormData);
     
     const { category, ...ruleData } = cleanedFormData;
-    console.log('Submitting rule:', { category: category || initialRule?.category, ruleData });
+    console.log('Submitting rule with synced conditions:', { 
+      category: category || initialRule?.category, 
+      ruleData,
+      syncedConditions: ruleData.conditions 
+    });
     onSubmit(category || initialRule?.category, ruleData);
   };
 
@@ -267,6 +448,14 @@ const RuleFormDialog: React.FC<RuleFormDialogProps> = ({
         ]
       }
     }));
+    
+    // Clear conditions error when adding a new condition
+    if (errors.conditions) {
+      setErrors(prev => ({
+        ...prev,
+        conditions: ''
+      }));
+    }
   };
 
   const updateCondition = (index: number, field: string, value: any) => {
@@ -279,6 +468,14 @@ const RuleFormDialog: React.FC<RuleFormDialogProps> = ({
         )
       }
     }));
+    
+    // Clear conditions error when updating a condition
+    if (errors.conditions) {
+      setErrors(prev => ({
+        ...prev,
+        conditions: ''
+      }));
+    }
   };
 
   const removeCondition = (index: number) => {
@@ -368,8 +565,8 @@ const RuleFormDialog: React.FC<RuleFormDialogProps> = ({
   ])];
 
   return (
-    <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
-      <div className="bg-white rounded-lg shadow-xl w-full max-w-4xl max-h-[90vh] overflow-y-auto">
+    <div className="fixed inset-0 bg-black/20 backdrop-blur-sm flex items-center justify-center z-50 p-4">
+      <div className="bg-white/95 backdrop-blur-md rounded-2xl shadow-2xl w-full max-w-4xl max-h-[90vh] overflow-y-auto border border-gray-200">
         <div className="sticky top-0 bg-white border-b border-gray-200 p-6 flex items-center justify-between">
           <h2 className="text-2xl font-bold text-gray-900">{title}</h2>
           <Button variant="ghost" size="sm" onClick={onClose}>
@@ -390,21 +587,27 @@ const RuleFormDialog: React.FC<RuleFormDialogProps> = ({
             <CardContent className="space-y-4">
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                 <div>
-                  <Label htmlFor="name">Rule Name</Label>
+                  <Label htmlFor="name" className="text-sm font-medium text-gray-700">Rule Name *</Label>
                   <Input
                     id="name"
                     value={formData.name}
-                    onChange={(e) => setFormData((prev: any) => ({ ...prev, name: e.target.value }))}
+                    onChange={(e) => handleInputChange('name', e.target.value)}
+                    className={`mt-1 ${errors.name ? 'border-red-500' : ''}`}
                     placeholder="Enter rule name"
-                    required
                   />
+                  {errors.name && (
+                    <p className="mt-1 text-sm text-red-600 flex items-center gap-1">
+                      <AlertCircle className="h-3 w-3" />
+                      {errors.name}
+                    </p>
+                  )}
                 </div>
 
                 <div>
-                  <Label htmlFor="category">Rule Category</Label>
+                  <Label htmlFor="category" className="text-sm font-medium text-gray-700">Rule Category *</Label>
                   {initialRule ? (
                     // In edit mode, show category as read-only
-                    <div className="flex items-center gap-2 px-3 py-2 border rounded-md bg-gray-50">
+                    <div className="flex items-center gap-2 px-3 py-2 border rounded-md bg-gray-50 mt-1">
                       {formData.category && RULE_CATEGORIES[formData.category as keyof typeof RULE_CATEGORIES] && (
                         <>
                           {(() => {
@@ -418,37 +621,52 @@ const RuleFormDialog: React.FC<RuleFormDialogProps> = ({
                     </div>
                   ) : (
                     // In create mode, allow selection
-                    <Select 
-                      value={formData.category} 
-                      onValueChange={(value) => setFormData((prev: any) => ({ ...prev, category: value }))}
-                    >
-                      <SelectTrigger>
-                        <SelectValue placeholder="Select category" />
-                      </SelectTrigger>
-                      <SelectContent>
-                        {Object.entries(RULE_CATEGORIES).map(([key, config]) => (
-                          <SelectItem key={key} value={key}>
-                            <div className="flex items-center gap-2">
-                              <config.icon className="h-4 w-4" />
-                              {config.label}
-                            </div>
-                          </SelectItem>
-                        ))}
-                      </SelectContent>
-                    </Select>
+                    <>
+                      <Select 
+                        value={formData.category} 
+                        onValueChange={(value) => handleInputChange('category', value)}
+                      >
+                        <SelectTrigger className={`mt-1 ${errors.category ? 'border-red-500' : ''}`}>
+                          <SelectValue placeholder="Select category" />
+                        </SelectTrigger>
+                        <SelectContent>
+                          {Object.entries(RULE_CATEGORIES).map(([key, config]) => (
+                            <SelectItem key={key} value={key}>
+                              <div className="flex items-center gap-2">
+                                <config.icon className="h-4 w-4" />
+                                {config.label}
+                              </div>
+                            </SelectItem>
+                          ))}
+                        </SelectContent>
+                      </Select>
+                      {errors.category && (
+                        <p className="mt-1 text-sm text-red-600 flex items-center gap-1">
+                          <AlertCircle className="h-3 w-3" />
+                          {errors.category}
+                        </p>
+                      )}
+                    </>
                   )}
                 </div>
 
                 <div>
-                  <Label htmlFor="priority">Priority</Label>
+                  <Label htmlFor="priority" className="text-sm font-medium text-gray-700">Priority *</Label>
                   <Input
                     id="priority"
                     type="number"
                     min="1"
                     max="100"
                     value={formData.priority}
-                    onChange={(e) => setFormData((prev: any) => ({ ...prev, priority: parseInt(e.target.value) || 1 }))}
+                    onChange={(e) => handleInputChange('priority', parseInt(e.target.value) || 1)}
+                    className={`mt-1 ${errors.priority ? 'border-red-500' : ''}`}
                   />
+                  {errors.priority && (
+                    <p className="mt-1 text-sm text-red-600 flex items-center gap-1">
+                      <AlertCircle className="h-3 w-3" />
+                      {errors.priority}
+                    </p>
+                  )}
                 </div>
 
                 <div className="flex items-center gap-2">
@@ -469,9 +687,15 @@ const RuleFormDialog: React.FC<RuleFormDialogProps> = ({
             <CardHeader>
               <CardTitle className="flex items-center gap-2">
                 <Check className="h-5 w-5" />
-                Rule Conditions
+                Rule Conditions *
               </CardTitle>
               <CardDescription>Define when this rule should trigger</CardDescription>
+              {errors.conditions && (
+                <p className="mt-2 text-sm text-red-600 flex items-center gap-1">
+                  <AlertCircle className="h-3 w-3" />
+                  {errors.conditions}
+                </p>
+              )}
             </CardHeader>
             <CardContent className="space-y-4">
               <div className="space-y-4">
@@ -562,16 +786,13 @@ const RuleFormDialog: React.FC<RuleFormDialogProps> = ({
             </CardHeader>
             <CardContent className="space-y-4">
               <div>
-                <Label htmlFor="eventType">Event Type</Label>
-                <div className="flex gap-2">
+                <Label htmlFor="eventType" className="text-sm font-medium text-gray-700">Event Type *</Label>
+                <div className="flex gap-2 mt-1">
                   <Select 
                     value={formData.event?.type || ''} 
-                    onValueChange={(value) => setFormData((prev: any) => ({
-                      ...prev,
-                      event: { ...prev.event, type: value }
-                    }))}
+                    onValueChange={(value) => handleEventChange('type', value)}
                   >
-                    <SelectTrigger className="flex-1">
+                    <SelectTrigger className={`flex-1 ${errors.eventType ? 'border-red-500' : ''}`}>
                       <SelectValue placeholder="Select event type" />
                     </SelectTrigger>
                     <SelectContent>
@@ -598,6 +819,12 @@ const RuleFormDialog: React.FC<RuleFormDialogProps> = ({
                     <Plus className="h-4 w-4" />
                   </Button>
                 </div>
+                {errors.eventType && (
+                  <p className="mt-1 text-sm text-red-600 flex items-center gap-1">
+                    <AlertCircle className="h-3 w-3" />
+                    {errors.eventType}
+                  </p>
+                )}
 
                 {showCustomInputs.eventType && (
                   <div className="mt-2 flex gap-2">
@@ -800,7 +1027,7 @@ const RuleFormDialog: React.FC<RuleFormDialogProps> = ({
             <CardContent className="space-y-6">
               {/* Markets */}
               <div>
-                <Label>Markets</Label>
+                <Label className="text-sm font-medium text-gray-700">Markets *</Label>
                 <div className="mt-2 space-y-3">
                   <div className="flex flex-wrap gap-2">
                     {Array.isArray(formData?.markets) && formData.markets.length > 0 ? (
@@ -822,8 +1049,8 @@ const RuleFormDialog: React.FC<RuleFormDialogProps> = ({
                   </div>
 
                   <div className="flex gap-2">
-                    <Select onValueChange={addMarket}>
-                      <SelectTrigger className="flex-1">
+                    <Select onValueChange={(value) => { addMarket(value); errors.markets && setErrors(prev => ({ ...prev, markets: '' })); }}>
+                      <SelectTrigger className={`flex-1 ${errors.markets ? 'border-red-500' : ''}`}>
                         <SelectValue placeholder="Select market" />
                       </SelectTrigger>
                       <SelectContent>
@@ -865,12 +1092,18 @@ const RuleFormDialog: React.FC<RuleFormDialogProps> = ({
                       </Button>
                     </div>
                   )}
+                  {errors.markets && (
+                    <p className="text-sm text-red-600 flex items-center gap-1">
+                      <AlertCircle className="h-3 w-3" />
+                      {errors.markets}
+                    </p>
+                  )}
                 </div>
               </div>
 
               {/* Channels */}
               <div>
-                <Label>Channels</Label>
+                <Label className="text-sm font-medium text-gray-700">Channels *</Label>
                 <div className="mt-2 space-y-3">
                   <div className="flex flex-wrap gap-2">
                     {Array.isArray(formData?.channels) && formData.channels.length > 0 ? (
@@ -892,8 +1125,8 @@ const RuleFormDialog: React.FC<RuleFormDialogProps> = ({
                   </div>
 
                   <div className="flex gap-2">
-                    <Select onValueChange={addChannel}>
-                      <SelectTrigger className="flex-1">
+                    <Select onValueChange={(value) => { addChannel(value); errors.channels && setErrors(prev => ({ ...prev, channels: '' })); }}>
+                      <SelectTrigger className={`flex-1 ${errors.channels ? 'border-red-500' : ''}`}>
                         <SelectValue placeholder="Select channel" />
                       </SelectTrigger>
                       <SelectContent>
@@ -934,6 +1167,12 @@ const RuleFormDialog: React.FC<RuleFormDialogProps> = ({
                         Cancel
                       </Button>
                     </div>
+                  )}
+                  {errors.channels && (
+                    <p className="text-sm text-red-600 flex items-center gap-1">
+                      <AlertCircle className="h-3 w-3" />
+                      {errors.channels}
+                    </p>
                   )}
                 </div>
               </div>

@@ -735,7 +735,7 @@ const RuleManager: React.FC<RuleManagerProps> = () => {
         isOpen={showCreateForm}
         onClose={() => setShowCreateForm(false)}
         onSubmit={handleCreateRule}
-        initialRule={editingRule}
+        initialRule={undefined}
       />
 
       {/* Edit Rule Dialog */}
