@@ -72,5 +72,19 @@
     ],
     "description": "This is the sample campaign for mpr.",
     "isActive": true
+  },
+  {
+    "campaignId": "a6b3c008-0c4e-4df0-9385-a29b343b1a5b",
+    "campaignCode": "CHRISTMAS_BONUUURS",
+    "name": "Christ Bonus Langs",
+    "market": "HK",
+    "channel": "ALL",
+    "startDate": "2025-07-10T07:51:00.000Z",
+    "endDate": "2025-07-31T07:51:00.000Z",
+    "ruleIds": [
+      "HELLO_CHRISTMAS"
+    ],
+    "description": "PASKO NAA",
+    "isActive": true
   }
 ]

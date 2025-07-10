@@ -74898,5 +74898,589 @@
       "used": 500,
       "transactionCount": 5
     }
+  },
+  {
+    "consumerId": "mng_autriz",
+    "eventId": "evt_1752133737254",
+    "eventType": "PURCHASE",
+    "timestamp": "2025-07-10T07:48:57.254Z",
+    "market": "HK",
+    "channel": "STORE",
+    "totalPointsAwarded": 2150,
+    "pointBreakdown": [
+      {
+        "ruleId": "ORDER_BASE_POINT",
+        "points": 1500,
+        "description": "Base purchase reward for HK market (+1500 MD)",
+        "ruleCategory": "BASE_PURCHASE",
+        "computation": {
+          "calculationType": "RATE_MULTIPLICATION",
+          "formula": "floor(amount × 1)",
+          "inputs": {
+            "standardRate": 1
+          },
+          "result": 1500
+        }
+      },
+      {
+        "ruleId": "FLEXIBLE_CAMPAIGN_BONUS",
+        "points": 300,
+        "description": "Special campaign bonus for HK (+300 MD)",
+        "ruleCategory": "CAMPAIGN",
+        "computation": {
+          "calculationType": "CAMPAIGN_BONUS",
+          "formula": "fixedBonus = 300",
+          "inputs": {
+            "fixedBonus": 300
+          },
+          "result": 300
+        }
+      },
+      {
+        "ruleId": "PURCHASE",
+        "points": 350,
+        "description": "PURCHASE reward applied (+350 MD)",
+        "ruleCategory": "OTHER",
+        "computation": {
+          "calculationType": "UNKNOWN",
+          "formula": "Unknown calculation method",
+          "inputs": {
+            "bonus": 350
+          },
+          "result": 350
+        }
+      }
+    ],
+    "errors": [],
+    "resultingBalance": {
+      "total": 2150,
+      "available": 2150,
+      "used": 0,
+      "transactionCount": 1
+    }
+  },
+  {
+    "consumerId": "mng_autriz",
+    "eventId": "evt_1752133739415",
+    "eventType": "REGISTRATION",
+    "timestamp": "2025-07-10T07:48:59.415Z",
+    "market": "HK",
+    "channel": "STORE",
+    "totalPointsAwarded": 0,
+    "pointBreakdown": [],
+    "errors": [],
+    "resultingBalance": {
+      "total": 2150,
+      "available": 2150,
+      "used": 0,
+      "transactionCount": 2
+    }
+  },
+  {
+    "consumerId": "mpr_user",
+    "eventId": "evt_1752133788015",
+    "eventType": "CONSULTATION",
+    "timestamp": "2025-07-10T07:49:48.015Z",
+    "market": "JP",
+    "channel": "STORE",
+    "totalPointsAwarded": 75,
+    "pointBreakdown": [
+      {
+        "ruleId": "CONSULTATION_BONUS",
+        "points": 75,
+        "description": "Beauty consultation completion bonus (+75 MD)",
+        "ruleCategory": "CONSULTATION",
+        "computation": {
+          "calculationType": "CONSULTATION_REWARD",
+          "formula": "consultationBonus = 75",
+          "inputs": {
+            "consultationBonus": 75
+          },
+          "result": 75
+        }
+      }
+    ],
+    "errors": [],
+    "resultingBalance": {
+      "total": 75,
+      "available": 75,
+      "used": 0,
+      "transactionCount": 1
+    }
+  },
+  {
+    "consumerId": "mpr_user",
+    "eventId": "evt_1752133791930",
+    "eventType": "ADJUSTMENT",
+    "timestamp": "2025-07-10T07:49:51.930Z",
+    "market": "JP",
+    "channel": "STORE",
+    "totalPointsAwarded": 123,
+    "pointBreakdown": [
+      {
+        "ruleId": "INTERACTION_ADJUST_POINT_BY_MANAGER",
+        "points": 123,
+        "description": "Manual account adjustment (+123 MD)",
+        "ruleCategory": "MANUAL_ADJUSTMENT",
+        "computation": {
+          "calculationType": "MANUAL_ADJUSTMENT",
+          "formula": "adjustedPoints (manual override)",
+          "inputs": {},
+          "result": 123
+        }
+      }
+    ],
+    "errors": [],
+    "resultingBalance": {
+      "total": 198,
+      "available": 198,
+      "used": 0,
+      "transactionCount": 2
+    }
+  },
+  {
+    "consumerId": "mpr_user",
+    "eventId": "evt_1752133798305",
+    "eventType": "REDEMPTION",
+    "timestamp": "2025-07-10T07:49:58.305Z",
+    "market": "JP",
+    "channel": "STORE",
+    "totalPointsAwarded": -1,
+    "pointBreakdown": [
+      {
+        "ruleId": "REDEMPTION_DEDUCTION",
+        "points": -1,
+        "description": "Points redeemed for rewards (-1 MD)",
+        "ruleCategory": "REDEMPTION",
+        "computation": {
+          "calculationType": "POINT_DEDUCTION",
+          "formula": "redemptionPoints = -1",
+          "inputs": {
+            "redemptionPoints": 1
+          },
+          "result": -1
+        }
+      }
+    ],
+    "errors": [],
+    "resultingBalance": {
+      "total": 197,
+      "available": 197,
+      "used": 1,
+      "transactionCount": 3
+    }
+  },
+  {
+    "consumerId": "user_hk_standard",
+    "eventId": "test_recycle_001",
+    "eventType": "RECYCLE",
+    "timestamp": "2025-07-10T07:54:32.519Z",
+    "market": "HK",
+    "channel": "STORE",
+    "totalPointsAwarded": 100,
+    "pointBreakdown": [
+      {
+        "ruleId": "INTERACTION_ADJUST_POINT_TIMES_PER_YEAR",
+        "points": 100,
+        "description": "Engagement activity reward (+100 MD)",
+        "ruleCategory": "ENGAGEMENT_ACTIVITY",
+        "computation": {
+          "calculationType": "ACTIVITY_REWARD",
+          "formula": "min(itemCount, 5) × 50",
+          "inputs": {
+            "pointsPerBottle": 50,
+            "maxPerYear": 5
+          },
+          "result": 100
+        }
+      }
+    ],
+    "errors": [],
+    "resultingBalance": {
+      "total": 275686,
+      "available": 275686,
+      "used": 13300,
+      "transactionCount": 45
+    }
+  },
+  {
+    "consumerId": "user_hk_vip_birthday",
+    "eventId": "evt_1752134515312",
+    "eventType": "PURCHASE",
+    "timestamp": "2025-07-10T08:01:55.312Z",
+    "market": "HK",
+    "channel": "STORE",
+    "totalPointsAwarded": 5150,
+    "pointBreakdown": [
+      {
+        "ruleId": "ORDER_BASE_POINT",
+        "points": 1500,
+        "description": "Base purchase reward for HK market (+1500 MD)",
+        "ruleCategory": "BASE_PURCHASE",
+        "computation": {
+          "calculationType": "RATE_MULTIPLICATION",
+          "formula": "floor(amount × 1)",
+          "inputs": {
+            "standardRate": 1
+          },
+          "result": 1500
+        }
+      },
+      {
+        "ruleId": "FLEXIBLE_CAMPAIGN_BONUS",
+        "points": 300,
+        "description": "Special campaign bonus for HK (+300 MD)",
+        "ruleCategory": "CAMPAIGN",
+        "computation": {
+          "calculationType": "CAMPAIGN_BONUS",
+          "formula": "fixedBonus = 300",
+          "inputs": {
+            "fixedBonus": 300
+          },
+          "result": 300
+        }
+      },
+      {
+        "ruleId": "FLEXIBLE_VIP_MULTIPLIER",
+        "points": 3000,
+        "description": "VIP tier multiplier bonus for HK (+3000 MD)",
+        "ruleCategory": "VIP_TIER",
+        "computation": {
+          "calculationType": "TIER_MULTIPLIER",
+          "formula": "floor(floor(amount × 1) × (2 - 1.0))",
+          "inputs": {
+            "multiplier": 2
+          },
+          "result": 3000
+        }
+      },
+      {
+        "ruleId": "PURCHASE",
+        "points": 350,
+        "description": "PURCHASE reward applied (+350 MD)",
+        "ruleCategory": "OTHER",
+        "computation": {
+          "calculationType": "UNKNOWN",
+          "formula": "Unknown calculation method",
+          "inputs": {
+            "bonus": 350
+          },
+          "result": 350
+        }
+      }
+    ],
+    "errors": [],
+    "resultingBalance": {
+      "total": 10157868,
+      "available": 10157868,
+      "used": 114433,
+      "transactionCount": 385
+    }
+  },
+  {
+    "consumerId": "user_hk_vip_birthday",
+    "eventId": "evt_1752134519145",
+    "eventType": "REGISTRATION",
+    "timestamp": "2025-07-10T08:01:59.145Z",
+    "market": "HK",
+    "channel": "STORE",
+    "totalPointsAwarded": 0,
+    "pointBreakdown": [],
+    "errors": [],
+    "resultingBalance": {
+      "total": 10157868,
+      "available": 10157868,
+      "used": 114433,
+      "transactionCount": 386
+    }
+  },
+  {
+    "consumerId": "user_jp_vip",
+    "eventId": "evt_1752134522947",
+    "eventType": "REGISTRATION",
+    "timestamp": "2025-07-10T08:02:02.947Z",
+    "market": "JP",
+    "channel": "STORE",
+    "totalPointsAwarded": 150,
+    "pointBreakdown": [
+      {
+        "ruleId": "INTERACTION_REGISTRY_POINT",
+        "points": 150,
+        "description": "Welcome bonus for JP registration (+150 MD)",
+        "ruleCategory": "REGISTRATION",
+        "computation": {
+          "calculationType": "FIXED_BONUS",
+          "formula": "registrationBonus = 0",
+          "inputs": {},
+          "result": 150
+        }
+      }
+    ],
+    "errors": [],
+    "resultingBalance": {
+      "total": 1014347,
+      "available": 1014347,
+      "used": 12099,
+      "transactionCount": 85
+    }
+  },
+  {
+    "consumerId": "zxc",
+    "eventId": "evt_1752134532494",
+    "eventType": "RECYCLE",
+    "timestamp": "2025-07-10T08:02:12.494Z",
+    "market": "JP",
+    "channel": "STORE",
+    "totalPointsAwarded": 150,
+    "pointBreakdown": [
+      {
+        "ruleId": "INTERACTION_ADJUST_POINT_TIMES_PER_YEAR",
+        "points": 150,
+        "description": "Engagement activity reward (+150 MD)",
+        "ruleCategory": "ENGAGEMENT_ACTIVITY",
+        "computation": {
+          "calculationType": "ACTIVITY_REWARD",
+          "formula": "min(itemCount, 5) × 50",
+          "inputs": {
+            "pointsPerBottle": 50,
+            "maxPerYear": 5
+          },
+          "result": 150
+        }
+      }
+    ],
+    "errors": [],
+    "resultingBalance": {
+      "total": 150,
+      "available": 150,
+      "used": 0,
+      "transactionCount": 1
+    }
+  },
+  {
+    "consumerId": "zxc",
+    "eventId": "evt_1752134534888",
+    "eventType": "RECYCLE",
+    "timestamp": "2025-07-10T08:02:14.888Z",
+    "market": "JP",
+    "channel": "STORE",
+    "totalPointsAwarded": 150,
+    "pointBreakdown": [
+      {
+        "ruleId": "INTERACTION_ADJUST_POINT_TIMES_PER_YEAR",
+        "points": 150,
+        "description": "Engagement activity reward (+150 MD)",
+        "ruleCategory": "ENGAGEMENT_ACTIVITY",
+        "computation": {
+          "calculationType": "ACTIVITY_REWARD",
+          "formula": "min(itemCount, 5) × 50",
+          "inputs": {
+            "pointsPerBottle": 50,
+            "maxPerYear": 5
+          },
+          "result": 150
+        }
+      }
+    ],
+    "errors": [],
+    "resultingBalance": {
+      "total": 300,
+      "available": 300,
+      "used": 0,
+      "transactionCount": 2
+    }
+  },
+  {
+    "consumerId": "zxc",
+    "eventId": "evt_1752134535307",
+    "eventType": "RECYCLE",
+    "timestamp": "2025-07-10T08:02:15.307Z",
+    "market": "JP",
+    "channel": "STORE",
+    "totalPointsAwarded": 150,
+    "pointBreakdown": [
+      {
+        "ruleId": "INTERACTION_ADJUST_POINT_TIMES_PER_YEAR",
+        "points": 150,
+        "description": "Engagement activity reward (+150 MD)",
+        "ruleCategory": "ENGAGEMENT_ACTIVITY",
+        "computation": {
+          "calculationType": "ACTIVITY_REWARD",
+          "formula": "min(itemCount, 5) × 50",
+          "inputs": {
+            "pointsPerBottle": 50,
+            "maxPerYear": 5
+          },
+          "result": 150
+        }
+      }
+    ],
+    "errors": [],
+    "resultingBalance": {
+      "total": 450,
+      "available": 450,
+      "used": 0,
+      "transactionCount": 3
+    }
+  },
+  {
+    "consumerId": "zxc",
+    "eventId": "evt_1752134538704",
+    "eventType": "RECYCLE",
+    "timestamp": "2025-07-10T08:02:18.704Z",
+    "market": "JP",
+    "channel": "STORE",
+    "totalPointsAwarded": 250,
+    "pointBreakdown": [
+      {
+        "ruleId": "INTERACTION_ADJUST_POINT_TIMES_PER_YEAR",
+        "points": 250,
+        "description": "Engagement activity reward (+250 MD)",
+        "ruleCategory": "ENGAGEMENT_ACTIVITY",
+        "computation": {
+          "calculationType": "ACTIVITY_REWARD",
+          "formula": "min(itemCount, 5) × 50",
+          "inputs": {
+            "pointsPerBottle": 50,
+            "maxPerYear": 5
+          },
+          "result": 250
+        }
+      }
+    ],
+    "errors": [],
+    "resultingBalance": {
+      "total": 700,
+      "available": 700,
+      "used": 0,
+      "transactionCount": 4
+    }
+  },
+  {
+    "consumerId": "zxc",
+    "eventId": "evt_1752134539857",
+    "eventType": "RECYCLE",
+    "timestamp": "2025-07-10T08:02:19.857Z",
+    "market": "JP",
+    "channel": "STORE",
+    "totalPointsAwarded": 250,
+    "pointBreakdown": [
+      {
+        "ruleId": "INTERACTION_ADJUST_POINT_TIMES_PER_YEAR",
+        "points": 250,
+        "description": "Engagement activity reward (+250 MD)",
+        "ruleCategory": "ENGAGEMENT_ACTIVITY",
+        "computation": {
+          "calculationType": "ACTIVITY_REWARD",
+          "formula": "min(itemCount, 5) × 50",
+          "inputs": {
+            "pointsPerBottle": 50,
+            "maxPerYear": 5
+          },
+          "result": 250
+        }
+      }
+    ],
+    "errors": [],
+    "resultingBalance": {
+      "total": 950,
+      "available": 950,
+      "used": 0,
+      "transactionCount": 5
+    }
+  },
+  {
+    "consumerId": "zxc",
+    "eventId": "evt_1752134562780",
+    "eventType": "CONSULTATION",
+    "timestamp": "2025-07-10T08:02:42.780Z",
+    "market": "JP",
+    "channel": "STORE",
+    "totalPointsAwarded": 75,
+    "pointBreakdown": [
+      {
+        "ruleId": "CONSULTATION_BONUS",
+        "points": 75,
+        "description": "Beauty consultation completion bonus (+75 MD)",
+        "ruleCategory": "CONSULTATION",
+        "computation": {
+          "calculationType": "CONSULTATION_REWARD",
+          "formula": "consultationBonus = 75",
+          "inputs": {
+            "consultationBonus": 75
+          },
+          "result": 75
+        }
+      }
+    ],
+    "errors": [],
+    "resultingBalance": {
+      "total": 1025,
+      "available": 1025,
+      "used": 0,
+      "transactionCount": 6
+    }
+  },
+  {
+    "consumerId": "zxc",
+    "eventId": "evt_1752134572809",
+    "eventType": "ADJUSTMENT",
+    "timestamp": "2025-07-10T08:02:52.809Z",
+    "market": "JP",
+    "channel": "STORE",
+    "totalPointsAwarded": 1000,
+    "pointBreakdown": [
+      {
+        "ruleId": "INTERACTION_ADJUST_POINT_BY_MANAGER",
+        "points": 1000,
+        "description": "Manual account adjustment (+1000 MD)",
+        "ruleCategory": "MANUAL_ADJUSTMENT",
+        "computation": {
+          "calculationType": "MANUAL_ADJUSTMENT",
+          "formula": "adjustedPoints (manual override)",
+          "inputs": {},
+          "result": 1000
+        }
+      }
+    ],
+    "errors": [],
+    "resultingBalance": {
+      "total": 2025,
+      "available": 2025,
+      "used": 0,
+      "transactionCount": 7
+    }
+  },
+  {
+    "consumerId": "zxc",
+    "eventId": "evt_1752134577425",
+    "eventType": "REDEMPTION",
+    "timestamp": "2025-07-10T08:02:57.425Z",
+    "market": "JP",
+    "channel": "STORE",
+    "totalPointsAwarded": -999,
+    "pointBreakdown": [
+      {
+        "ruleId": "REDEMPTION_DEDUCTION",
+        "points": -999,
+        "description": "Points redeemed for rewards (-999 MD)",
+        "ruleCategory": "REDEMPTION",
+        "computation": {
+          "calculationType": "POINT_DEDUCTION",
+          "formula": "redemptionPoints = -999",
+          "inputs": {
+            "redemptionPoints": 999
+          },
+          "result": -999
+        }
+      }
+    ],
+    "errors": [],
+    "resultingBalance": {
+      "total": 1026,
+      "available": 1026,
+      "used": 999,
+      "transactionCount": 8
+    }
   }
 ]

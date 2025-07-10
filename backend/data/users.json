@@ -50,7 +50,7 @@
         "thisYearBottlesRecycled": 8,
         "lastRecyclingDate": "2025-06-25T11:00:00Z"
       },
-      "lastPurchaseDate": "2025-07-10T07:45:52.409Z"
+      "lastPurchaseDate": "2025-07-10T08:01:55.312Z"
     },
     "preferences": {
       "productLines": [
@@ -64,10 +64,10 @@
       "skinType": "COMBINATION"
     },
     "balance": {
-      "total": 10152718,
-      "available": 10152718,
+      "total": 10157868,
+      "available": 10157868,
       "used": 114433,
-      "transactionCount": 384
+      "transactionCount": 386
     }
   },
   "user_hk_standard": {
@@ -103,10 +103,10 @@
       "skinType": "DRY"
     },
     "balance": {
-      "total": 275586,
-      "available": 275586,
+      "total": 275686,
+      "available": 275686,
       "used": 13300,
-      "transactionCount": 44
+      "transactionCount": 45
     }
   },
   "user_tw_vip": {
@@ -222,10 +222,10 @@
       "skinType": "NORMAL"
     },
     "balance": {
-      "total": 1014197,
-      "available": 1014197,
+      "total": 1014347,
+      "available": 1014347,
       "used": 12099,
-      "transactionCount": 84
+      "transactionCount": 85
     }
   },
   "user_jp_standard": {
@@ -1587,6 +1587,45 @@
     },
     "engagement": {
       "lastPurchaseDate": "2025-07-10T07:46:16.515Z"
+    }
+  },
+  "mng_autriz": {
+    "consumerId": "mng_autriz",
+    "profile": {
+      "market": "HK"
+    },
+    "balance": {
+      "total": 2150,
+      "available": 2150,
+      "used": 0,
+      "transactionCount": 2
+    },
+    "engagement": {
+      "lastPurchaseDate": "2025-07-10T07:48:57.254Z"
+    }
+  },
+  "mpr_user": {
+    "consumerId": "mpr_user",
+    "profile": {
+      "market": "JP"
+    },
+    "balance": {
+      "total": 197,
+      "available": 197,
+      "used": 1,
+      "transactionCount": 3
+    }
+  },
+  "zxc": {
+    "consumerId": "zxc",
+    "profile": {
+      "market": "JP"
+    },
+    "balance": {
+      "total": 1026,
+      "available": 1026,
+      "used": 999,
+      "transactionCount": 8
     }
   }
 }

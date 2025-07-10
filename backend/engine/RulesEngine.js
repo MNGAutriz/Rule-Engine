@@ -401,7 +401,10 @@ class RulesEngine {
 
       // STEP 3: VALIDATE EVENT DATA
       // Check required fields, data types, business constraints
-      ValidationHelpers.validateCompleteEvent(eventData);
+      const consumerService = require('../services/consumerService'); // Import here to avoid potential timing issues
+      logger.debug('About to validate event, consumerService:', typeof consumerService);
+      logger.debug('consumerService.getConsumerById:', typeof consumerService?.getConsumerById);
+      ValidationHelpers.validateCompleteEvent(eventData, consumerService);
 
       // STEP 4: ENRICH EVENT DATA
       // Add calculated fields, normalize values, prepare for rule evaluation
