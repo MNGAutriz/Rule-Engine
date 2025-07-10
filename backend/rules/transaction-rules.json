@@ -73,6 +73,7 @@
     "event": {
       "type": "ORDER_BASE_POINT",
       "params": {
+        "calculationMethod": "base",
         "standardRate": 1,
         "description": "HK/TW base purchase - 1 MD per 1 HKD/TWD spent"
       }
@@ -108,6 +109,7 @@
     "event": {
       "type": "ORDER_MULTIPLE_POINT_LIMIT",
       "params": {
+        "calculationMethod": "multiplier",
         "multiplier": 1.5,
         "description": "JP campaign multiplier - 1.5x during campaigns"
       }
@@ -136,6 +138,7 @@
     "event": {
       "type": "FLEXIBLE_CAMPAIGN_BONUS",
       "params": {
+        "calculationMethod": "fixed",
         "fixedBonus": 300,
         "description": "HK/TW campaign bonus"
       }

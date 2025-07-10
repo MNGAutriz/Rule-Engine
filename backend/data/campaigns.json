@@ -58,5 +58,19 @@
     ],
     "isActive": true,
     "description": "Welcome bonus for new customers on their first purchase - valid only for first-time customers, one-time bonus per customer"
+  },
+  {
+    "campaignId": "5078a8a9-f969-4cfd-b25c-a3e5c3b9b68c",
+    "campaignCode": "SAMPLE_CAMPAIGN_MPR",
+    "name": "MPR SAMPLE",
+    "market": "TW",
+    "channel": "ALL",
+    "startDate": "2025-07-09T23:35:00.000Z",
+    "endDate": "2025-07-11T23:35:00.000Z",
+    "ruleIds": [
+      "HELLO_WORLD"
+    ],
+    "description": "This is the sample campaign for mpr.",
+    "isActive": true
   }
 ]

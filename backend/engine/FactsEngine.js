@@ -2,335 +2,287 @@ const consumerService = require('../services/consumerService');
 const { logger } = require('../src/utils');
 
 /**
- * Facts Engine - Manages dynamic fact computation for the rules engine
- * Follows json-rules-engine fact patterns with pure functions
- * All facts are designed to be reusable and region-agnostic
+ * FACTS ENGINE - The Foundation of Rule Evaluation
+ * 
+ * WHAT IT DOES:
+ * - Defines and manages all "facts" that rules can evaluate against
+ * - Facts are computed values derived from event data (e.g., event amount, consumer tier, etc.)
+ * - Provides a centralized repository of reusable fact definitions
+ * 
+ * HOW IT WORKS:
+ * 1. Facts are defined as functions that compute values from event data
+ * 2. Each fact function receives (params, almanac) where:
+ *    - params: Raw event data passed to the rules engine
+ *    - almanac: json-rules-engine's fact resolver for accessing other facts
+ * 3. Facts can be synchronous (return value) or asynchronous (return Promise)
+ * 4. Facts are lazy-loaded - only computed when actually needed by rules
+ * 
+ * FACT CATEGORIES:
+ * - Context facts: Store ID, campaign codes from event context
+ * - Attribute facts: Transaction amounts, SKU lists, etc. from event attributes
+ * - Date/time facts: Event timing, weekends, birth months
+ * - Consumer facts: VIP status, purchase history, demographics
+ * - Calculation facts: Market-specific point calculations
  */
 class FactsEngine {
   constructor() {
+    // Map to store all fact definitions: factName -> computationFunction
     this.factDefinitions = new Map();
     this.initializeFactDefinitions();
   }
 
   /**
-   * Initialize all fact definitions with pure functions
-   * Following json-rules-engine best practices
+   * INITIALIZE ALL FACT DEFINITIONS
+   * Called once during engine startup to register all available facts
    */
   initializeFactDefinitions() {
-    // Context facts - accessing nested properties
-    // Note: json-rules-engine automatically creates facts for top-level properties
-    // We only need to define custom facts for computed or nested values
+    
+    // =================================================================
+    // CONTEXT FACTS - Extract data from event.context object
+    // These provide access to contextual information about the event
+    // =================================================================
+    
+    // Extract store ID from event context (used for store-specific rules)
     this.factDefinitions.set('context.storeId', (params, almanac) => {
       return almanac.factValue('context').then(context => context?.storeId);
     });
+    
+    // Extract campaign code from event context (used for campaign-specific bonuses)
     this.factDefinitions.set('context.campaignCode', (params, almanac) => {
       return almanac.factValue('context').then(context => context?.campaignCode);
     });
 
-    // Attributes facts - accessing nested properties
-    this.factDefinitions.set('attributes.amount', (params, almanac) => {
-      return almanac.factValue('attributes').then(attributes => attributes?.amount);
-    });
-    this.factDefinitions.set('attributes.currency', (params, almanac) => {
-      return almanac.factValue('attributes').then(attributes => attributes?.currency);
-    });
-    // Amount fact - the only field we need for calculations
-    this.factDefinitions.set('attributes.skuList', (params, almanac) => {
-      return almanac.factValue('attributes').then(attributes => attributes?.skuList || []);
-    });
-    this.factDefinitions.set('attributes.recycledCount', (params, almanac) => {
-      return almanac.factValue('attributes').then(attributes => attributes?.recycledCount || 0);
-    });
-    this.factDefinitions.set('attributes.skinTestDate', (params, almanac) => {
-      return almanac.factValue('attributes').then(attributes => attributes?.skinTestDate);
-    });
-    this.factDefinitions.set('attributes.adjustedPoints', (params, almanac) => {
-      return almanac.factValue('attributes').then(attributes => attributes?.adjustedPoints || 0);
-    });
-    this.factDefinitions.set('attributes.redemptionPoints', (params, almanac) => {
-      return almanac.factValue('attributes').then(attributes => attributes?.redemptionPoints || 0);
-    });
-    this.factDefinitions.set('attributes.giftValue', (params, almanac) => {
-      return almanac.factValue('attributes').then(attributes => attributes?.giftValue || 0);
-    });
-    this.factDefinitions.set('attributes.burnAmount', (params, almanac) => {
-      return almanac.factValue('attributes').then(attributes => attributes?.burnAmount || 0);
-    });
-    this.factDefinitions.set('attributes.comboTag', (params, almanac) => {
-      return almanac.factValue('attributes').then(attributes => attributes?.comboTag);
-    });
-    this.factDefinitions.set('attributes.note', (params, almanac) => {
-      return almanac.factValue('attributes').then(attributes => attributes?.note);
+    // =================================================================
+    // ATTRIBUTE FACTS - Extract data from event.attributes object
+    // These provide access to transaction details and event-specific data
+    // =================================================================
+    const attributeFields = [
+      'amount',          // Transaction amount (primary field for point calculations)
+      'currency',        // Currency code (HKD, TWD, JPY)
+      'skuList',         // Array of purchased SKUs (for product-specific rules)
+      'recycledCount',   // Number of recycled items (for recycling events)
+      'skinTestDate',    // Date of skin test (for consultation events)
+      'adjustedPoints',  // Manual point adjustments
+      'redemptionPoints',// Points being redeemed
+      'giftValue',       // Value of gift received
+      'burnAmount',      // Amount burned/deducted
+      'comboTag',        // Product combo identifier
+      'note'             // Additional notes
+    ];
+
+    // Dynamically create facts for each attribute field
+    attributeFields.forEach(field => {
+      this.factDefinitions.set(`attributes.${field}`, (params, almanac) => {
+        return almanac.factValue('attributes').then(attributes => 
+          // Special handling: skuList returns array, others return number/string with default 0
+          field === 'skuList' ? (attributes?.[field] || []) : (attributes?.[field] || 0)
+        );
+      });
     });
 
-    // Computed date/time facts (pure functions)
+    // =================================================================
+    // CONVENIENCE SHORTCUTS - Common attribute access patterns
+    // These provide easier access to frequently used attribute values
+    // =================================================================
+    
+    // Direct access to redemption points (commonly used in redemption rules)
+    this.factDefinitions.set('redemptionPoints', (params, almanac) => {
+      return almanac.factValue('attributes').then(attributes => attributes?.redemptionPoints || 0);
+    });
+    
+    // Transaction amount aliases (different rules may use different naming conventions)
+    this.factDefinitions.set('transactionAmount', (params, almanac) => {
+      return almanac.factValue('attributes').then(attributes => attributes?.amount || 0);
+    });
+    this.factDefinitions.set('discountedAmount', (params, almanac) => {
+      return almanac.factValue('attributes').then(attributes => attributes?.amount || 0);
+    });
+    this.factDefinitions.set('orderTotal', (params, almanac) => {
+      return almanac.factValue('attributes').then(attributes => attributes?.amount || 0);
+    });
+
+    // =================================================================
+    // DATE/TIME FACTS - Temporal information for time-based rules
+    // These extract timing information from the event timestamp
+    // =================================================================
+    
+    // Extract month number (1-12) from event timestamp
+    // Used for: birthday month bonuses, seasonal campaigns
     this.factDefinitions.set('eventMonth', (params) => {
       return new Date(params.timestamp).getMonth() + 1;
     });
     
+    // Extract date string (YYYY-MM-DD) from event timestamp
+    // Used for: daily limits, date-specific promotions
     this.factDefinitions.set('eventDate', async (params, almanac) => {
-      if (almanac) {
-        const timestamp = await almanac.factValue('timestamp');
-        return new Date(timestamp).toISOString().substr(0, 10); // Return YYYY-MM-DD string
-      } else {
-        // Fallback for direct testing
-        return new Date(params.timestamp).toISOString().substr(0, 10);
-      }
+      const timestamp = almanac ? await almanac.factValue('timestamp') : params.timestamp;
+      return new Date(timestamp).toISOString().substr(0, 10);
     });
-
+    
+    // Extract year from event timestamp
+    // Used for: yearly limits, annual campaigns
     this.factDefinitions.set('eventYear', (params) => {
       return new Date(params.timestamp).getFullYear();
     });
-
+    
+    // Extract day of week (0=Sunday, 6=Saturday)
+    // Used for: weekend bonuses, weekday-specific rules
     this.factDefinitions.set('dayOfWeek', (params) => {
       return new Date(params.timestamp).getDay();
     });
-
+    
+    // Check if event occurred on weekend
+    // Used for: weekend shopping bonuses
     this.factDefinitions.set('isWeekend', (params) => {
       const dayOfWeek = new Date(params.timestamp).getDay();
-      return dayOfWeek === 0 || dayOfWeek === 6; // Sunday = 0, Saturday = 6
+      return dayOfWeek === 0 || dayOfWeek === 6;
     });
 
-    // Store-based facts (pure functions)
+    // =================================================================
+    // STORE FACTS - Information about store/location characteristics
+    // These provide store-specific data for location-based rules
+    // =================================================================
+    
+    // Determine store type based on store ID pattern
+    // Used for: store-type specific bonuses
     this.factDefinitions.set('storeType', (params) => {
       const storeId = params.context?.storeId || '';
       return storeId.includes('VIP') ? 'VIP' : 'STANDARD';
     });
-
+    
+    // Check if store is a VIP location
+    // Used for: VIP store bonuses
     this.factDefinitions.set('isVIPStore', (params) => {
       const storeId = params.context?.storeId || '';
       return storeId.includes('VIP');
     });
-
+    
+    // Check if store is premium location (VIP or PREMIUM)
+    // Used for: premium location bonuses
     this.factDefinitions.set('isPremiumLocation', (params) => {
       const storeId = params.context?.storeId || '';
       return storeId.includes('VIP') || storeId.includes('PREMIUM');
     });
 
-    // Consumer-based facts (async functions with error handling)
-    this.factDefinitions.set('consumer', async (params, almanac) => {
-      try {
-        let consumerId = params?.consumerId;
-        if (!consumerId && almanac) {
-          consumerId = await almanac.factValue('consumerId');
-        }
-        return await consumerService.getConsumerById(consumerId);
-      } catch (error) {
-        logger.debug('Consumer fact failed, returning null', { error: error.message });
-        return null;
-      }
-    });
-
-    this.factDefinitions.set('purchaseCount', async (params, almanac) => {
-      try {
-        // Get consumerId from almanac if not in params
-        let consumerId = params?.consumerId;
-        if (!consumerId && almanac) {
-          consumerId = await almanac.factValue('consumerId');
-        }
-        
-        if (!consumerId) {
-          return 0;
-        }
-        
-        return await consumerService.getPurchaseCount(consumerId);
-      } catch (error) {
-        logger.debug('PurchaseCount fact failed, returning 0', { error: error.message });
-        return 0;
-      }
-    });
-
+    // =================================================================
+    // CONSUMER FACTS - Customer profile and behavior data
+    // These facts require database lookups and provide customer insights
+    // IMPORTANT: These are async facts that call external services
+    // =================================================================
+    
+    // Calculate days since consumer's first purchase
+    // Used for: new customer bonuses, loyalty tenure rules
     this.factDefinitions.set('daysSinceFirstPurchase', async (params, almanac) => {
       try {
-        // Get consumerId from almanac if not in params
-        let consumerId = params?.consumerId;
-        if (!consumerId && almanac) {
-          consumerId = await almanac.factValue('consumerId');
-        }
-        
+        const consumerId = params?.consumerId || await almanac.factValue('consumerId');
         return await consumerService.getDaysSinceFirstPurchase(consumerId);
       } catch (error) {
-        logger.debug('DaysSinceFirstPurchase fact failed, returning 0', { error: error.message });
-        return 0;
+        logger.debug('DaysSinceFirstPurchase fact failed', { error: error.message });
+        return 0; // Safe fallback
       }
     });
 
+    // Check if consumer has VIP/Platinum tier status
+    // Used for: tier-based bonuses and multipliers
     this.factDefinitions.set('isVIP', async (params, almanac) => {
       try {
-        let consumerId = params?.consumerId;
-        if (!consumerId && almanac) {
-          consumerId = await almanac.factValue('consumerId');
-        }
+        const consumerId = params?.consumerId || await almanac.factValue('consumerId');
         const consumer = await consumerService.getConsumerById(consumerId);
         const tier = consumer?.profile?.tier || 'STANDARD';
         return tier.includes('VIP') || tier.includes('PLATINUM');
       } catch (error) {
-        logger.debug('IsVIP fact failed, returning false', { error: error.message });
-        return false;
+        return false; // Safe fallback
       }
     });
 
+    // Get consumer's birth month (1-12)
+    // Used for: birthday month bonuses
     this.factDefinitions.set('birthMonth', async (params, almanac) => {
       try {
-        let consumerId = params?.consumerId;
-        if (!consumerId && almanac) {
-          consumerId = await almanac.factValue('consumerId');
-        }
+        const consumerId = params?.consumerId || await almanac.factValue('consumerId');
         const consumer = await consumerService.getConsumerById(consumerId);
         const birthDate = consumer?.profile?.birthDate;
         return birthDate ? new Date(birthDate).getMonth() + 1 : null;
       } catch (error) {
-        logger.debug('BirthMonth fact failed, returning null', { error: error.message });
-        return null;
+        return null; // Safe fallback
       }
     });
 
+    // Check if current event is in consumer's birth month
+    // Used for: birthday month special bonuses
     this.factDefinitions.set('isBirthMonth', async (params, almanac) => {
       try {
-        let consumerId = params?.consumerId;
-        if (!consumerId && almanac) {
-          consumerId = await almanac.factValue('consumerId');
-        }
+        const consumerId = params?.consumerId || await almanac.factValue('consumerId');
         const consumer = await consumerService.getConsumerById(consumerId);
         const birthDate = consumer?.profile?.birthDate;
-        const birthMonth = birthDate ? new Date(birthDate).getMonth() + 1 : null;
+        if (!birthDate) return false;
+        const birthMonth = new Date(birthDate).getMonth() + 1;
         const eventMonth = new Date(params.timestamp).getMonth() + 1;
         return birthMonth === eventMonth;
       } catch (error) {
-        logger.debug('IsBirthMonth fact failed, returning false', { error: error.message });
-        return false;
+        return false; // Safe fallback
       }
     });
 
-    // Age fact - calculates age from birthDate (optional, returns 0 if not available)
-    this.factDefinitions.set('age', async (params, almanac) => {
-      try {
-        let consumerId = params?.consumerId;
-        if (!consumerId && almanac) {
-          consumerId = await almanac.factValue('consumerId');
-        }
-        const consumer = await consumerService.getConsumerById(consumerId);
-        const birthDate = consumer?.profile?.birthDate;
-        if (!birthDate) {
-          return 0; // Default age if not available
-        }
-        const today = new Date();
-        const birth = new Date(birthDate);
-        let age = today.getFullYear() - birth.getFullYear();
-        const monthDiff = today.getMonth() - birth.getMonth();
-        if (monthDiff < 0 || (monthDiff === 0 && today.getDate() < birth.getDate())) {
-          age--;
-        }
-        return age;
-      } catch (error) {
-        logger.debug('Age fact calculation failed, returning default', { error: error.message });
-        return 0; // Default age on any error
-      }
-    });
-
-    this.factDefinitions.set('lastPurchaseDate', async (params, almanac) => {
-      try {
-        let consumerId = params?.consumerId;
-        if (!consumerId && almanac) {
-          consumerId = await almanac.factValue('consumerId');
-        }
-        const consumer = await consumerService.getConsumerById(consumerId);
-        return consumer?.engagement?.lastPurchaseDate || null;
-      } catch (error) {
-        logger.debug('LastPurchaseDate fact calculation failed, returning null', { error: error.message });
-        return null; // Return null if consumer data is not available
-      }
-    });
-
-    // Note: tags system removed from user structure - facts kept for backward compatibility
-    this.factDefinitions.set('tags', async (params, almanac) => {
-      // Tags are no longer part of the user structure - return empty array
-      return [];
-    });
-
+    // Check if this is consumer's first purchase
+    // Used for: first purchase bonuses, welcome rewards
     this.factDefinitions.set('isFirstPurchase', async (params, almanac) => {
       try {
-        let consumerId = params?.consumerId;
-        if (!consumerId && almanac) {
-          consumerId = await almanac.factValue('consumerId');
-        }
+        const consumerId = params?.consumerId || await almanac.factValue('consumerId');
         const purchaseCount = await consumerService.getPurchaseCount(consumerId);
         return purchaseCount === 0;
       } catch (error) {
-        logger.debug('IsFirstPurchase fact failed, returning false', { error: error.message });
-        return false;
+        return false; // Safe fallback
       }
     });
 
-    this.factDefinitions.set('hasTag', async (params, almanac) => {
-      // Tags system removed - this fact always responds false for backward compatibility
-      return false;
-    });
-
-    // SKU-based facts (pure functions)
+    // =================================================================
+    // SKU FACTS - Product-specific logic for purchases
+    // These check for specific products in the transaction
+    // =================================================================
+    
+    // Check if transaction contains a specific SKU
+    // Used for: product-specific bonuses
     this.factDefinitions.set('hasSku', (params, almanac) => {
-      // Parameterized fact for checking if specific SKU exists
       const skuList = params.attributes?.skuList || [];
       const requiredSku = params.sku || almanac.factValue('ruleParams.sku');
       return skuList.includes(requiredSku);
     });
 
+    // Check if transaction contains ANY SKU from a required list
+    // Used for: category bonuses, promotional product groups
     this.factDefinitions.set('hasAnySkuFromList', (params, almanac) => {
-      // Check if any SKU from a provided list exists in the purchase
       const skuList = params.attributes?.skuList || [];
       const requiredSkus = params.skuList || almanac.factValue('ruleParams.skuList') || [];
       return requiredSkus.some(sku => skuList.includes(sku));
     });
 
+    // Check if transaction contains ALL SKUs from a required list
+    // Used for: combo bonuses, bundle requirements
     this.factDefinitions.set('hasAllSkusFromList', (params, almanac) => {
-      // Check if all SKUs from a provided list exist in the purchase
       const skuList = params.attributes?.skuList || [];
       const requiredSkus = params.skuList || almanac.factValue('ruleParams.skuList') || [];
       return requiredSkus.every(sku => skuList.includes(sku));
     });
 
-    // Convenience shortcuts for common attributes
-    this.factDefinitions.set('redemptionPoints', (params, almanac) => {
-      return almanac.factValue('attributes').then(attributes => attributes?.redemptionPoints || 0);
-    });
-    
-    this.factDefinitions.set('transactionAmount', (params, almanac) => {
-      return almanac.factValue('attributes').then(attributes => attributes?.amount || 0);
-    });
-    
-    this.factDefinitions.set('discountedAmount', (params, almanac) => {
-      return almanac.factValue('attributes').then(attributes => attributes?.amount || 0); // No SRP, just use amount
-    });
-
-    // Backward compatibility alias for orderTotal
-    this.factDefinitions.set('orderTotal', (params, almanac) => {
-      return almanac.factValue('attributes').then(attributes => attributes?.amount || 0);
-    });
-
-    // Amount-based facts (pure functions with calculations)
+    // Calculation facts
     this.factDefinitions.set('amountInBasePoints', (params) => {
       const market = params.market;
       const amount = params.attributes?.amount || 0;
-      
-      if (market === 'JP') {
-        return Math.floor(amount * 0.1);
-      } else {
-        return Math.floor(amount); // Use actual amount
-      }
+      return market === 'JP' ? Math.floor(amount * 0.1) : Math.floor(amount);
     });
 
     this.factDefinitions.set('isHighValuePurchase', (params) => {
       const market = params.market;
       const amount = params.attributes?.amount || 0;
-      
       const thresholds = { JP: 5000, HK: 3000, TW: 3000 };
-      const baseAmount = amount; // Use actual amount
-      
-      return baseAmount >= (thresholds[market] || 3000);
+      return amount >= (thresholds[market] || 3000);
     });
+
+    // Backward compatibility
+    this.factDefinitions.set('hasTag', async () => false);
   }
 
-  // Add all facts to the engine
   async addFactsToEngine(engine, eventData) {
     for (const [factName, factFunction] of this.factDefinitions) {
       engine.addFact(factName, factFunction);
@@ -342,34 +294,20 @@ class FactsEngine {
     });
   }
 
-  /**
-   * Add a custom fact
-   */
   addFact(name, factFunction) {
     this.factDefinitions.set(name, factFunction);
   }
 
-  /**
-   * Remove a fact
-   */
   removeFact(name) {
     this.factDefinitions.delete(name);
   }
 
-  /**
-   * Get all available fact names
-   */
   getAvailableFacts() {
     return Array.from(this.factDefinitions.keys());
   }
 
-  /**
-   * Validate that all required facts are available for rules
-   */
   validateFactsForRules(rules) {
     const definedFacts = this.getAvailableFacts();
-    
-    // Basic facts that are automatically available from event data top-level properties
     const basicFacts = [
       'eventId', 'consumerId', 'eventType', 'market', 'channel', 
       'productLine', 'timestamp', 'context', 'attributes'
@@ -382,12 +320,8 @@ class FactsEngine {
       if (condition.fact && !availableFacts.includes(condition.fact)) {
         missingFacts.push(condition.fact);
       }
-      if (condition.all) {
-        condition.all.forEach(checkCondition);
-      }
-      if (condition.any) {
-        condition.any.forEach(checkCondition);
-      }
+      if (condition.all) condition.all.forEach(checkCondition);
+      if (condition.any) condition.any.forEach(checkCondition);
     };
 
     rules.forEach(rule => {

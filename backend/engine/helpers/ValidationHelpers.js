@@ -1,3 +1,5 @@
+const consumerService = require('../../services/consumerService');
+
 /**
  * Validation Helpers - Contains all validation logic for events and data
  * Ensures data integrity and proper format validation
@@ -157,7 +159,7 @@ class ValidationHelpers {
     }
 
     // Check available balance
-    const currentBalance = consumerService.getBalance(eventData.consumerId);
+    const currentBalance = require('../../services/consumerService').getBalance(eventData.consumerId);
     if (currentBalance.available < redemptionPoints) {
       throw new Error(`Insufficient points for redemption. Available: ${currentBalance.available}, Requested: ${redemptionPoints}`);
     }

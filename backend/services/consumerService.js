@@ -129,9 +129,15 @@ function getConsumerHistory(consumerId, options = {}) {
     let pointsAwarded = 0;
     let pointsUsed = 0;
     
-    if (event.eventType === 'REDEMPTION' && event.totalPointsUsed) {
-      pointsUsed = Math.abs(event.totalPointsUsed);
-    } else if (event.totalPointsAwarded) {
+    // Handle redemption events (negative totalPointsAwarded or explicit totalPointsUsed)
+    if (event.eventType === 'REDEMPTION') {
+      if (event.totalPointsUsed) {
+        pointsUsed = Math.abs(event.totalPointsUsed);
+      } else if (event.totalPointsAwarded && event.totalPointsAwarded < 0) {
+        pointsUsed = Math.abs(event.totalPointsAwarded);
+      }
+    } else if (event.totalPointsAwarded && event.totalPointsAwarded > 0) {
+      // Handle positive point awards
       pointsAwarded = event.totalPointsAwarded;
     }
     

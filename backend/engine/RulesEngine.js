@@ -1,7 +1,5 @@
 const { Engine } = require('json-rules-engine');
 const consumerService = require('../services/consumerService');
-const CDPService = require('../services/CDPService');
-const CampaignService = require('../services/CampaignService');
 const FactsEngine = require('./FactsEngine');
 const CalculationHelpers = require('./helpers/CalculationHelpers');
 const ValidationHelpers = require('./helpers/ValidationHelpers');
@@ -11,36 +9,64 @@ const fs = require('fs');
 const path = require('path');
 
 /**
- * Main Rules Engine - Orchestrates rule evaluation and point calculation
- * Follows json-rules-engine patterns with proper event-driven architecture
- * Flexible and market-agnostic design for global scalability
+ * RULES ENGINE - The Heart of Point Calculation and Business Logic
+ * 
+ * WHAT IT DOES:
+ * - Evaluates business rules against incoming events to determine point awards
+ * - Coordinates between facts, rules, and calculation logic
+ * - Manages event processing lifecycle from validation to point award
+ * - Handles dynamic rule loading and event-driven architecture
+ * 
+ * HOW IT WORKS:
+ * 1. INITIALIZATION: Load rules from JSON files, setup facts, register event handlers
+ * 2. EVENT PROCESSING: Validate incoming events, enrich with additional data
+ * 3. RULE EVALUATION: Run json-rules-engine to find matching rules
+ * 4. POINT CALCULATION: Execute rule actions to calculate point awards
+ * 5. BALANCE UPDATE: Update consumer point balance and transaction history
+ * 6. RESPONSE: Return structured result with points, breakdowns, and errors
+ * 
+ * ARCHITECTURE PATTERN:
+ * - Uses json-rules-engine for rule evaluation (condition → action pattern)
+ * - Event-driven: Rules emit events, handlers calculate points
+ * - Dynamic: Rules and handlers are discovered and registered automatically
+ * - Extensible: New rule types can be added by creating JSON rules and handlers
  */
-
 class RulesEngine {
   constructor() {
-    this.campaignService = new CampaignService();
-    this.factsEngine = new FactsEngine();
-    this.engine = new Engine();
-    this.rewardBreakdown = [];
-    this.errors = [];
-    this.currentEnrichedEventData = null; // Store current enriched event data for handlers
-    this.initialized = false; // Track initialization state
+    // Core engine components
+    this.factsEngine = new FactsEngine();  // Manages fact definitions and computations
+    this.engine = new Engine();           // json-rules-engine instance for rule evaluation
+    
+    // Processing state (reset for each event)
+    this.rewardBreakdown = [];            // Array of point awards with descriptions
+    this.errors = [];                     // Array of processing errors/warnings
+    this.currentEnrichedEventData = null; // Current event data being processed
+    
+    // Engine lifecycle
+    this.initialized = false;             // Prevents double initialization
   }
 
   /**
-   * Initialize the engine with facts, rules, and event handlers
-   * Following json-rules-engine patterns strictly
+   * INITIALIZE THE RULES ENGINE
+   * Called once at startup to prepare the engine for event processing
+   * 
+   * INITIALIZATION STEPS:
+   * 1. Register all facts from FactsEngine with json-rules-engine
+   * 2. Load all JSON rule files from the rules directory
+   * 3. Discover event types from loaded rules
+   * 4. Register dynamic event handlers for each event type
+   * 5. Mark engine as initialized
    */
   async initializeEngine() {
     if (this.initialized) return; // Prevent double initialization
     
-    // Add facts to engine
+    // Step 1: Register facts (makes facts available to rule conditions)
     await this.factsEngine.addFactsToEngine(this.engine);
     
-    // Load rules from JSON files
+    // Step 2: Load rules from JSON files
     await this.loadRulesFromFiles();
     
-    // Initialize event handlers (pure event-driven approach)
+    // Step 3 & 4: Setup dynamic event handlers
     this.initializeEventHandlers();
     
     this.initialized = true;
@@ -48,28 +74,36 @@ class RulesEngine {
   }
 
   /**
-   * Load rules from JSON files in the rules directory
-   * All rules must be defined in JSON files 
+   * LOAD RULES FROM JSON FILES
+   * Scans the rules directory and loads all JSON rule definitions
+   * 
+   * RULE FILE FORMAT:
+   * Each JSON file contains an array of rule objects with:
+   * - name: Human-readable rule name
+   * - conditions: json-rules-engine condition object (what must be true)
+   * - event: What to do when conditions are met (type + params)
+   * - priority: Execution order (lower numbers run first)
    */
   async loadRulesFromFiles() {
     const rulesDir = path.join(__dirname, '../rules');
     
     if (!fs.existsSync(rulesDir)) {
-      throw new Error('Rules directory not found. Please create the rules directory with JSON rule files.');
+      throw new Error('Rules directory not found.');
     }
 
     const ruleFiles = fs.readdirSync(rulesDir).filter(file => file.endsWith('.json'));
     
     if (ruleFiles.length === 0) {
-      throw new Error('No rule files found in rules directory. Please add JSON rule files.');
+      throw new Error('No rule files found in rules directory.');
     }
     
+    // Load each rule file and add rules to the engine
     for (const file of ruleFiles) {
       const filePath = path.join(rulesDir, file);
       try {
         const rulesData = JSON.parse(fs.readFileSync(filePath, 'utf8'));
         
-        // Add each rule to the engine
+        // Add each rule to the json-rules-engine
         for (const rule of rulesData) {
           this.engine.addRule(rule);
         }
@@ -83,11 +117,24 @@ class RulesEngine {
   }
 
   /**
-   * Dynamically initialize event handlers based on the event types found in loaded rules
-   * This method scans all loaded rules and creates handlers for any event types it finds
+   * INITIALIZE EVENT HANDLERS - Setup Dynamic Event Processing
+   * 
+   * WHAT HAPPENS:
+   * 1. Scan all loaded rules to discover unique event types
+   * 2. Create a dynamic event handler for each event type
+   * 3. Register handlers with json-rules-engine
+   * 4. Setup success handler for rule evaluation completion
+   * 
+   * WHY DYNAMIC:
+   * - New rule types can be added just by creating JSON rules
+   * - No need to modify code for new event types
+   * - Handlers are auto-discovered from rule definitions
+   * 
+   * EVENT HANDLER FLOW:
+   * Rule matches → Engine emits event → Handler calculates points → Handler updates breakdown
    */
   initializeEventHandlers() {
-    // Get all unique event types from loaded rules
+    // Step 1: Discover all event types from loaded rules
     const eventTypes = this.getEventTypesFromRules();
     
     logger.debug('Discovered event types from rules', { 
@@ -95,46 +142,39 @@ class RulesEngine {
       totalRules: this.engine.rules.length 
     });
     
-    // Create dynamic handlers for each discovered event type
+    // Step 2: Create and register a handler for each event type
     eventTypes.forEach(eventType => {
       this.engine.on(eventType, this.createDynamicEventHandler(eventType));
       logger.debug(`Registered dynamic handler for event type: ${eventType}`);
     });
 
-    // Generic success handler for logging
+    // Step 3: Register success handler for rule evaluation completion
     this.engine.on('success', (event, almanac, ruleResult) => {
-      logger.debug('Rule triggered', {
-        eventType: event.type,
-        params: event.params,
-        rule: ruleResult?.rule?.name || ruleResult?.name || 'Unnamed rule'
+      logger.debug('Engine run completed', { 
+        eventsTriggered: ruleResult.events?.length || 0,
+        eventTypes: ruleResult.events?.map(e => e.type) || []
       });
     });
 
-    // Add fact definitions to the engine immediately
-    this.engine.addFact('params', (params, almanac) => {
-      return params;
-    });
-    
     logger.info(`Dynamically initialized ${eventTypes.size} event handlers`);
   }
 
   /**
-   * Extract all unique event types from the loaded rules
-   * Scans through all rules and collects event.type values
+   * DISCOVER EVENT TYPES FROM LOADED RULES
+   * Scans all rules to find unique event types that need handlers
+   * 
+   * RETURNS: Set of unique event type strings found in rule definitions
    */
   getEventTypesFromRules() {
     const eventTypes = new Set();
     
-    // Iterate through all loaded rules and extract event types
     this.engine.rules.forEach((rule) => {
       let eventType = null;
       
-      // Access event type via ruleEvent (json-rules-engine internal structure)
       if (rule.ruleEvent && rule.ruleEvent.type) {
         eventType = rule.ruleEvent.type;
       }
       
-      // Fallback: try accessing via toJSON() if ruleEvent doesn't work
       if (!eventType && typeof rule.toJSON === 'function') {
         const ruleData = rule.toJSON();
         if (ruleData.event && ruleData.event.type) {
@@ -142,7 +182,6 @@ class RulesEngine {
         }
       }
       
-      // Add to set if found
       if (eventType) {
         eventTypes.add(eventType);
       }
@@ -152,75 +191,71 @@ class RulesEngine {
   }
 
   /**
-   * Create a dynamic event handler that calculates rewards based on rule parameters
-   * This is the core of the flexible, market-agnostic approach 
+   * CREATE DYNAMIC EVENT HANDLER - Factory for Rule Event Handlers
+   * 
+   * WHAT IT CREATES:
+   * A specialized handler function for each event type that:
+   * 1. Extracts relevant facts from the almanac (rule evaluation context)
+   * 2. Calculates point rewards using the appropriate calculation method
+   * 3. Formats reward description and adds to breakdown
+   * 4. Handles errors gracefully with logging
+   * 
+   * WHY DYNAMIC:
+   * - One handler can process different event types with same logic
+   * - New event types don't require code changes
+   * - Calculation method is determined by rule parameters
+   * 
+   * CALCULATION FLOW:
+   * Rule triggers → Handler called → Extract facts → Calculate points → Update breakdown
    */
   createDynamicEventHandler(eventType) {
-    // Use arrow function to preserve 'this' context
     return async (event, almanac) => {
       try {
+        // EXTRACT FACTS: Get computed values needed for calculations
         const market = await almanac.factValue('market');
-        
-        // Get transaction amounts from facts (more reliable for async handlers)
         const baseAmount = await almanac.factValue('transactionAmount');
         const discountedAmount = await almanac.factValue('discountedAmount');
         
-        // Get data from the current enriched event data stored during processing (for other attributes)
-        const enrichedEventData = (this && this.currentEnrichedEventData) || {};
-        const itemCount = enrichedEventData.attributes?.recycledCount || 0;
-        const adjustmentValue = enrichedEventData.attributes?.adjustmentPoints || enrichedEventData.attributes?.adjustedPoints || enrichedEventData.attributes?.adjustmentAmount || 0;
-        
-        logger.debug('Processing rule event', {
-          eventType,
-          market,
-          baseAmount,
-          discountedAmount,
-          itemCount,
-          adjustmentValue
-        });
+        // GET ENRICHED EVENT DATA: Access to full event context
+        const enrichedEventData = this.currentEnrichedEventData;
+        const itemCount = enrichedEventData?.attributes?.recycledCount || 
+                         enrichedEventData?.attributes?.itemCount || 0;
+        const adjustmentValue = enrichedEventData?.attributes?.adjustedPoints || 
+                               enrichedEventData?.attributes?.adjustmentPoints || 0;
 
-        const params = event; // In json-rules-engine, the event object IS the params
-        
-        // DYNAMIC CALCULATION: Use the calculation method specified in the rule parameters
+        const params = event; // Rule parameters from JSON rule definition
+
+        // CALCULATE POINTS: Use method specified in rule or fallback to simple
         let rewardPoints = 0;
-        
         if (params.calculationMethod) {
-          // Use the specified calculation method from the rule
+          // Advanced calculation with method-specific logic
           rewardPoints = await this.calculateRewardDynamically(params.calculationMethod, {
-            market,
-            baseAmount,
-            discountedAmount,
-            itemCount,
-            adjustmentValue,
-            params,
-            enrichedEventData
+            market, baseAmount, discountedAmount, itemCount, adjustmentValue, params, enrichedEventData
           });
         } else {
-          // Fallback to simple calculations for backward compatibility
+          // Simple calculation fallback
           rewardPoints = this.calculateSimpleReward(params, {
-            market,
-            baseAmount,
-            discountedAmount,
-            itemCount,
-            adjustmentValue
+            baseAmount, discountedAmount, adjustmentValue, itemCount, enrichedEventData
           });
         }
-        
+
         logger.debug('Calculated reward points', { eventType, rewardPoints });
-        
-        // Add to breakdown with proper campaign information
-        this.addToBreakdown(eventType, rewardPoints, FormattingHelpers.getDescription(eventType, market, rewardPoints), params);
-        
+
+        this.rewardBreakdown.push({
+          ruleId: eventType,
+          points: rewardPoints,
+          description: FormattingHelpers.getDescription(eventType, market, rewardPoints),
+          ruleCategory: FormattingHelpers.getRuleCategory(eventType),
+          computation: FormattingHelpers.generateComputationDetails(eventType, rewardPoints, params)
+        });
+
       } catch (error) {
-        logger.error(`Error in event handler for ${eventType}`, error);
-        this.addError(`Failed to process ${eventType}: ${error.message}`);
+        logger.error(`Error in ${eventType} handler`, { error: error.message, stack: error.stack });
+        this.errors.push(`${eventType} calculation failed: ${error.message}`);
       }
     };
   }
 
-  /**
-   * Dynamic calculation method that can handle any calculation type specified in rules
-   */
   async calculateRewardDynamically(calculationMethod, context) {
     const { market, baseAmount, discountedAmount, itemCount, adjustmentValue, params, enrichedEventData } = context;
 
@@ -251,15 +286,14 @@ class RulesEngine {
         return adjustmentValue;
       case 'redemption':
         const redemptionPoints = enrichedEventData.attributes?.redemptionPoints || params.redemptionPoints || 0;
-        params.redemptionPoints = redemptionPoints; // Add for proper formula display
+        params.redemptionPoints = redemptionPoints;
         return CalculationHelpers.calculateRedemptionDeduction(market, redemptionPoints, params);
       case 'fixed':
-        return params.fixedPoints || params.bonus || 0;
+        return params.fixedPoints || params.bonus || params.fixedBonus || 0;
       case 'percentage':
         const amount = params.useDiscounted ? discountedAmount : baseAmount;
         return Math.round((amount * (params.percentage || 0)) / 100);
       case 'formula':
-        // Allow custom JavaScript formulas defined in rules (advanced feature)
         return this.evaluateFormula(params.formula, context);
       default:
         logger.warn('Unknown calculation method', { calculationMethod });
@@ -267,376 +301,238 @@ class RulesEngine {
     }
   }
 
-  /**
-   * Simple reward calculation for backward compatibility
-   * Now handles all event types properly including recycling, consultation, redemption, and adjustment
-   */
   calculateSimpleReward(params, context) {
     const { baseAmount, discountedAmount, adjustmentValue, itemCount, enrichedEventData } = context;
 
-    // Handle specific event types based on their parameters
-    
-    // Recycling events - INTERACTION_ADJUST_POINT_TIMES_PER_YEAR
+    // Recycling events
     if (params.pointsPerBottle && itemCount > 0) {
       const pointsPerBottle = params.pointsPerBottle || 50;
       const maxPerYear = params.maxPerYear || 5;
-      
-      // Calculate points based on recycled count, respecting annual limit
       const totalBottles = itemCount;
       const earnedPoints = Math.min(totalBottles, maxPerYear) * pointsPerBottle;
       
       logger.debug('Recycling reward calculation', { 
-        totalBottles, 
-        pointsPerBottle, 
-        maxPerYear, 
-        earnedPoints 
+        totalBottles, pointsPerBottle, maxPerYear, earnedPoints 
       });
       
       return earnedPoints;
     }
     
-    // Consultation events - CONSULTATION_BONUS
+    // Consultation events
     if (params.consultationBonus) {
       return params.consultationBonus;
     }
     
-    // Redemption events - REDEMPTION_DEDUCTION (negative points)
+    // Redemption events
     if (params.description && params.description.includes('redeemed')) {
       const redemptionPoints = enrichedEventData?.attributes?.redemptionPoints || 
                               params.redemptionPoints || 
                               enrichedEventData?.attributes?.amount || 0;
       
       logger.debug('Redemption deduction calculation', { redemptionPoints });
-      
-      // Return negative value for deduction
       return -Math.abs(redemptionPoints);
     }
     
-    // Manual adjustment events - INTERACTION_ADJUST_POINT_BY_MANAGER
+    // Manual adjustment events
     if (params.description && params.description.includes('adjustment')) {
       const adjustmentPoints = enrichedEventData?.attributes?.adjustedPoints || 
                               enrichedEventData?.attributes?.adjustmentPoints ||
                               adjustmentValue || 0;
       
       logger.debug('Manual adjustment calculation', { adjustmentPoints });
-      
       return adjustmentPoints;
     }
     
-    // Standard reward calculations (existing logic)
-    if (params.fixedPoints) {
-      return params.fixedPoints;
-    }
-    
-    if (params.bonus) {
-      return params.bonus;
-    }
-    
-    if (params.multiplier && baseAmount) {
-      return Math.round(baseAmount * params.multiplier);
-    }
-    
-    if (params.percentage && baseAmount) {
-      return Math.round((baseAmount * params.percentage) / 100);
-    }
-    
-    if (params.adjustmentPoints || adjustmentValue) {
-      return adjustmentValue;
-    }
+    // Standard reward calculations
+    if (params.fixedPoints) return params.fixedPoints;
+    if (params.bonus) return params.bonus;
+    if (params.multiplier && baseAmount) return Math.round(baseAmount * params.multiplier);
+    if (params.percentage && baseAmount) return Math.round((baseAmount * params.percentage) / 100);
+    if (params.adjustmentPoints || adjustmentValue) return adjustmentValue;
     
     return 0;
   }
 
-  /**
-   * Evaluate custom formulas safely (for advanced rules)
-   */
   evaluateFormula(formula, context) {
     try {
-      // Only allow safe mathematical operations and predefined variables
-      const safeContext = {
-        baseAmount: context.baseAmount || 0,
-        discountedAmount: context.discountedAmount || 0,
-        itemCount: context.itemCount || 0,
-        Math: Math,
-        round: Math.round,
-        floor: Math.floor,
-        ceil: Math.ceil,
-        min: Math.min,
-        max: Math.max
-      };
-      
-      // Simple formula evaluation (you could use a more sophisticated parser here)
-      // For now, replace variables and evaluate basic math
-      let evaluableFormula = formula;
-      Object.keys(safeContext).forEach(key => {
-        const regex = new RegExp(`\\b${key}\\b`, 'g');
-        evaluableFormula = evaluableFormula.replace(regex, safeContext[key]);
-      });
-      
-      // Only allow safe mathematical expressions
-      if (!/^[0-9+\-*/().\s]+$/.test(evaluableFormula)) {
-        throw new Error('Formula contains unsafe characters');
-      }
-      
-      return eval(evaluableFormula) || 0;
+      const func = new Function('context', `return ${formula}`);
+      return func(context);
     } catch (error) {
-      logger.error('Error evaluating formula', { formula, error: error.message });
+      logger.error('Formula evaluation failed', { formula, error: error.message });
       return 0;
     }
   }
 
   /**
-   * Process an event through the rules engine with CDP enrichment
-   * Follows the generalized input/output template exactly
+   * PROCESS EVENT - Main Entry Point for Event Processing
+   * This is the primary method called by external systems to process loyalty events
+   * 
+   * PROCESSING FLOW:
+   * 1. RESET STATE: Clear previous rewards and errors
+   * 2. VALIDATE: Check event data format and business rules
+   * 3. ENRICH: Add calculated fields and normalize data
+   * 4. EVALUATE: Run rules engine to find matching rules
+   * 5. CALCULATE: Execute rule actions to determine point awards
+   * 6. UPDATE: Modify consumer balance and transaction history
+   * 7. RESPOND: Return structured result with all details
+   * 
+   * INPUT: eventData object with structure:
+   * {
+   *   eventId, consumerId, eventType, market, channel,
+   *   timestamp, context: {storeId, campaignCode},
+   *   attributes: {amount, skuList, etc.}
+   * }
+   * 
+   * OUTPUT: Processing result with:
+   * {
+   *   consumerId, eventId, eventType, totalPointsAwarded,
+   *   pointBreakdown: [{ruleId, points, description}],
+   *   errors: [warnings], resultingBalance: {total, available, used}
+   * }
    */
   async processEvent(eventData) {
     try {
-      // Ensure engine is initialized before processing
-      if (!this.initialized) {
-        await this.initializeEngine();
-      }
+      // STEP 1: RESET STATE - Clear previous processing state
+      this.rewardBreakdown = [];  // Reset point awards from previous events
+      this.errors = [];           // Reset error collection
+
+      // STEP 2: ENSURE ENGINE IS INITIALIZED
+      await this.initializeEngine();
+
+      // STEP 3: VALIDATE EVENT DATA
+      // Check required fields, data types, business constraints
+      ValidationHelpers.validateCompleteEvent(eventData);
+
+      // STEP 4: ENRICH EVENT DATA
+      // Add calculated fields, normalize values, prepare for rule evaluation
+      const enrichedEventData = this.enrichEventData(eventData);
+      this.currentEnrichedEventData = enrichedEventData; // Store for event handlers
+
+      // STEP 5: UPDATE CONSUMER MARKET (for market-specific rule processing)
+      consumerService.setConsumerMarket(eventData.consumerId, eventData.market);
+
+      // STEP 6: RUN RULES ENGINE
+      // Evaluate all rules against enriched event data
+      // Matching rules will emit events that trigger point calculations
+      const results = await this.engine.run(enrichedEventData);
+
+      // STEP 7: CALCULATE TOTAL POINTS
+      // Sum all point awards from triggered rules
+      const totalPointsAwarded = this.rewardBreakdown.reduce((sum, reward) => sum + reward.points, 0);
+
+      // STEP 8: UPDATE CONSUMER BALANCE
+      // Handle both positive point awards and negative redemptions
+      let resultingBalance;
+      const currentBalance = consumerService.getBalance(eventData.consumerId);
       
-      logger.info('Processing event', {
-        eventId: eventData.eventId,
-        consumerId: eventData.consumerId,
-        eventType: eventData.eventType
-      });
-      
-      // Comprehensive validation using ValidationHelpers
-      ValidationHelpers.validateCompleteEvent(eventData, consumerService);
-      
-      // Set consumer market if provided in event data
-      if (eventData.market) {
-        await consumerService.setConsumerMarket(eventData.consumerId, eventData.market);
-      }
-      
-      // Fetch enriched consumer data from CDP with calculated attributes
-      const cdpData = await CDPService.getConsumerAttributesForRules(eventData.consumerId);
-      
-      // Merge CDP data with event data (CDP takes precedence for consumer attributes)
-      const enrichedEventData = {
-        ...eventData,
-        // Consumer attributes from CDP (calculated, not hardcoded)
-        isVIP: cdpData.isVIP,
-        isBirthMonth: cdpData.isBirthMonth,
-        tier: cdpData.tier,
-        tierLevel: cdpData.tierLevel,
-        loyaltySegment: cdpData.loyaltySegment,
-        // Use market from CDP if not provided in event
-        market: eventData.market || cdpData.market,
-        // Set transaction amounts from attributes for purchase calculations
-        transactionAmount: eventData.attributes?.amount || 0,
-        discountedAmount: eventData.attributes?.amount || 0, // No SRP, just use amount
-        // Merge recycling data - for RECYCLE events, preserve event's recycledCount
-        attributes: {
-          ...eventData.attributes,
-          recycledCount: eventData.eventType === 'RECYCLE' ? eventData.attributes?.recycledCount : cdpData.recycledCount,
-          recyclingEligible: cdpData.recyclingEligible
-        }
-      };
-      
-      // Reset breakdown and errors for this processing
-      this.rewardBreakdown = [];
-      this.errors = [];
-      
-      // Store enriched event data for use in event handlers
-      this.currentEnrichedEventData = enrichedEventData;
-      
-      // Add transaction amounts as facts for use in handlers
-      this.engine.addFact('transactionAmount', enrichedEventData.transactionAmount || 0);
-      this.engine.addFact('discountedAmount', enrichedEventData.discountedAmount || enrichedEventData.transactionAmount || 0);
-      
-      // Add basic facts to engine for rule evaluation
-      this.engine.addFact('eventType', enrichedEventData.eventType);
-      this.engine.addFact('market', enrichedEventData.market);
-      this.engine.addFact('channel', enrichedEventData.channel);
-      
-      // Run the engine with the enriched event data - strictly following json-rules-engine patterns
-      const engineResults = await this.engine.run(enrichedEventData);
-      logger.debug('Engine run completed', {
-        eventsTriggered: engineResults.events.length,
-        eventTypes: engineResults.events.map(e => e.type)
-      });
-      
-      // Calculate total points from breakdown
-      const totalRewardsAwarded = this.rewardBreakdown.reduce((sum, item) => sum + item.points, 0);
-      
-      // Get current consumer balance and update it
-      const currentBalance = await consumerService.getBalance(eventData.consumerId);
-      logger.debug('Current balance before update', currentBalance);
-      
-      // Handle redemption vs earning differently
-      let newTotal, newAvailable, newUsed;
-      
-      if (totalRewardsAwarded < 0) {
-        // Redemption: validate sufficient points before processing
-        const redemptionAmount = Math.abs(totalRewardsAwarded);
-        
-        // Validate sufficient available points
-        if (currentBalance.available < redemptionAmount) {
-          const errorMessage = `Insufficient points for redemption. Available: ${currentBalance.available}, Requested: ${redemptionAmount}`;
-          logger.error(errorMessage);
-          this.errors.push(errorMessage);
-          
-          // Return error response instead of processing
-          return {
-            consumerId: eventData.consumerId,
-            eventId: eventData.eventId,
-            eventType: eventData.eventType,
-            totalPointsAwarded: 0,
-            pointBreakdown: [],
-            errors: this.errors,
-            resultingBalance: currentBalance // Return current balance unchanged
-          };
-        }
-        
-        newTotal = currentBalance.total; // Total earned doesn't change
-        newAvailable = Math.max(0, currentBalance.available - redemptionAmount);
-        newUsed = currentBalance.used + redemptionAmount;
+      if (eventData.eventType === 'REDEMPTION' && totalPointsAwarded < 0) {
+        // REDEMPTION: Deduct points and track usage
+        const newTotal = currentBalance.total + totalPointsAwarded; // totalPointsAwarded is negative
+        const newUsed = currentBalance.used + Math.abs(totalPointsAwarded);
+        resultingBalance = consumerService.updateBalance(eventData.consumerId, {
+          total: newTotal,
+          available: newTotal,
+          used: newUsed,
+          transactionCount: currentBalance.transactionCount + 1
+        });
       } else {
-        // Normal earning: add to total and available
-        newTotal = currentBalance.total + totalRewardsAwarded;
-        newAvailable = currentBalance.available + totalRewardsAwarded;
-        newUsed = currentBalance.used;
+        // POINT AWARD: Add points to total
+        const newTotal = currentBalance.total + totalPointsAwarded;
+        resultingBalance = consumerService.updateBalance(eventData.consumerId, {
+          total: newTotal,
+          available: newTotal,
+          used: currentBalance.used,
+          transactionCount: currentBalance.transactionCount + 1
+        });
       }
-      
-      const newTransactionCount = (currentBalance.transactionCount || 0) + 1;
-      
-      // Update balance in service
-      await consumerService.updateBalance(eventData.consumerId, {
-        total: newTotal,
-        available: newAvailable,
-        used: newUsed,
-        transactionCount: newTransactionCount
-      });
-      
-      // Build response following the exact generalized output template
-      const response = {
+
+      // STEP 9: CREATE EVENT RESULT FOR LOGGING
+      // Include all necessary fields for transaction history
+      const eventResult = {
         consumerId: eventData.consumerId,
         eventId: eventData.eventId,
         eventType: eventData.eventType,
-        totalPointsAwarded: totalRewardsAwarded,
+        timestamp: eventData.timestamp, // CRITICAL: Include timestamp for transaction history
+        market: eventData.market,       // Include market for history filtering
+        channel: eventData.channel,     // Include channel for transaction context
+        totalPointsAwarded,
         pointBreakdown: this.rewardBreakdown,
         errors: this.errors,
-        resultingBalance: {
-          total: newTotal,
-          available: newAvailable,
-          used: newUsed,
-          transactionCount: newTransactionCount
-        }
+        resultingBalance
       };
-      
-      // Log the event for audit trail
-      await consumerService.logEvent({
-        ...response,
-        timestamp: new Date().toISOString(),
-        originalEvent: eventData
+
+      // STEP 10: LOG TRANSACTION TO HISTORY
+      consumerService.logEvent(eventResult);
+
+      logger.info('Event processed successfully', {
+        consumerId: eventData.consumerId,
+        eventId: eventData.eventId,
+        eventType: eventData.eventType,
+        totalPointsAwarded,
+        errors: this.errors,
+        resultingBalance
       });
-      
-      logger.info('Event processed successfully', response);
-      return response;
-      
+
+      return eventResult;
+
     } catch (error) {
-      logger.error('Error processing event', error);
+      logger.error('Event processing failed', { 
+        eventId: eventData.eventId,
+        eventType: eventData.eventType,
+        error: error.message,
+        stack: error.stack
+      });
+
       throw new Error(`Event processing failed: ${error.message}`);
-    } finally {
-      // Clear current event data
-      this.currentEnrichedEventData = null;
     }
   }
 
   /**
-   * Add a reward calculation to the breakdown array
-   * Following the exact generalized output template
+   * ENRICH EVENT DATA - Prepare Event Data for Rule Evaluation
+   * 
+   * WHAT IT DOES:
+   * - Ensures required fields exist with default values
+   * - Normalizes data structure for consistent rule evaluation
+   * - Adds computed fields if needed
+   * 
+   * ENRICHMENT STEPS:
+   * 1. Clone original event data to avoid mutation
+   * 2. Add default timestamp if missing
+   * 3. Ensure attributes and context objects exist
+   * 4. Return enriched data ready for json-rules-engine
+   * 
+   * USED BY: processEvent method before running rules engine
    */
-  addToBreakdown(ruleId, rewardPoints, description, params) {
-    const breakdown = FormattingHelpers.formatBreakdownEntry(ruleId, rewardPoints, description, params);
-    this.rewardBreakdown.push(breakdown);
-  }
-
-  /**
-   * Add a new rule to the engine dynamically
-   */
-  addRule(rule) {
-    this.engine.addRule(rule);
-    logger.info('Dynamic rule added', { ruleName: rule.name || 'Unnamed rule' });
-  }
-
-  /**
-   * Remove a rule from the engine
-   */
-  removeRule(ruleId) {
-    this.engine.removeRule(ruleId);
-    logger.info('Dynamic rule removed', { ruleId });
-  }
-
-  /**
-   * Get all available facts
-   */
-  getEngineFacts() {
-    return this.factsEngine.getAvailableFacts();
-  }
-
-  /**
-   * Add error to the errors array
-   */
-  addError(error) {
-    this.errors.push(error);
-    logger.warn('Added error', { error });
-  }
-
-  /**
-   * Get active campaigns for a specific market and time
-   */
-  async getActiveCampaigns(market, timestamp = new Date().toISOString()) {
-    try {
-      return await this.campaignService.getActiveCampaigns(market, timestamp);
-    } catch (error) {
-      logger.error('Error fetching active campaigns', error);
-      return [];
-    }
-  }
-
-  /**
-   * Process multiple events in batch
-   */
-  async processEvents(events) {
-    const results = [];
+  enrichEventData(eventData) {
+    // Clone to avoid mutating original data
+    const enriched = { ...eventData };
     
-    for (const eventData of events) {
-      try {
-        const result = await this.processEvent(eventData);
-        results.push(result);
-      } catch (error) {
-        logger.error(`Error processing event ${eventData.eventId}`, error);
-        results.push({
-          eventId: eventData.eventId,
-          error: error.message
-        });
-      }
+    // Ensure timestamp exists (required for date/time facts)
+    if (!enriched.timestamp) {
+      enriched.timestamp = new Date().toISOString();
     }
     
-    return results;
+    // Ensure required object properties exist (prevents null reference errors)
+    enriched.attributes = enriched.attributes || {};
+    enriched.context = enriched.context || {};
+    
+    return enriched;
   }
 
   /**
-   * Clear engine state (useful for testing)
+   * RUNTIME RULE MANAGEMENT - Add rules dynamically
+   * Allows adding new rules without restarting the engine
    */
-  clearState() {
-    this.rewardBreakdown = [];
-    this.errors = [];
-    logger.debug('Engine state cleared');
+  addRule(ruleDefinition) {
+    this.engine.addRule(ruleDefinition);
   }
 
-  /**
-   * Get engine statistics
-   */
-  getEngineStats() {
-    return {
-      totalRules: this.engine.rules.length,
-      totalFacts: this.factsEngine.getAvailableFacts().length,
-      lastProcessed: new Date().toISOString()
-    };
+  removeRule(ruleDefinition) {
+    this.engine.removeRule(ruleDefinition);
+  }
+
+  getRules() {
+    return this.engine.rules;
   }
 }
 
