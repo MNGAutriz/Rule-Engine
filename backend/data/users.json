@@ -50,7 +50,7 @@
         "thisYearBottlesRecycled": 8,
         "lastRecyclingDate": "2025-06-25T11:00:00Z"
       },
-      "lastPurchaseDate": "2025-07-10T08:01:55.312Z"
+      "lastPurchaseDate": "2025-07-10T11:56:29.471Z"
     },
     "preferences": {
       "productLines": [
@@ -64,10 +64,10 @@
       "skinType": "COMBINATION"
     },
     "balance": {
-      "total": 10157868,
-      "available": 10157868,
+      "total": 10161647,
+      "available": 10161647,
       "used": 114433,
-      "transactionCount": 386
+      "transactionCount": 387
     }
   },
   "user_hk_standard": {
@@ -1626,6 +1626,21 @@
       "available": 1026,
       "used": 999,
       "transactionCount": 8
+    }
+  },
+  "fsafas": {
+    "consumerId": "fsafas",
+    "profile": {
+      "market": "HK"
+    },
+    "balance": {
+      "total": 1555,
+      "available": 1555,
+      "used": 0,
+      "transactionCount": 1
+    },
+    "engagement": {
+      "lastPurchaseDate": "2025-07-10T11:56:38.245Z"
     }
   }
 }

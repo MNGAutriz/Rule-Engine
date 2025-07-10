@@ -16,7 +16,8 @@ import {
   Activity,
   Settings,
   Check,
-  AlertCircle
+  AlertCircle,
+  CheckCircle
 } from 'lucide-react';
 
 interface RuleFormDialogProps {
@@ -565,199 +566,255 @@ const RuleFormDialog: React.FC<RuleFormDialogProps> = ({
   ])];
 
   return (
-    <div className="fixed inset-0 bg-black/20 backdrop-blur-sm flex items-center justify-center z-50 p-4">
-      <div className="bg-white/95 backdrop-blur-md rounded-2xl shadow-2xl w-full max-w-4xl max-h-[90vh] overflow-y-auto border border-gray-200">
-        <div className="sticky top-0 bg-white border-b border-gray-200 p-6 flex items-center justify-between">
-          <h2 className="text-2xl font-bold text-gray-900">{title}</h2>
-          <Button variant="ghost" size="sm" onClick={onClose}>
+    <div className="fixed inset-0 bg-black/40 backdrop-blur-sm flex items-center justify-center z-50 p-4">
+      <div className="bg-white rounded-2xl shadow-2xl w-full max-w-6xl max-h-[95vh] flex flex-col border border-gray-200/50">
+        {/* Fixed Header */}
+        <div className="bg-gradient-to-r from-blue-600 to-blue-700 text-white px-6 py-5 flex items-center justify-between rounded-t-2xl flex-shrink-0">
+          <div className="flex items-center gap-3">
+            <div className="p-2 bg-white/10 rounded-lg">
+              <Settings className="h-6 w-6 text-white" />
+            </div>
+            <div>
+              <h2 className="text-xl font-bold">{title}</h2>
+              <p className="text-blue-100 text-sm mt-1">{initialRule ? 'Modify existing rule settings' : 'Configure new rule parameters'}</p>
+            </div>
+          </div>
+          <Button variant="ghost" size="sm" onClick={onClose} className="text-white hover:bg-white/10 h-8 w-8 p-0">
             <X className="h-5 w-5" />
           </Button>
         </div>
 
-        <form onSubmit={handleSubmit} className="p-6 space-y-6">
-          {/* Basic Information */}
-          <Card>
-            <CardHeader>
-              <CardTitle className="flex items-center gap-2">
-                <Settings className="h-5 w-5" />
-                Rule Configuration
-              </CardTitle>
-              <CardDescription>Basic rule information and settings</CardDescription>
-            </CardHeader>
-            <CardContent className="space-y-4">
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                <div>
-                  <Label htmlFor="name" className="text-sm font-medium text-gray-700">Rule Name *</Label>
-                  <Input
-                    id="name"
-                    value={formData.name}
-                    onChange={(e) => handleInputChange('name', e.target.value)}
-                    className={`mt-1 ${errors.name ? 'border-red-500' : ''}`}
-                    placeholder="Enter rule name"
-                  />
-                  {errors.name && (
-                    <p className="mt-1 text-sm text-red-600 flex items-center gap-1">
-                      <AlertCircle className="h-3 w-3" />
-                      {errors.name}
-                    </p>
-                  )}
-                </div>
+        {/* Scrollable Content */}
+        <div className="flex-1 overflow-y-auto dialog-scrollbar">
+          <form id="rule-form" onSubmit={handleSubmit} className="p-6 space-y-8 bg-gray-50/30">
+            {/* Basic Information */}
+            <Card className="border-0 shadow-lg bg-white/80 backdrop-blur-sm">
+              <CardHeader className="bg-gradient-to-r from-slate-50 to-slate-100 rounded-t-lg border-b border-slate-200">
+                <CardTitle className="flex items-center gap-3 text-slate-800">
+                  <div className="p-2 bg-slate-200 rounded-lg">
+                    <Settings className="h-5 w-5 text-slate-600" />
+                  </div>
+                  <div>
+                    <div className="text-lg font-semibold">Rule Configuration</div>
+                    <CardDescription className="text-slate-600 mt-1">Basic rule information and settings</CardDescription>
+                  </div>
+                </CardTitle>
+              </CardHeader>
+              <CardContent className="p-6 space-y-6">
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                  <div className="space-y-2">
+                    <Label htmlFor="name" className="text-sm font-semibold text-slate-700 flex items-center gap-2">
+                      <span>Rule Name</span>
+                      <span className="text-red-500">*</span>
+                    </Label>
+                    <Input
+                      id="name"
+                      value={formData.name}
+                      onChange={(e) => handleInputChange('name', e.target.value)}
+                      className={`h-11 ${errors.name ? 'border-red-500 focus:border-red-500' : 'border-slate-300 focus:border-blue-500'} transition-colors`}
+                      placeholder="Enter a descriptive rule name"
+                    />
+                    {errors.name && (
+                      <p className="text-sm text-red-600 flex items-center gap-1 bg-red-50 p-2 rounded-md">
+                        <AlertCircle className="h-4 w-4" />
+                        {errors.name}
+                      </p>
+                    )}
+                  </div>
 
-                <div>
-                  <Label htmlFor="category" className="text-sm font-medium text-gray-700">Rule Category *</Label>
-                  {initialRule ? (
-                    // In edit mode, show category as read-only
-                    <div className="flex items-center gap-2 px-3 py-2 border rounded-md bg-gray-50 mt-1">
-                      {formData.category && RULE_CATEGORIES[formData.category as keyof typeof RULE_CATEGORIES] && (
-                        <>
-                          {(() => {
-                            const IconComponent = RULE_CATEGORIES[formData.category as keyof typeof RULE_CATEGORIES].icon;
-                            return <IconComponent className="h-4 w-4" />;
-                          })()}
-                          <span>{RULE_CATEGORIES[formData.category as keyof typeof RULE_CATEGORIES].label}</span>
-                        </>
-                      )}
-                      {!formData.category && <span className="text-gray-500">No category set</span>}
-                    </div>
-                  ) : (
-                    // In create mode, allow selection
-                    <>
-                      <Select 
-                        value={formData.category} 
-                        onValueChange={(value) => handleInputChange('category', value)}
-                      >
-                        <SelectTrigger className={`mt-1 ${errors.category ? 'border-red-500' : ''}`}>
-                          <SelectValue placeholder="Select category" />
-                        </SelectTrigger>
-                        <SelectContent>
+                  <div className="space-y-2">
+                    <Label htmlFor="category" className="text-sm font-semibold text-slate-700 flex items-center gap-2">
+                      <span>Rule Category</span>
+                      <span className="text-red-500">*</span>
+                    </Label>
+                    {initialRule ? (
+                      // In edit mode, show category as read-only
+                      <div className="flex items-center gap-3 px-4 py-3 border border-slate-300 rounded-lg bg-slate-50 h-11">
+                        {formData.category && RULE_CATEGORIES[formData.category as keyof typeof RULE_CATEGORIES] && (
+                          <>
+                            {(() => {
+                              const IconComponent = RULE_CATEGORIES[formData.category as keyof typeof RULE_CATEGORIES].icon;
+                              return <IconComponent className="h-5 w-5 text-slate-600" />;
+                            })()}
+                            <span className="font-medium text-slate-700">{RULE_CATEGORIES[formData.category as keyof typeof RULE_CATEGORIES].label}</span>
+                          </>
+                        )}
+                        {!formData.category && <span className="text-slate-500">No category set</span>}
+                      </div>
+                    ) : (
+                      // In create mode, allow selection
+                      <>
+                        <Select 
+                          value={formData.category} 
+                          onValueChange={(value) => handleInputChange('category', value)}
+                        >
+                          <SelectTrigger className={`h-11 ${errors.category ? 'border-red-500 focus:border-red-500' : 'border-slate-300 focus:border-blue-500'} transition-colors`}>
+                            <SelectValue placeholder="Select a category" />
+                          </SelectTrigger>                        <SelectContent className="max-h-[280px] overflow-y-auto z-50">
                           {Object.entries(RULE_CATEGORIES).map(([key, config]) => (
-                            <SelectItem key={key} value={key}>
-                              <div className="flex items-center gap-2">
-                                <config.icon className="h-4 w-4" />
-                                {config.label}
+                            <SelectItem key={key} value={key} className="py-3 px-4 cursor-pointer hover:bg-slate-50">
+                              <div className="flex items-center gap-3 w-full">
+                                <div className={`p-2 rounded-lg ${config.color} flex-shrink-0`}>
+                                  <config.icon className="h-4 w-4 text-white" />
+                                </div>
+                                <div className="flex-1 min-w-0 text-left">
+                                  <div className="font-medium text-slate-900 truncate">{config.label}</div>
+                                  <div className="text-sm text-slate-500 truncate mt-0.5">{config.description}</div>
+                                </div>
                               </div>
                             </SelectItem>
                           ))}
-                        </SelectContent>
-                      </Select>
-                      {errors.category && (
-                        <p className="mt-1 text-sm text-red-600 flex items-center gap-1">
-                          <AlertCircle className="h-3 w-3" />
-                          {errors.category}
-                        </p>
-                      )}
-                    </>
-                  )}
-                </div>
+                          </SelectContent>
+                        </Select>
+                        {errors.category && (
+                          <p className="text-sm text-red-600 flex items-center gap-1 bg-red-50 p-2 rounded-md">
+                            <AlertCircle className="h-4 w-4" />
+                            {errors.category}
+                          </p>
+                        )}
+                      </>
+                    )}
+                  </div>
 
-                <div>
-                  <Label htmlFor="priority" className="text-sm font-medium text-gray-700">Priority *</Label>
-                  <Input
-                    id="priority"
-                    type="number"
-                    min="1"
-                    max="100"
-                    value={formData.priority}
-                    onChange={(e) => handleInputChange('priority', parseInt(e.target.value) || 1)}
-                    className={`mt-1 ${errors.priority ? 'border-red-500' : ''}`}
-                  />
-                  {errors.priority && (
-                    <p className="mt-1 text-sm text-red-600 flex items-center gap-1">
-                      <AlertCircle className="h-3 w-3" />
-                      {errors.priority}
-                    </p>
-                  )}
-                </div>
+                  <div className="space-y-2">
+                    <Label htmlFor="priority" className="text-sm font-semibold text-slate-700 flex items-center gap-2">
+                      <span>Priority Level</span>
+                      <span className="text-red-500">*</span>
+                    </Label>
+                    <Input
+                      id="priority"
+                      type="number"
+                      min="1"
+                      max="100"
+                      value={formData.priority}
+                      onChange={(e) => handleInputChange('priority', parseInt(e.target.value) || 1)}
+                      className={`h-11 ${errors.priority ? 'border-red-500 focus:border-red-500' : 'border-slate-300 focus:border-blue-500'} transition-colors`}
+                      placeholder="1-100"
+                    />
+                    <div className="text-xs text-slate-500">Higher numbers = higher priority</div>
+                    {errors.priority && (
+                      <p className="text-sm text-red-600 flex items-center gap-1 bg-red-50 p-2 rounded-md">
+                        <AlertCircle className="h-4 w-4" />
+                        {errors.priority}
+                      </p>
+                    )}
+                  </div>
 
-                <div className="flex items-center gap-2">
-                  <input
-                    type="checkbox"
-                    id="active"
-                    checked={formData.active}
-                    onChange={(e) => setFormData((prev: any) => ({ ...prev, active: e.target.checked }))}
-                  />
-                  <Label htmlFor="active">Rule Active</Label>
+                  <div className="space-y-2">
+                    <Label className="text-sm font-semibold text-slate-700">Rule Status</Label>
+                    <div className="flex items-center gap-3 p-3 border border-slate-300 rounded-lg bg-slate-50">
+                      <input
+                        type="checkbox"
+                        id="active"
+                        checked={formData.active}
+                        onChange={(e) => setFormData((prev: any) => ({ ...prev, active: e.target.checked }))}
+                        className="h-4 w-4 text-blue-600 focus:ring-blue-500 border-slate-300 rounded"
+                      />
+                      <Label htmlFor="active" className="flex items-center gap-2 cursor-pointer">
+                        <span className={`font-medium ${formData.active ? 'text-green-700' : 'text-slate-500'}`}>
+                          {formData.active ? 'Active' : 'Inactive'}
+                        </span>
+                        {formData.active && <CheckCircle className="h-4 w-4 text-green-600" />}
+                      </Label>
+                    </div>
+                  </div>
                 </div>
-              </div>
-            </CardContent>
-          </Card>
+              </CardContent>
+            </Card>
 
           {/* Conditions */}
-          <Card>
-            <CardHeader>
-              <CardTitle className="flex items-center gap-2">
-                <Check className="h-5 w-5" />
-                Rule Conditions *
+          <Card className="border-0 shadow-lg bg-white/80 backdrop-blur-sm">
+            <CardHeader className="bg-gradient-to-r from-emerald-50 to-emerald-100 rounded-t-lg border-b border-emerald-200">
+              <CardTitle className="flex items-center gap-3 text-emerald-800">
+                <div className="p-2 bg-emerald-200 rounded-lg">
+                  <Check className="h-5 w-5 text-emerald-600" />
+                </div>
+                <div>
+                  <div className="text-lg font-semibold">Rule Conditions</div>
+                  <CardDescription className="text-emerald-600 mt-1 flex items-center gap-2">
+                    <span>Define when this rule should trigger</span>
+                    <span className="text-red-500">*</span>
+                  </CardDescription>
+                </div>
               </CardTitle>
-              <CardDescription>Define when this rule should trigger</CardDescription>
               {errors.conditions && (
-                <p className="mt-2 text-sm text-red-600 flex items-center gap-1">
-                  <AlertCircle className="h-3 w-3" />
-                  {errors.conditions}
-                </p>
+                <div className="mt-3 p-3 bg-red-50 border border-red-200 rounded-lg">
+                  <p className="text-sm text-red-600 flex items-center gap-2">
+                    <AlertCircle className="h-4 w-4" />
+                    {errors.conditions}
+                  </p>
+                </div>
               )}
             </CardHeader>
-            <CardContent className="space-y-4">
+            <CardContent className="p-6 space-y-4">
               <div className="space-y-4">
                 {Array.isArray(formData.conditions?.all) && formData.conditions.all.map((condition: any, index: number) => (
-                  <div key={index} className="p-4 border border-gray-200 rounded-lg bg-gray-50">
-                    <div className="grid grid-cols-1 md:grid-cols-4 gap-4 items-end">
-                      <div>
-                        <Label>Fact</Label>
-                        <Select 
-                          value={condition.fact} 
-                          onValueChange={(value) => updateCondition(index, 'fact', value)}
-                        >
-                          <SelectTrigger>
-                            <SelectValue placeholder="Select fact" />
-                          </SelectTrigger>
-                          <SelectContent>
-                            {allAvailableFacts.map((fact) => (
-                              <SelectItem key={fact} value={fact}>
-                                {fact}
-                              </SelectItem>
-                            ))}
-                          </SelectContent>
-                        </Select>
+                  <div key={index} className="p-5 border border-slate-200 rounded-xl bg-gradient-to-r from-slate-50 to-slate-100 hover:shadow-md transition-shadow">
+                    <div className="flex items-center justify-between mb-4">
+                      <div className="flex items-center gap-2">
+                        <div className="w-6 h-6 bg-blue-500 text-white rounded-full flex items-center justify-center text-sm font-medium">
+                          {index + 1}
+                        </div>
+                        <span className="font-medium text-slate-700">Condition {index + 1}</span>
                       </div>
-
-                      <div>
-                        <Label>Operator</Label>
-                        <Select 
-                          value={condition.operator} 
-                          onValueChange={(value) => updateCondition(index, 'operator', value)}
-                        >
-                          <SelectTrigger>
-                            <SelectValue placeholder="Select operator" />
-                          </SelectTrigger>
-                          <SelectContent>
-                            {OPERATORS.map((op) => (
-                              <SelectItem key={op.value} value={op.value}>
-                                {op.label}
-                              </SelectItem>
-                            ))}
-                          </SelectContent>
-                        </Select>
-                      </div>
-
-                      <div>
-                        <Label>Value</Label>
-                        <Input
-                          value={condition.value}
-                          onChange={(e) => updateCondition(index, 'value', e.target.value)}
-                          placeholder="Enter value"
-                        />
-                      </div>
-
                       <Button
                         type="button"
                         variant="outline"
                         size="sm"
                         onClick={() => removeCondition(index)}
-                        className="text-red-600 hover:text-red-700 hover:bg-red-50"
+                        className="text-red-600 hover:text-red-700 hover:bg-red-50 border-red-200 hover:border-red-300"
                       >
                         <Trash2 className="h-4 w-4" />
                       </Button>
+                    </div>
+                    <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                      <div className="space-y-2">
+                        <Label className="text-sm font-semibold text-slate-700">Fact</Label>
+                        <Select 
+                          value={condition.fact} 
+                          onValueChange={(value) => updateCondition(index, 'fact', value)}
+                        >
+                          <SelectTrigger className="h-10 border-slate-300 focus:border-blue-500">
+                            <SelectValue placeholder="Select fact" />
+                          </SelectTrigger>
+                          <SelectContent className="max-h-[200px] overflow-y-auto">
+                            {allAvailableFacts.map((fact) => (
+                              <SelectItem key={fact} value={fact} className="py-2 px-3">
+                                <span className="font-medium">{fact}</span>
+                              </SelectItem>
+                            ))}
+                          </SelectContent>
+                        </Select>
+                      </div>
+
+                      <div className="space-y-2">
+                        <Label className="text-sm font-semibold text-slate-700">Operator</Label>
+                        <Select 
+                          value={condition.operator} 
+                          onValueChange={(value) => updateCondition(index, 'operator', value)}
+                        >
+                          <SelectTrigger className="h-10 border-slate-300 focus:border-blue-500">
+                            <SelectValue placeholder="Select operator" />
+                          </SelectTrigger>
+                          <SelectContent className="max-h-[200px] overflow-y-auto">
+                            {OPERATORS.map((op) => (
+                              <SelectItem key={op.value} value={op.value} className="py-2 px-3">
+                                <span className="font-medium">{op.label}</span>
+                              </SelectItem>
+                            ))}
+                          </SelectContent>
+                        </Select>
+                      </div>
+
+                      <div className="space-y-2">
+                        <Label className="text-sm font-semibold text-slate-700">Value</Label>
+                        <Input
+                          value={condition.value}
+                          onChange={(e) => updateCondition(index, 'value', e.target.value)}
+                          placeholder="Enter value"
+                          className="h-10 border-slate-300 focus:border-blue-500"
+                        />
+                      </div>
                     </div>
                   </div>
                 ))}
@@ -766,47 +823,54 @@ const RuleFormDialog: React.FC<RuleFormDialogProps> = ({
                   type="button"
                   variant="outline"
                   onClick={addCondition}
-                  className="w-full"
+                  className="w-full h-12 border-2 border-dashed border-slate-300 hover:border-blue-500 hover:bg-blue-50 text-slate-600 hover:text-blue-600 transition-colors"
                 >
-                  <Plus className="h-4 w-4 mr-2" />
-                  Add Condition
+                  <Plus className="h-5 w-5 mr-2" />
+                  Add New Condition
                 </Button>
               </div>
             </CardContent>
           </Card>
 
           {/* Event Configuration */}
-          <Card>
-            <CardHeader>
-              <CardTitle className="flex items-center gap-2">
-                <Activity className="h-5 w-5" />
-                Event Configuration
+          <Card className="border-0 shadow-lg bg-white/80 backdrop-blur-sm">
+            <CardHeader className="bg-gradient-to-r from-purple-50 to-purple-100 rounded-t-lg border-b border-purple-200">
+              <CardTitle className="flex items-center gap-3 text-purple-800">
+                <div className="p-2 bg-purple-200 rounded-lg">
+                  <Activity className="h-5 w-5 text-purple-600" />
+                </div>
+                <div>
+                  <div className="text-lg font-semibold">Event Configuration</div>
+                  <CardDescription className="text-purple-600 mt-1">Configure the event that this rule will trigger</CardDescription>
+                </div>
               </CardTitle>
-              <CardDescription>Configure the event that this rule will trigger</CardDescription>
             </CardHeader>
-            <CardContent className="space-y-4">
-              <div>
-                <Label htmlFor="eventType" className="text-sm font-medium text-gray-700">Event Type *</Label>
-                <div className="flex gap-2 mt-1">
+            <CardContent className="p-6 space-y-6">
+              <div className="space-y-2">
+                <Label htmlFor="eventType" className="text-sm font-semibold text-slate-700 flex items-center gap-2">
+                  <span>Event Type</span>
+                  <span className="text-red-500">*</span>
+                </Label>
+                <div className="flex gap-3">
                   <Select 
                     value={formData.event?.type || ''} 
                     onValueChange={(value) => handleEventChange('type', value)}
                   >
-                    <SelectTrigger className={`flex-1 ${errors.eventType ? 'border-red-500' : ''}`}>
+                    <SelectTrigger className={`flex-1 h-11 ${errors.eventType ? 'border-red-500 focus:border-red-500' : 'border-slate-300 focus:border-blue-500'} transition-colors`}>
                       <SelectValue placeholder="Select event type" />
                     </SelectTrigger>
-                    <SelectContent>
+                    <SelectContent className="max-h-[250px] overflow-y-auto">
                       {/* Show default event types */}
                       {Array.isArray(defaults?.eventTypes) && defaults.eventTypes.map((type: string) => (
-                        <SelectItem key={type} value={type}>
-                          {type}
+                        <SelectItem key={type} value={type} className="py-2 px-3">
+                          <span className="font-medium">{type}</span>
                         </SelectItem>
                       ))}
                       {/* When editing, also show the current event type if it's not in defaults */}
                       {initialRule && formData.event?.type && 
                        (!Array.isArray(defaults?.eventTypes) || !defaults.eventTypes.includes(formData.event.type)) && (
-                        <SelectItem key={formData.event.type} value={formData.event.type}>
-                          {formData.event.type} (current)
+                        <SelectItem key={formData.event.type} value={formData.event.type} className="py-2 px-3">
+                          <span className="font-medium">{formData.event.type} (current)</span>
                         </SelectItem>
                       )}
                     </SelectContent>
@@ -815,46 +879,54 @@ const RuleFormDialog: React.FC<RuleFormDialogProps> = ({
                     type="button"
                     variant="outline"
                     onClick={() => setShowCustomInputs((prev: any) => ({ ...prev, eventType: !prev.eventType }))}
+                    className="px-3 h-11 border-slate-300 hover:border-blue-500 hover:bg-blue-50"
                   >
                     <Plus className="h-4 w-4" />
                   </Button>
                 </div>
                 {errors.eventType && (
-                  <p className="mt-1 text-sm text-red-600 flex items-center gap-1">
-                    <AlertCircle className="h-3 w-3" />
+                  <p className="text-sm text-red-600 flex items-center gap-1 bg-red-50 p-2 rounded-md">
+                    <AlertCircle className="h-4 w-4" />
                     {errors.eventType}
                   </p>
                 )}
 
                 {showCustomInputs.eventType && (
-                  <div className="mt-2 flex gap-2">
-                    <Input
-                      value={customEventType}
-                      onChange={(e) => setCustomEventType(e.target.value)}
-                      placeholder="Enter custom event type"
-                    />
-                    <Button type="button" onClick={addCustomEventType} size="sm">
-                      Add
-                    </Button>
-                    <Button 
-                      type="button" 
-                      variant="outline" 
-                      onClick={() => setShowCustomInputs((prev: any) => ({ ...prev, eventType: false }))}
-                      size="sm"
-                    >
-                      Cancel
-                    </Button>
+                  <div className="mt-3 p-4 bg-blue-50 border border-blue-200 rounded-lg">
+                    <div className="flex gap-2">
+                      <Input
+                        value={customEventType}
+                        onChange={(e) => setCustomEventType(e.target.value)}
+                        placeholder="Enter custom event type"
+                        className="flex-1 h-10 border-slate-300 focus:border-blue-500"
+                      />
+                      <Button type="button" onClick={addCustomEventType} size="sm" className="bg-blue-600 hover:bg-blue-700 text-white">
+                        Add
+                      </Button>
+                      <Button 
+                        type="button" 
+                        variant="outline" 
+                        onClick={() => setShowCustomInputs((prev: any) => ({ ...prev, eventType: false }))}
+                        size="sm"
+                        className="border-slate-300 hover:border-slate-400"
+                      >
+                        Cancel
+                      </Button>
+                    </div>
                   </div>
                 )}
               </div>
 
-              {/* Event Parameters - Simplified */}
-              <div>
-                <Label className="text-sm font-semibold text-gray-700 mb-3 block">Event Parameters</Label>
-                <div className="space-y-4 p-4 bg-gray-50 rounded-lg border border-gray-200">
+              {/* Event Parameters - Enhanced */}
+              <div className="space-y-4">
+                <div className="flex items-center gap-2">
+                  <Label className="text-sm font-semibold text-slate-700">Event Parameters</Label>
+                  <div className="h-px bg-slate-200 flex-1"></div>
+                </div>
+                <div className="p-5 bg-gradient-to-r from-slate-50 to-slate-100 rounded-xl border border-slate-200">
                   {/* Description */}
-                  <div>
-                    <Label htmlFor="eventDescription">Description</Label>
+                  <div className="mb-6">
+                    <Label htmlFor="eventDescription" className="text-sm font-semibold text-slate-700 mb-2 block">Description</Label>
                     <Input
                       id="eventDescription"
                       value={formData.event?.params?.description || ''}
@@ -869,13 +941,14 @@ const RuleFormDialog: React.FC<RuleFormDialogProps> = ({
                         }
                       }))}
                       placeholder="Enter event description"
+                      className="h-11 border-slate-300 focus:border-blue-500"
                     />
                   </div>
 
                   {/* Core Parameters Grid */}
-                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                    <div>
-                      <Label htmlFor="multiplier">Multiplier</Label>
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
+                    <div className="space-y-2">
+                      <Label htmlFor="multiplier" className="text-sm font-semibold text-slate-700">Multiplier</Label>
                       <Input
                         id="multiplier"
                         type="number"
@@ -893,11 +966,13 @@ const RuleFormDialog: React.FC<RuleFormDialogProps> = ({
                           }
                         }))}
                         placeholder="e.g., 1.5"
+                        className="h-11 border-slate-300 focus:border-blue-500"
                       />
+                      <div className="text-xs text-slate-500">Point calculation multiplier</div>
                     </div>
 
-                    <div>
-                      <Label htmlFor="bonus">Bonus Points</Label>
+                    <div className="space-y-2">
+                      <Label htmlFor="bonus" className="text-sm font-semibold text-slate-700">Bonus Points</Label>
                       <Input
                         id="bonus"
                         type="number"
@@ -914,20 +989,25 @@ const RuleFormDialog: React.FC<RuleFormDialogProps> = ({
                           }
                         }))}
                         placeholder="e.g., 300"
+                        className="h-11 border-slate-300 focus:border-blue-500"
                       />
+                      <div className="text-xs text-slate-500">Additional bonus points</div>
                     </div>
                   </div>
 
                   {/* Custom Parameters */}
-                  <div>
-                    <Label className="text-sm font-medium text-gray-600 mb-2 block">Additional Parameters</Label>
-                    <div className="space-y-2">
+                  <div className="space-y-4">
+                    <div className="flex items-center gap-2">
+                      <Label className="text-sm font-semibold text-slate-700">Additional Parameters</Label>
+                      <div className="h-px bg-slate-300 flex-1"></div>
+                    </div>
+                    <div className="space-y-3">
                       {Object.entries(formData.event?.params || {})
                         .filter(([key]) => !['description', 'multiplier', 'bonus', 'fixedBonus', 'registrationBonus'].includes(key))
                         .map(([key, value], index) => (
-                          <div key={index} className="flex gap-2 items-end">
-                            <div className="flex-1">
-                              <Label>Parameter Name</Label>
+                          <div key={index} className="flex gap-3 items-end p-3 bg-white rounded-lg border border-slate-200">
+                            <div className="flex-1 space-y-1">
+                              <Label className="text-xs font-medium text-slate-600">Parameter Name</Label>
                               <Input
                                 value={key}
                                 onChange={(e) => {
@@ -941,10 +1021,11 @@ const RuleFormDialog: React.FC<RuleFormDialogProps> = ({
                                   }));
                                 }}
                                 placeholder="Parameter name"
+                                className="h-9 border-slate-300 focus:border-blue-500"
                               />
                             </div>
-                            <div className="flex-1">
-                              <Label>Value</Label>
+                            <div className="flex-1 space-y-1">
+                              <Label className="text-xs font-medium text-slate-600">Value</Label>
                               <Input
                                 value={String(value)}
                                 onChange={(e) => {
@@ -965,6 +1046,7 @@ const RuleFormDialog: React.FC<RuleFormDialogProps> = ({
                                   }));
                                 }}
                                 placeholder="Parameter value"
+                                className="h-9 border-slate-300 focus:border-blue-500"
                               />
                             </div>
                             <Button
@@ -979,7 +1061,7 @@ const RuleFormDialog: React.FC<RuleFormDialogProps> = ({
                                   event: { ...prev.event, params }
                                 }));
                               }}
-                              className="text-red-600 hover:text-red-700 hover:bg-red-50"
+                              className="text-red-600 hover:text-red-700 hover:bg-red-50 border-red-200 hover:border-red-300 h-9 px-2"
                             >
                               <Trash2 className="h-4 w-4" />
                             </Button>
@@ -1003,7 +1085,7 @@ const RuleFormDialog: React.FC<RuleFormDialogProps> = ({
                             }
                           }));
                         }}
-                        className="w-full"
+                        className="w-full h-10 border-2 border-dashed border-slate-300 hover:border-blue-500 hover:bg-blue-50 text-slate-600 hover:text-blue-600"
                       >
                         <Plus className="h-4 w-4 mr-2" />
                         Add Custom Parameter
@@ -1016,49 +1098,56 @@ const RuleFormDialog: React.FC<RuleFormDialogProps> = ({
           </Card>
 
           {/* Markets and Channels */}
-          <Card>
-            <CardHeader>
-              <CardTitle className="flex items-center gap-2">
-                <Tag className="h-5 w-5" />
-                Scope Configuration
+          <Card className="border-0 shadow-lg bg-white/80 backdrop-blur-sm">
+            <CardHeader className="bg-gradient-to-r from-orange-50 to-orange-100 rounded-t-lg border-b border-orange-200">
+              <CardTitle className="flex items-center gap-3 text-orange-800">
+                <div className="p-2 bg-orange-200 rounded-lg">
+                  <Tag className="h-5 w-5 text-orange-600" />
+                </div>
+                <div>
+                  <div className="text-lg font-semibold">Scope Configuration</div>
+                  <CardDescription className="text-orange-600 mt-1">Define where this rule applies</CardDescription>
+                </div>
               </CardTitle>
-              <CardDescription>Define where this rule applies</CardDescription>
             </CardHeader>
-            <CardContent className="space-y-6">
+            <CardContent className="p-6 space-y-8">
               {/* Markets */}
-              <div>
-                <Label className="text-sm font-medium text-gray-700">Markets *</Label>
-                <div className="mt-2 space-y-3">
-                  <div className="flex flex-wrap gap-2">
+              <div className="space-y-4">
+                <Label className="text-sm font-semibold text-slate-700 flex items-center gap-2">
+                  <span>Markets</span>
+                  <span className="text-red-500">*</span>
+                </Label>
+                <div className="space-y-4">
+                  <div className="min-h-[40px] p-3 border border-slate-300 rounded-lg bg-slate-50 flex flex-wrap gap-2">
                     {Array.isArray(formData?.markets) && formData.markets.length > 0 ? (
                       formData.markets.map((market: string) => (
-                        <span key={market} className="inline-flex items-center px-3 py-1 rounded-full text-sm bg-blue-100 text-blue-800">
-                          {market}
+                        <span key={market} className="inline-flex items-center px-3 py-1.5 rounded-full text-sm bg-blue-100 text-blue-800 border border-blue-200">
+                          <span className="font-medium">{market}</span>
                           <button
                             type="button"
                             onClick={() => removeMarket(market)}
-                            className="ml-2 hover:text-red-600"
+                            className="ml-2 hover:text-red-600 transition-colors"
                           >
                             <X className="h-3 w-3" />
                           </button>
                         </span>
                       ))
                     ) : (
-                      <span className="text-sm text-gray-500">No markets selected</span>
+                      <span className="text-sm text-slate-500 italic">No markets selected</span>
                     )}
                   </div>
 
-                  <div className="flex gap-2">
+                  <div className="flex gap-3">
                     <Select onValueChange={(value) => { addMarket(value); errors.markets && setErrors(prev => ({ ...prev, markets: '' })); }}>
-                      <SelectTrigger className={`flex-1 ${errors.markets ? 'border-red-500' : ''}`}>
+                      <SelectTrigger className={`flex-1 h-11 ${errors.markets ? 'border-red-500 focus:border-red-500' : 'border-slate-300 focus:border-blue-500'} transition-colors`}>
                         <SelectValue placeholder="Select market" />
                       </SelectTrigger>
-                      <SelectContent>
+                      <SelectContent className="max-h-[200px] overflow-y-auto">
                         {Array.isArray(defaults?.markets) && defaults.markets
                           .filter((market: string) => !Array.isArray(formData?.markets) || !formData.markets.includes(market))
                           .map((market: string) => (
-                            <SelectItem key={market} value={market}>
-                              {market}
+                            <SelectItem key={market} value={market} className="py-2 px-3">
+                              <span className="font-medium">{market}</span>
                             </SelectItem>
                           ))}
                       </SelectContent>
@@ -1067,34 +1156,39 @@ const RuleFormDialog: React.FC<RuleFormDialogProps> = ({
                       type="button"
                       variant="outline"
                       onClick={() => setShowCustomInputs((prev: any) => ({ ...prev, market: !prev.market }))}
+                      className="px-3 h-11 border-slate-300 hover:border-blue-500 hover:bg-blue-50"
                     >
                       <Plus className="h-4 w-4" />
                     </Button>
                   </div>
 
                   {showCustomInputs.market && (
-                    <div className="flex gap-2">
-                      <Input
-                        value={customMarket}
-                        onChange={(e) => setCustomMarket(e.target.value)}
-                        placeholder="Enter custom market"
-                      />
-                      <Button type="button" onClick={addCustomMarket} size="sm">
-                        Add
-                      </Button>
-                      <Button 
-                        type="button" 
-                        variant="outline" 
-                        onClick={() => setShowCustomInputs((prev: any) => ({ ...prev, market: false }))}
-                        size="sm"
-                      >
-                        Cancel
-                      </Button>
+                    <div className="p-4 bg-blue-50 border border-blue-200 rounded-lg">
+                      <div className="flex gap-2">
+                        <Input
+                          value={customMarket}
+                          onChange={(e) => setCustomMarket(e.target.value)}
+                          placeholder="Enter custom market"
+                          className="flex-1 h-10 border-slate-300 focus:border-blue-500"
+                        />
+                        <Button type="button" onClick={addCustomMarket} size="sm" className="bg-blue-600 hover:bg-blue-700 text-white">
+                          Add
+                        </Button>
+                        <Button 
+                          type="button" 
+                          variant="outline" 
+                          onClick={() => setShowCustomInputs((prev: any) => ({ ...prev, market: false }))}
+                          size="sm"
+                          className="border-slate-300 hover:border-slate-400"
+                        >
+                          Cancel
+                        </Button>
+                      </div>
                     </div>
                   )}
                   {errors.markets && (
-                    <p className="text-sm text-red-600 flex items-center gap-1">
-                      <AlertCircle className="h-3 w-3" />
+                    <p className="text-sm text-red-600 flex items-center gap-1 bg-red-50 p-2 rounded-md">
+                      <AlertCircle className="h-4 w-4" />
                       {errors.markets}
                     </p>
                   )}
@@ -1102,39 +1196,42 @@ const RuleFormDialog: React.FC<RuleFormDialogProps> = ({
               </div>
 
               {/* Channels */}
-              <div>
-                <Label className="text-sm font-medium text-gray-700">Channels *</Label>
-                <div className="mt-2 space-y-3">
-                  <div className="flex flex-wrap gap-2">
+              <div className="space-y-4">
+                <Label className="text-sm font-semibold text-slate-700 flex items-center gap-2">
+                  <span>Channels</span>
+                  <span className="text-red-500">*</span>
+                </Label>
+                <div className="space-y-4">
+                  <div className="min-h-[40px] p-3 border border-slate-300 rounded-lg bg-slate-50 flex flex-wrap gap-2">
                     {Array.isArray(formData?.channels) && formData.channels.length > 0 ? (
                       formData.channels.map((channel: string) => (
-                        <span key={channel} className="inline-flex items-center px-3 py-1 rounded-full text-sm bg-green-100 text-green-800">
-                          {channel}
+                        <span key={channel} className="inline-flex items-center px-3 py-1.5 rounded-full text-sm bg-green-100 text-green-800 border border-green-200">
+                          <span className="font-medium">{channel}</span>
                           <button
                             type="button"
                             onClick={() => removeChannel(channel)}
-                            className="ml-2 hover:text-red-600"
+                            className="ml-2 hover:text-red-600 transition-colors"
                           >
                             <X className="h-3 w-3" />
                           </button>
                         </span>
                       ))
                     ) : (
-                      <span className="text-sm text-gray-500">No channels selected</span>
+                      <span className="text-sm text-slate-500 italic">No channels selected</span>
                     )}
                   </div>
 
-                  <div className="flex gap-2">
+                  <div className="flex gap-3">
                     <Select onValueChange={(value) => { addChannel(value); errors.channels && setErrors(prev => ({ ...prev, channels: '' })); }}>
-                      <SelectTrigger className={`flex-1 ${errors.channels ? 'border-red-500' : ''}`}>
+                      <SelectTrigger className={`flex-1 h-11 ${errors.channels ? 'border-red-500 focus:border-red-500' : 'border-slate-300 focus:border-blue-500'} transition-colors`}>
                         <SelectValue placeholder="Select channel" />
                       </SelectTrigger>
-                      <SelectContent>
+                      <SelectContent className="max-h-[200px] overflow-y-auto">
                         {Array.isArray(defaults?.channels) && defaults.channels
                           .filter((channel: string) => !Array.isArray(formData?.channels) || !formData.channels.includes(channel))
                           .map((channel: string) => (
-                            <SelectItem key={channel} value={channel}>
-                              {channel}
+                            <SelectItem key={channel} value={channel} className="py-2 px-3">
+                              <span className="font-medium">{channel}</span>
                             </SelectItem>
                           ))}
                       </SelectContent>
@@ -1143,34 +1240,39 @@ const RuleFormDialog: React.FC<RuleFormDialogProps> = ({
                       type="button"
                       variant="outline"
                       onClick={() => setShowCustomInputs((prev: any) => ({ ...prev, channel: !prev.channel }))}
+                      className="px-3 h-11 border-slate-300 hover:border-blue-500 hover:bg-blue-50"
                     >
                       <Plus className="h-4 w-4" />
                     </Button>
                   </div>
 
                   {showCustomInputs.channel && (
-                    <div className="flex gap-2">
-                      <Input
-                        value={customChannel}
-                        onChange={(e) => setCustomChannel(e.target.value)}
-                        placeholder="Enter custom channel"
-                      />
-                      <Button type="button" onClick={addCustomChannel} size="sm">
-                        Add
-                      </Button>
-                      <Button 
-                        type="button" 
-                        variant="outline" 
-                        onClick={() => setShowCustomInputs((prev: any) => ({ ...prev, channel: false }))}
-                        size="sm"
-                      >
-                        Cancel
-                      </Button>
+                    <div className="p-4 bg-green-50 border border-green-200 rounded-lg">
+                      <div className="flex gap-2">
+                        <Input
+                          value={customChannel}
+                          onChange={(e) => setCustomChannel(e.target.value)}
+                          placeholder="Enter custom channel"
+                          className="flex-1 h-10 border-slate-300 focus:border-blue-500"
+                        />
+                        <Button type="button" onClick={addCustomChannel} size="sm" className="bg-green-600 hover:bg-green-700 text-white">
+                          Add
+                        </Button>
+                        <Button 
+                          type="button" 
+                          variant="outline" 
+                          onClick={() => setShowCustomInputs((prev: any) => ({ ...prev, channel: false }))}
+                          size="sm"
+                          className="border-slate-300 hover:border-slate-400"
+                        >
+                          Cancel
+                        </Button>
+                      </div>
                     </div>
                   )}
                   {errors.channels && (
-                    <p className="text-sm text-red-600 flex items-center gap-1">
-                      <AlertCircle className="h-3 w-3" />
+                    <p className="text-sm text-red-600 flex items-center gap-1 bg-red-50 p-2 rounded-md">
+                      <AlertCircle className="h-4 w-4" />
                       {errors.channels}
                     </p>
                   )}
@@ -1178,20 +1280,30 @@ const RuleFormDialog: React.FC<RuleFormDialogProps> = ({
               </div>
             </CardContent>
           </Card>
-
-          {/* Form Actions */}
-          <div className="flex items-center justify-end gap-3 pt-6 border-t border-gray-200">
-            <Button type="button" variant="outline" onClick={onClose}>
-              Cancel
-            </Button>
-            <Button type="submit" className="!text-white" style={{ background: 'linear-gradient(to right, rgb(0, 114, 187), rgb(0, 94, 154))' }}>
-              <Save className="h-4 w-4 mr-2 !text-white" />
-              {initialRule ? 'Update Rule' : 'Create Rule'}
-            </Button>
-          </div>
         </form>
       </div>
+
+      {/* Fixed Footer */}
+      <div className="flex items-center justify-end gap-3 px-6 py-4 border-t border-slate-200 bg-white/95 backdrop-blur-sm rounded-b-2xl flex-shrink-0">
+        <Button 
+          type="button" 
+          variant="outline" 
+          onClick={onClose}
+          className="h-10 px-6 border-slate-300 hover:border-slate-400 hover:bg-slate-50 text-slate-700 font-medium"
+        >
+          Cancel
+        </Button>
+        <Button 
+          type="submit" 
+          form="rule-form"
+          className="h-10 px-6 bg-gradient-to-r from-blue-600 to-blue-700 hover:from-blue-700 hover:to-blue-800 text-white font-medium shadow-lg hover:shadow-xl transition-all duration-200"
+        >
+          <Save className="h-4 w-4 mr-2" />
+          {initialRule ? 'Update Rule' : 'Create Rule'}
+        </Button>
+      </div>
     </div>
+  </div>
   );
 };
 

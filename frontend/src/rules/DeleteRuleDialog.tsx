@@ -31,7 +31,7 @@ const DeleteRuleDialog: React.FC<DeleteRuleDialogProps> = ({
     <div className="fixed inset-0 bg-black/50 backdrop-blur-sm flex items-center justify-center p-4 z-50">
       <div className="bg-white/95 backdrop-blur-md rounded-2xl shadow-2xl w-full max-w-md border border-gray-200">
         {/* Modal Header */}
-        <div className="bg-gradient-to-r from-red-600 to-red-700 px-6 py-4 flex items-center justify-between">
+        <div className="bg-gradient-to-r from-red-600 to-red-700 px-6 py-4 flex items-center justify-between rounded-t-2xl">
           <div className="flex items-center gap-3">
             <div className="bg-white p-2 rounded-xl shadow-lg">
               <AlertTriangle className="h-5 w-5 text-red-600" />
@@ -114,7 +114,7 @@ const DeleteRuleDialog: React.FC<DeleteRuleDialogProps> = ({
         </div>
 
         {/* Modal Footer */}
-        <div className="px-6 py-4 bg-gray-50 border-t border-gray-200 flex justify-end gap-3">
+        <div className="px-6 py-4 bg-gray-50 border-t border-gray-200 flex justify-end gap-3 rounded-b-2xl">
           <Button
             variant="outline"
             onClick={onCancel}

@@ -282,5 +282,61 @@
     "channels": [
       "STORE"
     ]
+  },
+  {
+    "name": "MPR_DAY_SURPRISE",
+    "priority": 1,
+    "active": true,
+    "conditions": {
+      "all": [
+        {
+          "fact": "eventType",
+          "operator": "equal",
+          "value": "PURCHASE"
+        },
+        {
+          "fact": "channel",
+          "operator": "in",
+          "value": [
+            "ONLINE",
+            "STORE",
+            "MOBILE",
+            "ECOMMERCE"
+          ]
+        },
+        {
+          "fact": "market",
+          "operator": "in",
+          "value": [
+            "HK",
+            "JP",
+            "TW"
+          ]
+        },
+        {
+          "fact": "transactionAmount",
+          "operator": "greaterThanInclusive",
+          "value": "1111"
+        }
+      ]
+    },
+    "event": {
+      "type": "PURCHASE",
+      "params": {
+        "description": "This is the MPR day surprise",
+        "bonus": 143
+      }
+    },
+    "markets": [
+      "HK",
+      "JP",
+      "TW"
+    ],
+    "channels": [
+      "ONLINE",
+      "STORE",
+      "MOBILE",
+      "ECOMMERCE"
+    ]
   }
 ]

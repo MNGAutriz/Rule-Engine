@@ -70,12 +70,14 @@
 
 /* Ensure dropdown visibility and proper z-index stacking */
 [data-radix-select-content] {
-  z-index: 9999 !important;
+  z-index: 10000 !important;
   position: fixed !important;
+  max-height: 300px !important;
+  overflow-y: auto !important;
 }
 
 [data-radix-popper-content-wrapper] {
-  z-index: 9999 !important;
+  z-index: 10000 !important;
 }
 
 /* Ensure parent containers don't clip dropdowns */
@@ -96,6 +98,41 @@
 .space-y-6 > div:has([data-radix-select-trigger]) {
   overflow: visible !important;
   position: relative;
+}
+
+/* Custom scrollbar for dialog content */
+.dialog-scrollbar {
+  scrollbar-width: thin;
+  scrollbar-color: #cbd5e1 #f1f5f9;
+}
+
+.dialog-scrollbar::-webkit-scrollbar {
+  width: 8px;
+}
+
+.dialog-scrollbar::-webkit-scrollbar-track {
+  background: #f1f5f9;
+  border-radius: 4px;
+}
+
+.dialog-scrollbar::-webkit-scrollbar-thumb {
+  background: #cbd5e1;
+  border-radius: 4px;
+}
+
+.dialog-scrollbar::-webkit-scrollbar-thumb:hover {
+  background: #94a3b8;
+}
+
+/* Ensure proper spacing for form sections */
+.form-section {
+  margin-bottom: 1.5rem;
+}
+
+/* Fix select item spacing */
+[data-radix-select-item] {
+  padding: 0.75rem 1rem !important;
+  min-height: auto !important;
 }
 
 /* Improve select trigger visibility */

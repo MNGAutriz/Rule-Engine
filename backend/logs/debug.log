@@ -7345,3 +7345,53 @@
 {"timestamp":"2025-07-10T08:02:57.443Z","level":"DEBUG","message":"consumerService.getConsumerById:","data":"function"}
 {"timestamp":"2025-07-10T08:02:57.449Z","level":"DEBUG","message":"Engine run completed","data":{"eventsTriggered":0,"eventTypes":[]}}
 {"timestamp":"2025-07-10T08:02:57.451Z","level":"DEBUG","message":"Calculated reward points","data":{"eventType":"REDEMPTION_DEDUCTION","rewardPoints":-999}}
+{"timestamp":"2025-07-10T11:56:29.492Z","level":"DEBUG","message":"Facts engine initialization complete","data":{"totalFacts":36,"keyFacts":["eventType","market","context.storeId"]}}
+{"timestamp":"2025-07-10T11:56:29.509Z","level":"DEBUG","message":"Discovered event types from rules","data":{"eventTypes":["FLEXIBLE_BASKET_AMOUNT","FIRST_PURCHASE_BIRTH_MONTH_BONUS","FLEXIBLE_VIP_MULTIPLIER","FLEXIBLE_PRODUCT_MULTIPLIER","FLEXIBLE_COMBO_PRODUCT_MULTIPLIER","INTERACTION_REGISTRY_POINT","ORDER_BASE_POINT","ORDER_MULTIPLE_POINT_LIMIT","FLEXIBLE_CAMPAIGN_BONUS","INTERACTION_ADJUST_POINT_TIMES_PER_YEAR","CONSULTATION_BONUS","INTERACTION_ADJUST_POINT_BY_MANAGER","REDEMPTION_DEDUCTION","PURCHASE"],"totalRules":19}}
+{"timestamp":"2025-07-10T11:56:29.514Z","level":"DEBUG","message":"Registered dynamic handler for event type: FLEXIBLE_BASKET_AMOUNT"}
+{"timestamp":"2025-07-10T11:56:29.516Z","level":"DEBUG","message":"Registered dynamic handler for event type: FIRST_PURCHASE_BIRTH_MONTH_BONUS"}
+{"timestamp":"2025-07-10T11:56:29.519Z","level":"DEBUG","message":"Registered dynamic handler for event type: FLEXIBLE_VIP_MULTIPLIER"}
+{"timestamp":"2025-07-10T11:56:29.521Z","level":"DEBUG","message":"Registered dynamic handler for event type: FLEXIBLE_PRODUCT_MULTIPLIER"}
+{"timestamp":"2025-07-10T11:56:29.523Z","level":"DEBUG","message":"Registered dynamic handler for event type: FLEXIBLE_COMBO_PRODUCT_MULTIPLIER"}
+{"timestamp":"2025-07-10T11:56:29.525Z","level":"DEBUG","message":"Registered dynamic handler for event type: INTERACTION_REGISTRY_POINT"}
+{"timestamp":"2025-07-10T11:56:29.527Z","level":"DEBUG","message":"Registered dynamic handler for event type: ORDER_BASE_POINT"}
+{"timestamp":"2025-07-10T11:56:29.529Z","level":"DEBUG","message":"Registered dynamic handler for event type: ORDER_MULTIPLE_POINT_LIMIT"}
+{"timestamp":"2025-07-10T11:56:29.531Z","level":"DEBUG","message":"Registered dynamic handler for event type: FLEXIBLE_CAMPAIGN_BONUS"}
+{"timestamp":"2025-07-10T11:56:29.533Z","level":"DEBUG","message":"Registered dynamic handler for event type: INTERACTION_ADJUST_POINT_TIMES_PER_YEAR"}
+{"timestamp":"2025-07-10T11:56:29.536Z","level":"DEBUG","message":"Registered dynamic handler for event type: CONSULTATION_BONUS"}
+{"timestamp":"2025-07-10T11:56:29.538Z","level":"DEBUG","message":"Registered dynamic handler for event type: INTERACTION_ADJUST_POINT_BY_MANAGER"}
+{"timestamp":"2025-07-10T11:56:29.540Z","level":"DEBUG","message":"Registered dynamic handler for event type: REDEMPTION_DEDUCTION"}
+{"timestamp":"2025-07-10T11:56:29.542Z","level":"DEBUG","message":"Registered dynamic handler for event type: PURCHASE"}
+{"timestamp":"2025-07-10T11:56:29.547Z","level":"DEBUG","message":"About to validate event, consumerService:","data":"object"}
+{"timestamp":"2025-07-10T11:56:29.549Z","level":"DEBUG","message":"consumerService.getConsumerById:","data":"function"}
+{"timestamp":"2025-07-10T11:56:29.570Z","level":"DEBUG","message":"Engine run completed","data":{"eventsTriggered":0,"eventTypes":[]}}
+{"timestamp":"2025-07-10T11:56:29.574Z","level":"DEBUG","message":"Calculated reward points","data":{"eventType":"ORDER_BASE_POINT","rewardPoints":1112}}
+{"timestamp":"2025-07-10T11:56:29.585Z","level":"DEBUG","message":"Engine run completed","data":{"eventsTriggered":0,"eventTypes":[]}}
+{"timestamp":"2025-07-10T11:56:29.587Z","level":"DEBUG","message":"Engine run completed","data":{"eventsTriggered":0,"eventTypes":[]}}
+{"timestamp":"2025-07-10T11:56:29.589Z","level":"DEBUG","message":"Calculated reward points","data":{"eventType":"FLEXIBLE_CAMPAIGN_BONUS","rewardPoints":300}}
+{"timestamp":"2025-07-10T11:56:29.592Z","level":"DEBUG","message":"Calculated reward points","data":{"eventType":"FLEXIBLE_VIP_MULTIPLIER","rewardPoints":2224}}
+{"timestamp":"2025-07-10T11:56:29.595Z","level":"DEBUG","message":"Engine run completed","data":{"eventsTriggered":0,"eventTypes":[]}}
+{"timestamp":"2025-07-10T11:56:29.598Z","level":"DEBUG","message":"Calculated reward points","data":{"eventType":"PURCHASE","rewardPoints":143}}
+{"timestamp":"2025-07-10T11:56:38.263Z","level":"DEBUG","message":"Facts engine initialization complete","data":{"totalFacts":36,"keyFacts":["eventType","market","context.storeId"]}}
+{"timestamp":"2025-07-10T11:56:38.277Z","level":"DEBUG","message":"Discovered event types from rules","data":{"eventTypes":["FLEXIBLE_BASKET_AMOUNT","FIRST_PURCHASE_BIRTH_MONTH_BONUS","FLEXIBLE_VIP_MULTIPLIER","FLEXIBLE_PRODUCT_MULTIPLIER","FLEXIBLE_COMBO_PRODUCT_MULTIPLIER","INTERACTION_REGISTRY_POINT","ORDER_BASE_POINT","ORDER_MULTIPLE_POINT_LIMIT","FLEXIBLE_CAMPAIGN_BONUS","INTERACTION_ADJUST_POINT_TIMES_PER_YEAR","CONSULTATION_BONUS","INTERACTION_ADJUST_POINT_BY_MANAGER","REDEMPTION_DEDUCTION","PURCHASE"],"totalRules":19}}
+{"timestamp":"2025-07-10T11:56:38.281Z","level":"DEBUG","message":"Registered dynamic handler for event type: FLEXIBLE_BASKET_AMOUNT"}
+{"timestamp":"2025-07-10T11:56:38.283Z","level":"DEBUG","message":"Registered dynamic handler for event type: FIRST_PURCHASE_BIRTH_MONTH_BONUS"}
+{"timestamp":"2025-07-10T11:56:38.285Z","level":"DEBUG","message":"Registered dynamic handler for event type: FLEXIBLE_VIP_MULTIPLIER"}
+{"timestamp":"2025-07-10T11:56:38.286Z","level":"DEBUG","message":"Registered dynamic handler for event type: FLEXIBLE_PRODUCT_MULTIPLIER"}
+{"timestamp":"2025-07-10T11:56:38.288Z","level":"DEBUG","message":"Registered dynamic handler for event type: FLEXIBLE_COMBO_PRODUCT_MULTIPLIER"}
+{"timestamp":"2025-07-10T11:56:38.290Z","level":"DEBUG","message":"Registered dynamic handler for event type: INTERACTION_REGISTRY_POINT"}
+{"timestamp":"2025-07-10T11:56:38.292Z","level":"DEBUG","message":"Registered dynamic handler for event type: ORDER_BASE_POINT"}
+{"timestamp":"2025-07-10T11:56:38.294Z","level":"DEBUG","message":"Registered dynamic handler for event type: ORDER_MULTIPLE_POINT_LIMIT"}
+{"timestamp":"2025-07-10T11:56:38.296Z","level":"DEBUG","message":"Registered dynamic handler for event type: FLEXIBLE_CAMPAIGN_BONUS"}
+{"timestamp":"2025-07-10T11:56:38.298Z","level":"DEBUG","message":"Registered dynamic handler for event type: INTERACTION_ADJUST_POINT_TIMES_PER_YEAR"}
+{"timestamp":"2025-07-10T11:56:38.300Z","level":"DEBUG","message":"Registered dynamic handler for event type: CONSULTATION_BONUS"}
+{"timestamp":"2025-07-10T11:56:38.301Z","level":"DEBUG","message":"Registered dynamic handler for event type: INTERACTION_ADJUST_POINT_BY_MANAGER"}
+{"timestamp":"2025-07-10T11:56:38.303Z","level":"DEBUG","message":"Registered dynamic handler for event type: REDEMPTION_DEDUCTION"}
+{"timestamp":"2025-07-10T11:56:38.305Z","level":"DEBUG","message":"Registered dynamic handler for event type: PURCHASE"}
+{"timestamp":"2025-07-10T11:56:38.311Z","level":"DEBUG","message":"About to validate event, consumerService:","data":"object"}
+{"timestamp":"2025-07-10T11:56:38.313Z","level":"DEBUG","message":"consumerService.getConsumerById:","data":"function"}
+{"timestamp":"2025-07-10T11:56:38.327Z","level":"DEBUG","message":"Engine run completed","data":{"eventsTriggered":0,"eventTypes":[]}}
+{"timestamp":"2025-07-10T11:56:38.330Z","level":"DEBUG","message":"Calculated reward points","data":{"eventType":"ORDER_BASE_POINT","rewardPoints":1112}}
+{"timestamp":"2025-07-10T11:56:38.337Z","level":"DEBUG","message":"Engine run completed","data":{"eventsTriggered":0,"eventTypes":[]}}
+{"timestamp":"2025-07-10T11:56:38.340Z","level":"DEBUG","message":"Calculated reward points","data":{"eventType":"FLEXIBLE_CAMPAIGN_BONUS","rewardPoints":300}}
+{"timestamp":"2025-07-10T11:56:38.343Z","level":"DEBUG","message":"Engine run completed","data":{"eventsTriggered":0,"eventTypes":[]}}
+{"timestamp":"2025-07-10T11:56:38.345Z","level":"DEBUG","message":"Calculated reward points","data":{"eventType":"PURCHASE","rewardPoints":143}}
