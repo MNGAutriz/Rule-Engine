@@ -91,6 +91,12 @@ class PointsExpirationService {
       return typeof lastOrderDate === 'string' ? new Date(lastOrderDate) : lastOrderDate;
     }
 
+    // Ensure pointsHistory is an array
+    if (!Array.isArray(pointsHistory)) {
+      console.warn('pointsHistory is not an array:', typeof pointsHistory, pointsHistory);
+      pointsHistory = [];
+    }
+
     // Look for most recent qualifying event in history
     const qualifyingEvents = pointsHistory.filter(event => 
       validEventTypes.includes(event.eventType)
@@ -108,7 +114,9 @@ class PointsExpirationService {
     }
 
     // Fallback to registration event if no qualifying events found
-    const registrationEvent = pointsHistory.find(event => event.eventType === 'REGISTRATION');
+    const registrationEvent = Array.isArray(pointsHistory) 
+      ? pointsHistory.find(event => event.eventType === 'REGISTRATION')
+      : null;
     if (registrationEvent) {
       return new Date(registrationEvent.timestamp);
     }
@@ -167,6 +175,14 @@ class PointsExpirationService {
   getExpirationDetails(consumerId, market, consumerData) {
     const pointsHistory = consumerData.history || [];
     const lastOrderDate = consumerData.lastOrderDate;
+    
+    // Add logging for debugging
+    console.log(`🔍 Expiration details for ${consumerId}:`, {
+      market,
+      historyLength: Array.isArray(pointsHistory) ? pointsHistory.length : 'NOT_ARRAY',
+      historyType: typeof pointsHistory,
+      lastOrderDate
+    });
     
     const nextExpiration = this.calculateNextExpiration(consumerId, market, lastOrderDate, pointsHistory, consumerData);
     const config = this.expirationConfigs[market] || this.expirationConfigs['JP'];

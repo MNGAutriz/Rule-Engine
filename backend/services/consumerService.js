@@ -74,11 +74,11 @@ function getConsumerPoints(consumerId) {
   const market = consumer?.profile?.market || 'JP'; // Default to JP if no market specified
   
   // Get consumer's point history to calculate expiration
-  const history = getConsumerHistory(consumerId, { limit: 100 });
+  const historyResult = getConsumerHistory(consumerId, { limit: 100 });
   
   // Calculate next expiration based on market rules
   const expirationDetails = expirationService.getExpirationDetails(consumerId, market, {
-    history,
+    history: historyResult.transactions, // Pass only the transactions array
     lastOrderDate: consumer?.engagement?.lastPurchaseDate,
     balance,
     firstOrderDate: consumer?.engagement?.firstPurchaseDate,

@@ -4,6 +4,7 @@ import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { consumersApi } from '@/services/api';
+import { formatNumber } from '@/lib/utils';
 import { 
   Search, 
   User, 
@@ -22,7 +23,9 @@ import {
   Activity,
   ChevronLeft,
   ChevronRight,
-  Info
+  Info,
+  MinusCircle,
+  PlusCircle
 } from 'lucide-react';
 
 interface ConsumerPoints {
@@ -46,6 +49,9 @@ interface HistoryItem {
   pointsUsed?: number;
   description: string;
   channel: string;
+  ruleCategory?: string; // Rule category information
+  ruleApplied?: string; // Specific rule that was applied
+  ruleId?: string; // Rule ID for reference
 }
 
 interface PaginationInfo {
@@ -697,17 +703,34 @@ const ConsumerQuery: React.FC = () => {
                         let isPositive = false;
                         let isNegative = false;
 
-                        // Check if the API returns 'points' directly or 'pointsAwarded'/'pointsUsed'
-                        if (typeof item.points !== 'undefined') {
-                          pointsValue = Math.abs(item.points);
-                          isPositive = item.points > 0;
-                          isNegative = item.points < 0;
+                        // Special handling for REDEMPTION transactions - always show as negative/red
+                        if (item.eventType === 'REDEMPTION') {
+                          // For redemptions, show as negative points deducted
+                          if (item.pointsUsed && item.pointsUsed > 0) {
+                            pointsValue = item.pointsUsed;
+                          } else if (item.pointsAwarded && item.pointsAwarded > 0) {
+                            pointsValue = item.pointsAwarded; // Use awarded amount but show as negative
+                          } else if (item.points && Math.abs(item.points) > 0) {
+                            pointsValue = Math.abs(item.points);
+                          } else {
+                            // Fallback: try to extract from description or use a default
+                            pointsValue = 100; // Default value for redemptions if no points data available
+                          }
+                          isNegative = true;
+                          isPositive = false;
                         } else {
-                          const pointsAwarded = item.pointsAwarded || 0;
-                          const pointsUsed = item.pointsUsed || 0;
-                          isPositive = pointsAwarded > 0;
-                          isNegative = pointsUsed > 0;
-                          pointsValue = isPositive ? pointsAwarded : pointsUsed;
+                          // Original logic for non-redemption transactions
+                          if (typeof item.points !== 'undefined') {
+                            pointsValue = Math.abs(item.points);
+                            isPositive = item.points > 0;
+                            isNegative = item.points < 0;
+                          } else {
+                            const pointsAwarded = item.pointsAwarded || 0;
+                            const pointsUsed = item.pointsUsed || 0;
+                            isPositive = pointsAwarded > 0;
+                            isNegative = pointsUsed > 0;
+                            pointsValue = isPositive ? pointsAwarded : pointsUsed;
+                          }
                         }
                         
                         return (
@@ -720,34 +743,70 @@ const ConsumerQuery: React.FC = () => {
                                 isPositive ? 'bg-green-100' : isNegative ? 'bg-red-100' : 'bg-gray-100'
                               }`}>
                                 {isPositive ? (
-                                  <TrendingUp className="h-4 w-4 text-green-600" />
+                                  <PlusCircle className="h-5 w-5 text-green-600" />
                                 ) : isNegative ? (
-                                  <CreditCard className="h-4 w-4 text-red-600" />
+                                  <MinusCircle className="h-5 w-5 text-red-600" />
                                 ) : (
                                   <Activity className="h-4 w-4 text-gray-600" />
                                 )}
                               </div>
                               <div className="flex-1 min-w-0">
                                 <div className="font-semibold text-gray-900 text-base mb-1">
-                                  {item.eventType} - {item.description}
+                                  {item.eventType}
                                 </div>
                                 <div className="text-sm text-gray-600 flex items-center">
                                   <Calendar className="h-3 w-3 mr-1" />
                                   {formatDate(item.timestamp)}
                                 </div>
+                                {/* Rule information - show rule category or rule applied if available */}
+                                {(item.ruleCategory || item.ruleApplied || item.ruleId) && (
+                                  <div className="text-xs text-blue-600 mt-1 font-medium">
+                                    {item.ruleCategory && `Category: ${item.ruleCategory}`}
+                                    {item.ruleApplied && `Rule: ${item.ruleApplied}`}
+                                    {!item.ruleCategory && !item.ruleApplied && item.ruleId && `Rule ID: ${item.ruleId}`}
+                                  </div>
+                                )}
+                                {/* Fallback: extract rule info from description if available */}
+                                {!item.ruleCategory && !item.ruleApplied && !item.ruleId && item.description && item.description.includes('Rule') && (
+                                  <div className="text-xs text-blue-600 mt-1 font-medium">
+                                    {item.description.substring(0, 50)}...
+                                  </div>
+                                )}
+                                {/* Channel information */}
+                                {item.channel && (
+                                  <div className="text-xs text-gray-500 mt-1">
+                                    Channel: {item.channel}
+                                  </div>
+                                )}
                               </div>
                             </div>
-                            <div className="text-right flex-shrink-0 ml-4 min-w-[140px]">
-                              {pointsValue > 0 ? (
+                            <div className="text-right flex-shrink-0 ml-4 min-w-[160px]">
+                              {(pointsValue > 0 || item.eventType === 'REDEMPTION') ? (
                                 <>
-                                  <div className={`font-bold text-lg ${
+                                  <div className={`font-bold text-xl ${
                                     isPositive ? 'text-green-600' : 'text-red-600'
                                   }`}>
-                                    {isPositive ? '+' : '-'}{pointsValue.toLocaleString()}
+                                    {isPositive ? '+' : '-'}{formatNumber(pointsValue)}
                                   </div>
-                                  <div className="text-xs text-gray-500 mt-1">
-                                    {isPositive ? 'Points Earned' : 'Points Charged'}
+                                  <div className={`text-sm mt-1 font-semibold px-2 py-1 rounded-full ${
+                                    isPositive 
+                                      ? 'text-green-700 bg-green-100' 
+                                      : 'text-red-700 bg-red-100'
+                                  }`}>
+                                    {isPositive 
+                                      ? 'POINTS EARNED' 
+                                      : (item.eventType === 'REDEMPTION' ? 'POINTS REDUCED' : 'POINTS DEDUCTED')
+                                    }
                                   </div>
+                                  {/* Enhanced transaction description */}
+                                  {(isNegative || item.eventType === 'REDEMPTION') && (
+                                    <div className="text-xs text-red-600 mt-1 font-bold">
+                                      {item.eventType === 'REDEMPTION' 
+                                        ? `${formatNumber(pointsValue)} Points Reduced` 
+                                        : 'Transaction Deduction'
+                                      }
+                                    </div>
+                                  )}
                                 </>
                               ) : (
                                 <div className="text-sm text-gray-500">No change</div>

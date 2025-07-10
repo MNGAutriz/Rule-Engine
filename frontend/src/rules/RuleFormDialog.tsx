@@ -1184,8 +1184,8 @@ const RuleFormDialog: React.FC<RuleFormDialogProps> = ({
             <Button type="button" variant="outline" onClick={onClose}>
               Cancel
             </Button>
-            <Button type="submit" className="bg-blue-600 hover:bg-blue-700">
-              <Save className="h-4 w-4 mr-2" />
+            <Button type="submit" className="!text-white" style={{ background: 'linear-gradient(to right, rgb(0, 114, 187), rgb(0, 94, 154))' }}>
+              <Save className="h-4 w-4 mr-2 !text-white" />
               {initialRule ? 'Update Rule' : 'Create Rule'}
             </Button>
           </div>

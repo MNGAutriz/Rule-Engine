@@ -8,6 +8,7 @@ import { LoadingButton, ValidationMessage } from '@/components/common';
 import { PageHeader } from '@/components/layout';
 import { StatsGrid } from '@/components/display';
 import { eventsApi, defaultsApi, consumersApi } from '@/services/api';
+import { formatNumber } from '@/lib/utils';
 import type { EventData, EventResponse, DefaultsResponse, RedemptionValidationResponse, RecyclingValidationResponse } from '@/services/api';
 import { RefreshCw, CheckCircle, Activity,Calendar,Zap,Settings, Database, Code, Sparkles, Send, Cpu, AlertCircle, Clock, Award, CreditCard, TrendingUp, Info, User, Target} from 'lucide-react';
 
@@ -938,7 +939,7 @@ const EventProcessor: React.FC = () => {
                       <div className="flex flex-col items-center text-center">
                         <Award className="h-8 w-8 text-purple-500 mb-2" />
                         <p className="text-sm font-medium text-purple-600 mb-1">Points Earned</p>
-                        <p className="text-3xl font-bold text-purple-800">{result.totalPointsAwarded || 0}</p>
+                        <p className="text-3xl font-bold text-purple-800">{formatNumber(result.totalPointsAwarded || 0)}</p>
                       </div>
                     </div>
 
@@ -947,7 +948,7 @@ const EventProcessor: React.FC = () => {
                       <div className="flex flex-col items-center text-center">
                         <CreditCard className="h-8 w-8 text-blue-500 mb-2" />
                         <p className="text-sm font-medium text-blue-600 mb-1">Total Balance</p>
-                        <p className="text-3xl font-bold text-blue-800">{result.resultingBalance?.total || 0}</p>
+                        <p className="text-3xl font-bold text-blue-800">{formatNumber(result.resultingBalance?.total || 0)}</p>
                       </div>
                     </div>
 
@@ -956,7 +957,7 @@ const EventProcessor: React.FC = () => {
                       <div className="flex flex-col items-center text-center">
                         <TrendingUp className="h-8 w-8 text-green-500 mb-2" />
                         <p className="text-sm font-medium text-green-600 mb-1">Available</p>
-                        <p className="text-3xl font-bold text-green-800">{result.resultingBalance?.available || 0}</p>
+                        <p className="text-3xl font-bold text-green-800">{formatNumber(result.resultingBalance?.available || 0)}</p>
                       </div>
                     </div>
                   </div>
@@ -991,22 +992,22 @@ const EventProcessor: React.FC = () => {
                       <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
                         <div className="flex flex-col items-center justify-center p-4 bg-blue-50 rounded-lg border border-blue-100 min-h-[120px]">
                           <CreditCard className="h-6 w-6 text-blue-500 mb-2" />
-                          <p className="text-2xl font-bold text-blue-600">{result.resultingBalance.total}</p>
+                          <p className="text-2xl font-bold text-blue-600">{formatNumber(result.resultingBalance.total)}</p>
                           <p className="text-sm text-gray-600 mt-1 whitespace-nowrap">Total Points</p>
                         </div>
                         <div className="flex flex-col items-center justify-center p-4 bg-green-50 rounded-lg border border-green-100 min-h-[120px]">
                           <TrendingUp className="h-6 w-6 text-green-500 mb-2" />
-                          <p className="text-2xl font-bold text-green-600">{result.resultingBalance.available}</p>
+                          <p className="text-2xl font-bold text-green-600">{formatNumber(result.resultingBalance.available)}</p>
                           <p className="text-sm text-gray-600 mt-1 whitespace-nowrap">Available</p>
                         </div>
                         <div className="flex flex-col items-center justify-center p-4 bg-red-50 rounded-lg border border-red-100 min-h-[120px]">
                           <Target className="h-6 w-6 text-red-500 mb-2" />
-                          <p className="text-2xl font-bold text-red-600">{result.resultingBalance.used}</p>
+                          <p className="text-2xl font-bold text-red-600">{formatNumber(result.resultingBalance.used)}</p>
                           <p className="text-sm text-gray-600 mt-1 whitespace-nowrap">Used</p>
                         </div>
                         <div className="flex flex-col items-center justify-center p-4 bg-purple-50 rounded-lg border border-purple-100 min-h-[120px]">
                           <Database className="h-6 w-6 text-purple-500 mb-2" />
-                            <p className="text-2xl font-bold text-purple-600">{result.resultingBalance.transactionCount}</p>
+                            <p className="text-2xl font-bold text-purple-600">{formatNumber(result.resultingBalance.transactionCount)}</p>
                           <p className="text-sm text-gray-600 mt-1 whitespace-nowrap">Total Transactions</p>
                         </div>
                       </div>
@@ -1028,7 +1029,7 @@ const EventProcessor: React.FC = () => {
                               <p className="text-xs text-gray-600 font-mono">Rule ID: {breakdown.ruleId}</p>
                             </div>
                             <div className="text-center ml-4">
-                              <p className="text-2xl font-bold text-yellow-600">+{breakdown.points}</p>
+                              <p className="text-2xl font-bold text-yellow-600">+{formatNumber(breakdown.points)}</p>
                               <p className="text-xs text-gray-500">points</p>
                             </div>
                           </div>

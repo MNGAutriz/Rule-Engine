@@ -10,6 +10,7 @@ import { StatusBadge, StatsGrid } from '@/components/display';
 import { RuleFormDialog, DeleteRuleDialog } from '@/rules';
 import Toast from '@/components/common/Toast';
 import { rulesManagementApi, type Rule } from '@/services/api';
+import { formatNumber } from '@/lib/utils';
 import { 
   Settings, 
   Filter, 
@@ -67,13 +68,13 @@ const RULE_CATEGORIES = {
     label: 'Product Multiplier Rules', 
     icon: Tag, 
     colors: {
-      bg: 'bg-purple-100',
-      border: 'border-purple-400',
-      text: 'text-purple-800',
-      light: 'bg-purple-50',
-      hoverBorder: 'hover:border-purple-500',
-      gradient: 'bg-gradient-to-br from-purple-500 to-purple-600',
-      iconColor: 'text-purple-600'
+      bg: 'bg-sky-100',
+      border: 'border-sky-400',
+      text: 'text-sky-800',
+      light: 'bg-sky-50',
+      hoverBorder: 'hover:border-sky-500',
+      gradient: 'bg-gradient-to-br from-sky-500 to-sky-600',
+      iconColor: 'text-sky-600'
     }
   },
   basket: { 
@@ -96,7 +97,7 @@ const getEventTypeColor = (eventType: string) => {
   const eventColors = {
     'INTERACTION_REGISTRY_POINT': { bg: 'bg-green-50', text: 'text-green-700', border: 'border-green-200' },
     'ORDER_BASE_POINT': { bg: 'bg-blue-50', text: 'text-blue-700', border: 'border-blue-200' },
-    'FLEXIBLE_CAMPAIGN_BONUS': { bg: 'bg-purple-50', text: 'text-purple-700', border: 'border-purple-200' },
+    'FLEXIBLE_CAMPAIGN_BONUS': { bg: 'bg-sky-50', text: 'text-sky-700', border: 'border-sky-200' },
     'FLEXIBLE_VIP_MULTIPLIER': { bg: 'bg-yellow-50', text: 'text-yellow-700', border: 'border-yellow-200' },
     'FIRST_PURCHASE_BIRTH_MONTH_BONUS': { bg: 'bg-pink-50', text: 'text-pink-700', border: 'border-pink-200' },
     'FLEXIBLE_PRODUCT_MULTIPLIER': { bg: 'bg-indigo-50', text: 'text-indigo-700', border: 'border-indigo-200' },
@@ -146,7 +147,7 @@ const getPriorityColor = (priority: number) => {
 const getMarketColor = (market: string) => {
   const colors = {
     'HK': { bg: 'bg-red-50', text: 'text-red-700', border: 'border-red-200' },
-    'JP': { bg: 'bg-purple-50', text: 'text-purple-700', border: 'border-purple-200' },
+    'JP': { bg: 'bg-cyan-50', text: 'text-cyan-700', border: 'border-cyan-200' },
     'TW': { bg: 'bg-green-50', text: 'text-green-700', border: 'border-green-200' },
     'ALL': { bg: 'bg-gray-50', text: 'text-gray-700', border: 'border-gray-200' },
     'US': { bg: 'bg-blue-50', text: 'text-blue-700', border: 'border-blue-200' }
@@ -274,7 +275,7 @@ const RuleManager: React.FC<RuleManagerProps> = () => {
   const stats = [
     {
       title: 'Total Rules',
-      value: rules.length.toString(),
+      value: formatNumber(rules.length),
       icon: Settings,
       description: 'All rules in system',
       gradientColors: 'bg-gradient-to-br from-slate-500 to-slate-600',
@@ -282,7 +283,7 @@ const RuleManager: React.FC<RuleManagerProps> = () => {
     },
     {
       title: 'Transaction Rules',
-      value: transactionRules.length.toString(),
+      value: formatNumber(transactionRules.length),
       icon: Zap,
       description: 'Purchase & interaction rules',
       gradientColors: 'bg-gradient-to-br from-blue-500 to-blue-600',
@@ -290,7 +291,7 @@ const RuleManager: React.FC<RuleManagerProps> = () => {
     },
     {
       title: 'Consumer Rules',
-      value: consumerRules.length.toString(),
+      value: formatNumber(consumerRules.length),
       icon: Target,
       description: 'Profile-based rules',
       gradientColors: 'bg-gradient-to-br from-emerald-500 to-emerald-600',
@@ -298,7 +299,7 @@ const RuleManager: React.FC<RuleManagerProps> = () => {
     },
     {
       title: 'High Priority',
-      value: highPriorityRules.length.toString(),
+      value: formatNumber(highPriorityRules.length),
       icon: XCircle,
       description: 'Priority 8+ rules',
       gradientColors: 'bg-gradient-to-br from-red-500 to-red-600',
@@ -325,22 +326,22 @@ const RuleManager: React.FC<RuleManagerProps> = () => {
       />
       
       {/* Stats Grid */}
-      <div className="mb-6">
+      <div className="mb-8">
         <StatsGrid stats={stats} />
       </div>
 
       {/* Enhanced Controls Section - Simplified */}
-      <Card className="mb-6 border-2 border-indigo-200 shadow-lg bg-gradient-to-r from-white to-indigo-50">
-        <CardHeader className="bg-gradient-to-r from-indigo-600 to-blue-700 text-white">
+      <Card className="mb-8 border-2 border-blue-200 shadow-lg bg-gradient-to-r from-white to-blue-50">
+        <CardHeader className="text-white" style={{ background: 'linear-gradient(to right, rgb(0, 114, 187), rgb(0, 94, 154))' }}>
           <CardTitle className="flex items-center justify-between">
             <div className="flex items-center gap-3">
               <div className="p-2 bg-white/20 rounded-lg backdrop-blur-sm">
                 <Filter className="h-5 w-5 text-white" />
               </div>
-              <span className="text-lg font-bold">Filters & Actions</span>
+              <span className="text-lg font-bold tracking-wide">Filters & Actions</span>
             </div>
             <div className="text-sm bg-white/20 px-3 py-1 rounded-full backdrop-blur-sm">
-              {filteredRules.length} of {rules.length} rules
+              {formatNumber(filteredRules.length)} of {formatNumber(rules.length)} rules
             </div>
           </CardTitle>
         </CardHeader>
@@ -351,18 +352,18 @@ const RuleManager: React.FC<RuleManagerProps> = () => {
                 Search Rules
               </Label>
               <div className="relative">
-                <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-indigo-400 h-5 w-5" />
+                <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-blue-400 h-5 w-5" />
                 <Input
                   id="search"
                   placeholder="Search by name or category..."
                   value={filters.search}
                   onChange={(e) => setFilters(prev => ({ ...prev, search: e.target.value }))}
-                  className="pl-11 pr-4 py-3 border-2 border-indigo-200 rounded-lg focus:border-indigo-500 focus:ring-2 focus:ring-indigo-200 bg-white/80 transition-all"
+                  className="pl-11 pr-4 py-3 border-2 border-blue-200 rounded-lg focus:border-blue-500 focus:ring-2 focus:ring-blue-200 bg-white/80 transition-all"
                 />
                 {filters.search && (
                   <button
                     onClick={() => setFilters(prev => ({ ...prev, search: '' }))}
-                    className="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-400 hover:text-indigo-600 transition-colors"
+                    className="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-400 hover:text-blue-600 transition-colors"
                   >
                     <X className="h-4 w-4" />
                   </button>
@@ -375,15 +376,15 @@ const RuleManager: React.FC<RuleManagerProps> = () => {
                 Category
               </Label>
               <Select value={filters.category} onValueChange={(value) => setFilters(prev => ({ ...prev, category: value }))}>
-                <SelectTrigger className="border-2 border-indigo-200 focus:border-indigo-500 bg-white/80 hover:bg-white transition-all">
+                <SelectTrigger className="border-2 border-blue-200 focus:border-blue-500 bg-white/80 hover:bg-white transition-all">
                   <SelectValue placeholder="All Categories" />
                 </SelectTrigger>
                 <SelectContent>
                   <SelectItem value="all">
                     <div className="flex items-center justify-between w-full">
                       <span className="font-medium">All Categories</span>
-                      <span className="ml-3 text-xs bg-indigo-100 text-indigo-700 px-2 py-0.5 rounded-full font-semibold">
-                        {rules.length}
+                      <span className="ml-3 text-xs bg-blue-100 text-blue-700 px-2 py-0.5 rounded-full font-semibold">
+                        {formatNumber(rules.length)}
                       </span>
                     </div>
                   </SelectItem>
@@ -397,7 +398,7 @@ const RuleManager: React.FC<RuleManagerProps> = () => {
                             <span className="font-medium">{config.label}</span>
                           </div>
                           <span className={`ml-3 text-xs px-2 py-0.5 rounded-full font-semibold ${config.colors.bg} ${config.colors.text}`}>
-                            {count}
+                            {formatNumber(count)}
                           </span>
                         </div>
                       </SelectItem>
@@ -412,7 +413,7 @@ const RuleManager: React.FC<RuleManagerProps> = () => {
                 Status
               </Label>
               <Select value={filters.status} onValueChange={(value) => setFilters(prev => ({ ...prev, status: value }))}>
-                <SelectTrigger className="border-2 border-indigo-200 focus:border-indigo-500 bg-white/80 hover:bg-white transition-all">
+                <SelectTrigger className="border-2 border-blue-200 focus:border-blue-500 bg-white/80 hover:bg-white transition-all">
                   <SelectValue placeholder="All Statuses" />
                 </SelectTrigger>
                 <SelectContent>
@@ -420,7 +421,7 @@ const RuleManager: React.FC<RuleManagerProps> = () => {
                     <div className="flex items-center justify-between w-full">
                       <span className="font-medium">All Statuses</span>
                       <span className="ml-3 text-xs bg-indigo-100 text-indigo-700 px-2 py-0.5 rounded-full font-semibold">
-                        {rules.length}
+                        {formatNumber(rules.length)}
                       </span>
                     </div>
                   </SelectItem>
@@ -431,7 +432,7 @@ const RuleManager: React.FC<RuleManagerProps> = () => {
                         <span className="font-medium">Active</span>
                       </div>
                       <span className="ml-3 text-xs bg-emerald-100 text-emerald-700 px-2 py-0.5 rounded-full font-semibold">
-                        {rules.filter(rule => rule.active !== false).length}
+                        {formatNumber(rules.filter(rule => rule.active !== false).length)}
                       </span>
                     </div>
                   </SelectItem>
@@ -442,7 +443,7 @@ const RuleManager: React.FC<RuleManagerProps> = () => {
                         <span className="font-medium">Inactive</span>
                       </div>
                       <span className="ml-3 text-xs bg-red-100 text-red-700 px-2 py-0.5 rounded-full font-semibold">
-                        {rules.filter(rule => rule.active === false).length}
+                        {formatNumber(rules.filter(rule => rule.active === false).length)}
                       </span>
                     </div>
                   </SelectItem>
@@ -463,7 +464,8 @@ const RuleManager: React.FC<RuleManagerProps> = () => {
               
               <Button
                 onClick={() => setShowCreateForm(true)}
-                className="flex items-center gap-2 bg-gradient-to-r from-indigo-600 to-blue-700 hover:from-indigo-700 hover:to-blue-800 text-white shadow-lg transition-all duration-200 transform hover:scale-105"
+                className="flex items-center gap-2 !text-white shadow-lg transition-all duration-200 transform hover:scale-105"
+                style={{ background: 'linear-gradient(to right, rgb(0, 114, 187), rgb(0, 94, 154))' }}
                 size="sm"
               >
                 <Plus className="h-4 w-4" />
@@ -474,8 +476,8 @@ const RuleManager: React.FC<RuleManagerProps> = () => {
 
           {/* Active Filters Display - Compact */}
           {(filters.search || filters.category !== 'all' || filters.status !== 'all') && (
-            <div className="flex flex-wrap items-center gap-2 p-3 bg-gradient-to-r from-indigo-50 to-blue-50 rounded-lg border border-indigo-200 mt-4">
-              <span className="text-sm font-semibold text-indigo-700">Active filters:</span>
+            <div className="flex flex-wrap items-center gap-2 p-3 bg-gradient-to-r from-blue-50 to-sky-50 rounded-lg border border-blue-200 mt-4">
+              <span className="text-sm font-semibold text-blue-700">Active filters:</span>
               {filters.search && (
                 <span className="inline-flex items-center px-3 py-1 rounded-full text-xs font-semibold bg-blue-500 text-white shadow-sm">
                   Search: "{filters.search}"
@@ -499,11 +501,11 @@ const RuleManager: React.FC<RuleManagerProps> = () => {
                 </span>
               )}
               {filters.status !== 'all' && (
-                <span className="inline-flex items-center px-3 py-1 rounded-full text-xs font-semibold bg-purple-500 text-white shadow-sm">
+                <span className="inline-flex items-center px-3 py-1 rounded-full text-xs font-semibold bg-blue-500 text-white shadow-sm">
                   Status: {filters.status}
                   <button
                     onClick={() => setFilters(prev => ({ ...prev, status: 'all' }))}
-                    className="ml-2 hover:text-purple-200 transition-colors"
+                    className="ml-2 hover:text-blue-200 transition-colors"
                   >
                     <X className="h-3 w-3" />
                   </button>

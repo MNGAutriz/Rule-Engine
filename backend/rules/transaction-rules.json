@@ -3,15 +3,23 @@
     "name": "JP Registration Bonus",
     "conditions": {
       "all": [
-        { "fact": "eventType", "operator": "equal", "value": "REGISTRATION" },
-        { "fact": "market", "operator": "equal", "value": "JP" }
+        {
+          "fact": "eventType",
+          "operator": "equal",
+          "value": "REGISTRATION"
+        },
+        {
+          "fact": "market",
+          "operator": "equal",
+          "value": "JP"
+        }
       ]
     },
     "event": {
       "type": "INTERACTION_REGISTRY_POINT",
       "params": {
         "registrationBonus": 150,
-        "description": "JP registration bonus - 150 MD"
+        "description": "JP registration bonus"
       }
     },
     "priority": 10
@@ -20,8 +28,16 @@
     "name": "JP Base Purchase Points",
     "conditions": {
       "all": [
-        { "fact": "eventType", "operator": "equal", "value": "PURCHASE" },
-        { "fact": "market", "operator": "equal", "value": "JP" }
+        {
+          "fact": "eventType",
+          "operator": "equal",
+          "value": "PURCHASE"
+        },
+        {
+          "fact": "market",
+          "operator": "equal",
+          "value": "JP"
+        }
       ]
     },
     "event": {
@@ -37,14 +53,25 @@
     "name": "HK/TW Base Purchase Points",
     "conditions": {
       "all": [
-        { "fact": "eventType", "operator": "equal", "value": "PURCHASE" },
-        { "fact": "market", "operator": "in", "value": ["HK", "TW"] }
+        {
+          "fact": "eventType",
+          "operator": "equal",
+          "value": "PURCHASE"
+        },
+        {
+          "fact": "market",
+          "operator": "in",
+          "value": [
+            "HK",
+            "TW"
+          ]
+        }
       ]
     },
     "event": {
       "type": "ORDER_BASE_POINT",
       "params": {
-        "standardRate": 1.0,
+        "standardRate": 1,
         "description": "HK/TW base purchase - 1 MD per 1 HKD/TWD spent"
       }
     },
@@ -54,10 +81,26 @@
     "name": "JP Campaign Multiplier",
     "conditions": {
       "all": [
-        { "fact": "eventType", "operator": "equal", "value": "PURCHASE" },
-        { "fact": "market", "operator": "equal", "value": "JP" },
-        { "fact": "eventDate", "operator": "greaterThanInclusive", "value": "2025-06-01" },
-        { "fact": "eventDate", "operator": "lessThanInclusive", "value": "2025-08-31" }
+        {
+          "fact": "eventType",
+          "operator": "equal",
+          "value": "PURCHASE"
+        },
+        {
+          "fact": "market",
+          "operator": "equal",
+          "value": "JP"
+        },
+        {
+          "fact": "eventDate",
+          "operator": "greaterThanInclusive",
+          "value": "2025-06-01"
+        },
+        {
+          "fact": "eventDate",
+          "operator": "lessThanInclusive",
+          "value": "2025-08-31"
+        }
       ]
     },
     "event": {
@@ -73,15 +116,26 @@
     "name": "HK/TW Campaign Bonus",
     "conditions": {
       "all": [
-        { "fact": "eventType", "operator": "equal", "value": "PURCHASE" },
-        { "fact": "market", "operator": "in", "value": ["HK", "TW"] }
+        {
+          "fact": "eventType",
+          "operator": "equal",
+          "value": "PURCHASE"
+        },
+        {
+          "fact": "market",
+          "operator": "in",
+          "value": [
+            "HK",
+            "TW"
+          ]
+        }
       ]
     },
     "event": {
       "type": "FLEXIBLE_CAMPAIGN_BONUS",
       "params": {
         "fixedBonus": 300,
-        "description": "HK/TW campaign bonus - +300 MD"
+        "description": "HK/TW campaign bonus"
       }
     },
     "priority": 4
@@ -90,8 +144,16 @@
     "name": "Bottle Recycling Reward",
     "conditions": {
       "all": [
-        { "fact": "eventType", "operator": "equal", "value": "RECYCLE" },
-        { "fact": "attributes.recycledCount", "operator": "greaterThan", "value": 0 }
+        {
+          "fact": "eventType",
+          "operator": "equal",
+          "value": "RECYCLE"
+        },
+        {
+          "fact": "attributes.recycledCount",
+          "operator": "greaterThan",
+          "value": 0
+        }
       ]
     },
     "event": {
@@ -108,15 +170,23 @@
     "name": "Skin Consultation Bonus",
     "conditions": {
       "all": [
-        { "fact": "eventType", "operator": "equal", "value": "CONSULTATION" },
-        { "fact": "attributes.skinTestDate", "operator": "notEqual", "value": null }
+        {
+          "fact": "eventType",
+          "operator": "equal",
+          "value": "CONSULTATION"
+        },
+        {
+          "fact": "attributes.skinTestDate",
+          "operator": "notEqual",
+          "value": null
+        }
       ]
     },
     "event": {
       "type": "CONSULTATION_BONUS",
       "params": {
         "consultationBonus": 75,
-        "description": "Skin consultation completion - 75 MD"
+        "description": "Skin consultation completion"
       }
     },
     "priority": 7
@@ -125,7 +195,11 @@
     "name": "Manual Admin Adjustment",
     "conditions": {
       "all": [
-        { "fact": "eventType", "operator": "equal", "value": "ADJUSTMENT" }
+        {
+          "fact": "eventType",
+          "operator": "equal",
+          "value": "ADJUSTMENT"
+        }
       ]
     },
     "event": {
@@ -140,8 +214,16 @@
     "name": "Point Redemption - All Markets",
     "conditions": {
       "all": [
-        { "fact": "eventType", "operator": "equal", "value": "REDEMPTION" },
-        { "fact": "redemptionPoints", "operator": "greaterThan", "value": 0 }
+        {
+          "fact": "eventType",
+          "operator": "equal",
+          "value": "REDEMPTION"
+        },
+        {
+          "fact": "redemptionPoints",
+          "operator": "greaterThan",
+          "value": 0
+        }
       ]
     },
     "event": {

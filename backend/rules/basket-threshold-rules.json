@@ -1,13 +1,13 @@
 [
   {
     "name": "HK High Value Purchase Bonus",
-    "description": "Basket threshold bonus - HKD 5000+ gets +200 MD",
+    "description": "Basket threshold bonus",
     "priority": 4,
     "active": true,
     "event": {
       "type": "FLEXIBLE_BASKET_AMOUNT",
       "params": {
-        "description": "Basket threshold bonus - HKD 5000+ gets +200 MD",
+        "description": "Basket threshold bonus",
         "all": [
           {
             "fact": "eventType",
@@ -80,7 +80,7 @@
       "params": {
         "threshold": 10000,
         "bonus": 500,
-        "description": "Basket threshold bonus - HKD 10000+ gets +500 MD"
+        "description": "Basket threshold bonus "
       }
     },
     "priority": 3
@@ -111,7 +111,7 @@
       "params": {
         "threshold": 15000,
         "bonus": 800,
-        "description": "Basket threshold bonus - TWD 15000+ gets +800 MD"
+        "description": "Basket threshold bonus"
       }
     },
     "priority": 2
