@@ -9,7 +9,7 @@ import { PageHeader } from '@/components/layout';
 import { StatsGrid } from '@/components/display';
 import { eventsApi, defaultsApi, consumersApi } from '@/services/api';
 import { formatNumber } from '@/lib/utils';
-import type { EventData, EventResponse, DefaultsResponse, RedemptionValidationResponse, RecyclingValidationResponse } from '@/services/api';
+import type { EventData, EventResponse, DefaultsResponse } from '@/services/api';
 import { RefreshCw, CheckCircle, Activity,Calendar,Zap,Settings, Database, Code, Sparkles, Send, Cpu, AlertCircle, Clock, Award, CreditCard, TrendingUp, Info, User, Target} from 'lucide-react';
 
 const EventProcessor: React.FC = () => {
@@ -68,7 +68,7 @@ const EventProcessor: React.FC = () => {
         }));
       }
       // Keep the hardcoded defaults if API fails
-    } catch (error) {
+    } catch {
       // API fallback - continue with hardcoded defaults
     }
   };
@@ -224,7 +224,7 @@ const EventProcessor: React.FC = () => {
       }
       
       return validationResult.valid;
-    } catch (error) {
+    } catch {
       setValidationMessage('❌ Error validating redemption. Please try again.');
       return false;
     } finally {
@@ -246,7 +246,7 @@ const EventProcessor: React.FC = () => {
       }
       
       return validationResult.valid;
-    } catch (error) {
+    } catch {
       setRecyclingValidationMessage('❌ Error validating recycling. Please try again.');
       return false;
     } finally {

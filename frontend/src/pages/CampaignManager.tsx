@@ -4,11 +4,8 @@ import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
-import { LoadingSpinner } from '@/components/common';
-import { PageHeader } from '@/components/layout';
-import { StatusBadge, StatsGrid } from '@/components/display';
+import { StatsGrid } from '@/components/display';
 import { CampaignForm, DeleteCampaignDialog, EditCampaignDialog } from '@/components/campaigns';
-import Toast from '@/components/common/Toast';
 import { campaignsApi } from '@/services/api';
 import { 
   Calendar, 
@@ -21,10 +18,8 @@ import {
   TrendingUp, 
   Activity,
   CheckCircle,
-  Clock,
   XCircle,
   PlayCircle,
-  Zap,
   Plus,
   Edit,
   Trash2,
@@ -69,7 +64,7 @@ const CampaignManager: React.FC = () => {
       
       // Remove empty filters and "all" values
       const cleanFilters = Object.fromEntries(
-        Object.entries(filtersToUse).filter(([_, value]) => value !== '' && value !== 'all')
+        Object.entries(filtersToUse).filter(([, value]) => value !== '' && value !== 'all')
       );
       
       // Use getAllCampaigns to ensure we get fresh data, then filter on frontend if needed
@@ -127,7 +122,7 @@ const CampaignManager: React.FC = () => {
     if (!editingCampaign) return;
     
     try {
-      const updatedCampaign = await campaignsApi.updateCampaign(editingCampaign.campaignCode, campaignData);
+      await campaignsApi.updateCampaign(editingCampaign.campaignCode, campaignData);
       showToast('Campaign updated successfully', 'success');
       setEditingCampaign(null);
       

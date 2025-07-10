@@ -17,17 +17,6 @@ class FactsEngine {
    * Following json-rules-engine best practices
    */
   initializeFactDefinitions() {
-    // Basic event facts - these are automatically created by json-rules-engine
-    // from the top-level properties of the data passed to engine.run()
-    // We only define them here for documentation and potential transformation
-    // this.factDefinitions.set('eventId', (params) => params.eventId);
-    // this.factDefinitions.set('consumerId', (params) => params.consumerId);
-    // this.factDefinitions.set('eventType', (params) => params.eventType);
-    // this.factDefinitions.set('market', (params) => params.market);
-    // this.factDefinitions.set('channel', (params) => params.channel);
-    // this.factDefinitions.set('productLine', (params) => params.productLine);
-    // this.factDefinitions.set('timestamp', (params) => params.timestamp);
-    
     // Context facts - accessing nested properties
     // Note: json-rules-engine automatically creates facts for top-level properties
     // We only need to define custom facts for computed or nested values
@@ -311,6 +300,11 @@ class FactsEngine {
     
     this.factDefinitions.set('discountedAmount', (params, almanac) => {
       return almanac.factValue('attributes').then(attributes => attributes?.amount || 0); // No SRP, just use amount
+    });
+
+    // Backward compatibility alias for orderTotal
+    this.factDefinitions.set('orderTotal', (params, almanac) => {
+      return almanac.factValue('attributes').then(attributes => attributes?.amount || 0);
     });
 
     // Amount-based facts (pure functions with calculations)

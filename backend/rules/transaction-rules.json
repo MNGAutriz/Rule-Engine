@@ -18,7 +18,8 @@
     "event": {
       "type": "INTERACTION_REGISTRY_POINT",
       "params": {
-        "registrationBonus": 150,
+        "calculationMethod": "fixed",
+        "fixedPoints": 150,
         "description": "JP registration bonus"
       }
     },
@@ -43,6 +44,7 @@
     "event": {
       "type": "ORDER_BASE_POINT",
       "params": {
+        "calculationMethod": "base",
         "conversionRate": 0.1,
         "description": "JP base purchase - 1 MD per 10 JPY"
       }
@@ -205,6 +207,7 @@
     "event": {
       "type": "INTERACTION_ADJUST_POINT_BY_MANAGER",
       "params": {
+        "calculationMethod": "adjustment",
         "description": "Manual adjustment by admin"
       }
     },
@@ -229,9 +232,52 @@
     "event": {
       "type": "REDEMPTION_DEDUCTION",
       "params": {
+        "calculationMethod": "redemption",
         "description": "Points redeemed for rewards"
       }
     },
     "priority": 1
+  },
+  {
+    "name": "STEVE_JOBS_RULE",
+    "priority": 2,
+    "active": true,
+    "conditions": {
+      "all": [
+        {
+          "fact": "eventType",
+          "operator": "equal",
+          "value": "PURCHASE"
+        },
+        {
+          "fact": "channel",
+          "operator": "equal",
+          "value": "STORE"
+        },
+        {
+          "fact": "market",
+          "operator": "equal",
+          "value": "HK"
+        },
+        {
+          "fact": "transactionAmount",
+          "operator": "equal",
+          "value": 1500
+        }
+      ]
+    },
+    "event": {
+      "type": "PURCHASE",
+      "params": {
+        "description": "The transaction rules is here.",
+        "bonus": 350
+      }
+    },
+    "markets": [
+      "HK"
+    ],
+    "channels": [
+      "STORE"
+    ]
   }
 ]

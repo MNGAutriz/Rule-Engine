@@ -9,7 +9,6 @@ const FormattingHelpers = require('./helpers/FormattingHelpers');
 const { logger } = require('../src/utils');
 const fs = require('fs');
 const path = require('path');
-const { v4: uuidv4 } = require('uuid');
 
 /**
  * Main Rules Engine - Orchestrates rule evaluation and point calculation
@@ -84,30 +83,23 @@ class RulesEngine {
   }
 
   /**
-   * Initialize event handlers for all rule types actually used in JSON files
-   * Only includes handlers for event types that exist in the rule definitions
+   * Dynamically initialize event handlers based on the event types found in loaded rules
+   * This method scans all loaded rules and creates handlers for any event types it finds
    */
   initializeEventHandlers() {
-    // Core transaction event handlers (from transaction-rules.json)
-    this.engine.on('INTERACTION_REGISTRY_POINT', this.createDynamicEventHandler('INTERACTION_REGISTRY_POINT'));
-    this.engine.on('ORDER_BASE_POINT', this.createDynamicEventHandler('ORDER_BASE_POINT'));
-    this.engine.on('ORDER_MULTIPLE_POINT_LIMIT', this.createDynamicEventHandler('ORDER_MULTIPLE_POINT_LIMIT'));
-    this.engine.on('FLEXIBLE_CAMPAIGN_BONUS', this.createDynamicEventHandler('FLEXIBLE_CAMPAIGN_BONUS'));
-    this.engine.on('INTERACTION_ADJUST_POINT_TIMES_PER_YEAR', this.createDynamicEventHandler('INTERACTION_ADJUST_POINT_TIMES_PER_YEAR'));
-    this.engine.on('CONSULTATION_BONUS', this.createDynamicEventHandler('CONSULTATION_BONUS'));
-    this.engine.on('INTERACTION_ADJUST_POINT_BY_MANAGER', this.createDynamicEventHandler('INTERACTION_ADJUST_POINT_BY_MANAGER'));
-    this.engine.on('REDEMPTION_DEDUCTION', this.createDynamicEventHandler('REDEMPTION_DEDUCTION')); // Add redemption handler
+    // Get all unique event types from loaded rules
+    const eventTypes = this.getEventTypesFromRules();
     
-    // Consumer attribute event handlers (from consumer-attribute-rules.json)
-    this.engine.on('FIRST_PURCHASE_BIRTH_MONTH_BONUS', this.createDynamicEventHandler('FIRST_PURCHASE_BIRTH_MONTH_BONUS'));
-    this.engine.on('FLEXIBLE_VIP_MULTIPLIER', this.createDynamicEventHandler('FLEXIBLE_VIP_MULTIPLIER'));
+    logger.debug('Discovered event types from rules', { 
+      eventTypes: Array.from(eventTypes),
+      totalRules: this.engine.rules.length 
+    });
     
-    // Product multiplier event handlers (from product-multiplier-rules.json)
-    this.engine.on('FLEXIBLE_PRODUCT_MULTIPLIER', this.createDynamicEventHandler('FLEXIBLE_PRODUCT_MULTIPLIER'));
-    this.engine.on('FLEXIBLE_COMBO_PRODUCT_MULTIPLIER', this.createDynamicEventHandler('FLEXIBLE_COMBO_PRODUCT_MULTIPLIER'));
-    
-    // Basket threshold event handlers (from basket-threshold-rules.json)
-    this.engine.on('FLEXIBLE_BASKET_AMOUNT', this.createDynamicEventHandler('FLEXIBLE_BASKET_AMOUNT'));
+    // Create dynamic handlers for each discovered event type
+    eventTypes.forEach(eventType => {
+      this.engine.on(eventType, this.createDynamicEventHandler(eventType));
+      logger.debug(`Registered dynamic handler for event type: ${eventType}`);
+    });
 
     // Generic success handler for logging
     this.engine.on('success', (event, almanac, ruleResult) => {
@@ -122,6 +114,41 @@ class RulesEngine {
     this.engine.addFact('params', (params, almanac) => {
       return params;
     });
+    
+    logger.info(`Dynamically initialized ${eventTypes.size} event handlers`);
+  }
+
+  /**
+   * Extract all unique event types from the loaded rules
+   * Scans through all rules and collects event.type values
+   */
+  getEventTypesFromRules() {
+    const eventTypes = new Set();
+    
+    // Iterate through all loaded rules and extract event types
+    this.engine.rules.forEach((rule) => {
+      let eventType = null;
+      
+      // Access event type via ruleEvent (json-rules-engine internal structure)
+      if (rule.ruleEvent && rule.ruleEvent.type) {
+        eventType = rule.ruleEvent.type;
+      }
+      
+      // Fallback: try accessing via toJSON() if ruleEvent doesn't work
+      if (!eventType && typeof rule.toJSON === 'function') {
+        const ruleData = rule.toJSON();
+        if (ruleData.event && ruleData.event.type) {
+          eventType = ruleData.event.type;
+        }
+      }
+      
+      // Add to set if found
+      if (eventType) {
+        eventTypes.add(eventType);
+      }
+    });
+    
+    return eventTypes;
   }
 
   /**
@@ -151,70 +178,32 @@ class RulesEngine {
           itemCount,
           adjustmentValue
         });
-        
-        let rewardPoints = 0;
+
         const params = event; // In json-rules-engine, the event object IS the params
         
-        // Calculate rewards based on event type and parameters
-        switch (eventType) {
-          case 'INTERACTION_REGISTRY_POINT':
-            rewardPoints = CalculationHelpers.calculateRegistrationReward(market, params);
-            break;
-            
-          case 'ORDER_BASE_POINT':
-            rewardPoints = CalculationHelpers.calculateBaseReward(market, baseAmount, discountedAmount, params);
-            break;
-            
-          case 'ORDER_MULTIPLE_POINT_LIMIT':
-            rewardPoints = CalculationHelpers.calculateMultiplierReward(market, baseAmount, discountedAmount, params);
-            break;
-            
-          case 'FLEXIBLE_CAMPAIGN_BONUS':
-            rewardPoints = CalculationHelpers.calculateCampaignReward(market, baseAmount, discountedAmount, params);
-            break;
-            
-          case 'FLEXIBLE_VIP_MULTIPLIER':
-            rewardPoints = CalculationHelpers.calculateTierMultiplier(market, baseAmount, discountedAmount, params);
-            break;
-            
-          case 'FLEXIBLE_BASKET_AMOUNT':
-            rewardPoints = CalculationHelpers.calculateThresholdReward(market, discountedAmount, params);
-            break;
-            
-          case 'FLEXIBLE_PRODUCT_MULTIPLIER':
-            rewardPoints = CalculationHelpers.calculateProductReward(market, baseAmount, discountedAmount, params);
-            break;
-            
-          case 'FLEXIBLE_COMBO_PRODUCT_MULTIPLIER':
-            rewardPoints = CalculationHelpers.calculateComboReward(market, params);
-            break;
-            
-          case 'INTERACTION_ADJUST_POINT_TIMES_PER_YEAR':
-            rewardPoints = CalculationHelpers.calculateActivityReward(market, itemCount, params);
-            break;
-            
-          case 'CONSULTATION_BONUS':
-            rewardPoints = CalculationHelpers.calculateConsultationReward(market, params);
-            break;
-            
-          case 'FIRST_PURCHASE_BIRTH_MONTH_BONUS':
-            rewardPoints = CalculationHelpers.calculateTimedBonus(market, baseAmount, discountedAmount, params);
-            break;
-            
-          case 'INTERACTION_ADJUST_POINT_BY_MANAGER':
-            rewardPoints = adjustmentValue;
-            break;
-            
-          case 'REDEMPTION_DEDUCTION':
-            const redemptionPoints = enrichedEventData.attributes?.redemptionPoints || params.redemptionPoints || 0;
-            rewardPoints = CalculationHelpers.calculateRedemptionDeduction(market, redemptionPoints, params);
-            // Add redemptionPoints to params for proper formula display
-            params.redemptionPoints = redemptionPoints;
-            break;
-            
-          default:
-            logger.warn('Unknown event type', { eventType });
-            rewardPoints = 0;
+        // DYNAMIC CALCULATION: Use the calculation method specified in the rule parameters
+        let rewardPoints = 0;
+        
+        if (params.calculationMethod) {
+          // Use the specified calculation method from the rule
+          rewardPoints = await this.calculateRewardDynamically(params.calculationMethod, {
+            market,
+            baseAmount,
+            discountedAmount,
+            itemCount,
+            adjustmentValue,
+            params,
+            enrichedEventData
+          });
+        } else {
+          // Fallback to simple calculations for backward compatibility
+          rewardPoints = this.calculateSimpleReward(params, {
+            market,
+            baseAmount,
+            discountedAmount,
+            itemCount,
+            adjustmentValue
+          });
         }
         
         logger.debug('Calculated reward points', { eventType, rewardPoints });
@@ -227,6 +216,173 @@ class RulesEngine {
         this.addError(`Failed to process ${eventType}: ${error.message}`);
       }
     };
+  }
+
+  /**
+   * Dynamic calculation method that can handle any calculation type specified in rules
+   */
+  async calculateRewardDynamically(calculationMethod, context) {
+    const { market, baseAmount, discountedAmount, itemCount, adjustmentValue, params, enrichedEventData } = context;
+
+    switch (calculationMethod) {
+      case 'registration':
+        return CalculationHelpers.calculateRegistrationReward(market, params);
+      case 'base':
+        return CalculationHelpers.calculateBaseReward(market, baseAmount, discountedAmount, params);
+      case 'multiplier':
+        return CalculationHelpers.calculateMultiplierReward(market, baseAmount, discountedAmount, params);
+      case 'campaign':
+        return CalculationHelpers.calculateCampaignReward(market, baseAmount, discountedAmount, params);
+      case 'tier':
+        return CalculationHelpers.calculateTierMultiplier(market, baseAmount, discountedAmount, params);
+      case 'threshold':
+        return CalculationHelpers.calculateThresholdReward(market, discountedAmount, params);
+      case 'product':
+        return CalculationHelpers.calculateProductReward(market, baseAmount, discountedAmount, params);
+      case 'combo':
+        return CalculationHelpers.calculateComboReward(market, params);
+      case 'activity':
+        return CalculationHelpers.calculateActivityReward(market, itemCount, params);
+      case 'consultation':
+        return CalculationHelpers.calculateConsultationReward(market, params);
+      case 'timed_bonus':
+        return CalculationHelpers.calculateTimedBonus(market, baseAmount, discountedAmount, params);
+      case 'adjustment':
+        return adjustmentValue;
+      case 'redemption':
+        const redemptionPoints = enrichedEventData.attributes?.redemptionPoints || params.redemptionPoints || 0;
+        params.redemptionPoints = redemptionPoints; // Add for proper formula display
+        return CalculationHelpers.calculateRedemptionDeduction(market, redemptionPoints, params);
+      case 'fixed':
+        return params.fixedPoints || params.bonus || 0;
+      case 'percentage':
+        const amount = params.useDiscounted ? discountedAmount : baseAmount;
+        return Math.round((amount * (params.percentage || 0)) / 100);
+      case 'formula':
+        // Allow custom JavaScript formulas defined in rules (advanced feature)
+        return this.evaluateFormula(params.formula, context);
+      default:
+        logger.warn('Unknown calculation method', { calculationMethod });
+        return 0;
+    }
+  }
+
+  /**
+   * Simple reward calculation for backward compatibility
+   * Now handles all event types properly including recycling, consultation, redemption, and adjustment
+   */
+  calculateSimpleReward(params, context) {
+    const { baseAmount, discountedAmount, adjustmentValue, itemCount, enrichedEventData } = context;
+
+    // Handle specific event types based on their parameters
+    
+    // Recycling events - INTERACTION_ADJUST_POINT_TIMES_PER_YEAR
+    if (params.pointsPerBottle && itemCount > 0) {
+      const pointsPerBottle = params.pointsPerBottle || 50;
+      const maxPerYear = params.maxPerYear || 5;
+      
+      // Calculate points based on recycled count, respecting annual limit
+      const totalBottles = itemCount;
+      const earnedPoints = Math.min(totalBottles, maxPerYear) * pointsPerBottle;
+      
+      logger.debug('Recycling reward calculation', { 
+        totalBottles, 
+        pointsPerBottle, 
+        maxPerYear, 
+        earnedPoints 
+      });
+      
+      return earnedPoints;
+    }
+    
+    // Consultation events - CONSULTATION_BONUS
+    if (params.consultationBonus) {
+      return params.consultationBonus;
+    }
+    
+    // Redemption events - REDEMPTION_DEDUCTION (negative points)
+    if (params.description && params.description.includes('redeemed')) {
+      const redemptionPoints = enrichedEventData?.attributes?.redemptionPoints || 
+                              params.redemptionPoints || 
+                              enrichedEventData?.attributes?.amount || 0;
+      
+      logger.debug('Redemption deduction calculation', { redemptionPoints });
+      
+      // Return negative value for deduction
+      return -Math.abs(redemptionPoints);
+    }
+    
+    // Manual adjustment events - INTERACTION_ADJUST_POINT_BY_MANAGER
+    if (params.description && params.description.includes('adjustment')) {
+      const adjustmentPoints = enrichedEventData?.attributes?.adjustedPoints || 
+                              enrichedEventData?.attributes?.adjustmentPoints ||
+                              adjustmentValue || 0;
+      
+      logger.debug('Manual adjustment calculation', { adjustmentPoints });
+      
+      return adjustmentPoints;
+    }
+    
+    // Standard reward calculations (existing logic)
+    if (params.fixedPoints) {
+      return params.fixedPoints;
+    }
+    
+    if (params.bonus) {
+      return params.bonus;
+    }
+    
+    if (params.multiplier && baseAmount) {
+      return Math.round(baseAmount * params.multiplier);
+    }
+    
+    if (params.percentage && baseAmount) {
+      return Math.round((baseAmount * params.percentage) / 100);
+    }
+    
+    if (params.adjustmentPoints || adjustmentValue) {
+      return adjustmentValue;
+    }
+    
+    return 0;
+  }
+
+  /**
+   * Evaluate custom formulas safely (for advanced rules)
+   */
+  evaluateFormula(formula, context) {
+    try {
+      // Only allow safe mathematical operations and predefined variables
+      const safeContext = {
+        baseAmount: context.baseAmount || 0,
+        discountedAmount: context.discountedAmount || 0,
+        itemCount: context.itemCount || 0,
+        Math: Math,
+        round: Math.round,
+        floor: Math.floor,
+        ceil: Math.ceil,
+        min: Math.min,
+        max: Math.max
+      };
+      
+      // Simple formula evaluation (you could use a more sophisticated parser here)
+      // For now, replace variables and evaluate basic math
+      let evaluableFormula = formula;
+      Object.keys(safeContext).forEach(key => {
+        const regex = new RegExp(`\\b${key}\\b`, 'g');
+        evaluableFormula = evaluableFormula.replace(regex, safeContext[key]);
+      });
+      
+      // Only allow safe mathematical expressions
+      if (!/^[0-9+\-*/().\s]+$/.test(evaluableFormula)) {
+        throw new Error('Formula contains unsafe characters');
+      }
+      
+      return eval(evaluableFormula) || 0;
+    } catch (error) {
+      logger.error('Error evaluating formula', { formula, error: error.message });
+      return 0;
+    }
   }
 
   /**

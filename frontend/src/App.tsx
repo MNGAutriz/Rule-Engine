@@ -5,7 +5,7 @@ import EventProcessor from '@/pages/EventProcessor';
 import CampaignManager from '@/pages/CampaignManager';
 import ConsumerQuery from '@/pages/ConsumerQuery';
 import RuleManagement from '@/pages/RuleManagement';
-import { Crown, Play, BarChart3, Menu, Calendar, X, Users, Settings } from 'lucide-react';
+import { Crown, Play, BarChart3, Calendar, Users, Settings } from 'lucide-react';
 
 const App: React.FC = () => {
   const [currentPage, setCurrentPage] = useState<'dashboard' | 'events' | 'campaigns' | 'consumers' | 'rules'>('dashboard');

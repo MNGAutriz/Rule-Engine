@@ -63,18 +63,6 @@ interface PaginationInfo {
   hasPrev: boolean;
 }
 
-interface AvailableConsumer {
-  consumerId: string;
-  market: string;
-  tier: string;
-  totalPoints: number;
-}
-
-interface HistoryResponse {
-  transactions: HistoryItem[];
-  pagination: PaginationInfo;
-}
-
 const ConsumerQuery: React.FC = () => {
   const [consumerId, setConsumerId] = useState('');
   const [consumerData, setConsumerData] = useState<ConsumerPoints | null>(null);

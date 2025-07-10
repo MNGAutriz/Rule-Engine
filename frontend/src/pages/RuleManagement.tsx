@@ -23,7 +23,6 @@ import {
   Plus,
   Edit,
   Trash2,
-  Eye,
   Code,
   Tag,
   Zap,
@@ -155,9 +154,7 @@ const getMarketColor = (market: string) => {
   return colors[market] || colors['ALL'];
 };
 
-interface RuleManagerProps {}
-
-const RuleManager: React.FC<RuleManagerProps> = () => {
+const RuleManager: React.FC = () => {
   const [rules, setRules] = useState<Rule[]>([]);
   const [loading, setLoading] = useState(true);
   const [showCreateForm, setShowCreateForm] = useState(false);
@@ -268,8 +265,6 @@ const RuleManager: React.FC<RuleManagerProps> = () => {
   // Calculate stats with proper gradient colors and enhanced rule-specific data
   const transactionRules = rules.filter(rule => rule.category === 'transaction');
   const consumerRules = rules.filter(rule => rule.category === 'consumer');
-  const productRules = rules.filter(rule => rule.category === 'product');
-  const basketRules = rules.filter(rule => rule.category === 'basket');
   const highPriorityRules = rules.filter(rule => (rule.priority || 1) >= 8);
   
   const stats = [
@@ -563,7 +558,6 @@ const RuleManager: React.FC<RuleManagerProps> = () => {
               
               // Extract key rule details
               const conditions = rule.conditions?.all || [];
-              const eventParams = rule.event?.params || {};
               const marketCondition = conditions.find(c => c.fact === 'market');
               const markets = rule.markets || (marketCondition ? [marketCondition.value] : []);
               

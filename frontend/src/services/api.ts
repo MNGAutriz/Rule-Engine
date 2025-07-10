@@ -298,13 +298,13 @@ export const consumersApi = {
               transactionCount: points.transactionCount
             }
           });
-        } catch (error) {
+        } catch {
           // Consumer fetch failed, skip
         }
       }
       
       return consumers;
-    } catch (error) {
+    } catch {
       // Fallback to sample consumers if defaults API fails
       const sampleConsumerIds = ['user_hk_standard', 'user_hk_vip', 'user_jp_standard', 'user_tw_essence_lover', 'user_tw_vip'];
       const consumers = [];
@@ -325,7 +325,7 @@ export const consumersApi = {
               transactionCount: points.transactionCount
             }
           });
-        } catch (error) {
+        } catch {
           // Consumer fetch failed, skip
         }
       }

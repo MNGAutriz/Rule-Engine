@@ -43,7 +43,7 @@
       "firstPurchaseDate": "2024-01-20T10:00:00Z",
       "totalPurchases": 25,
       "totalSpent": 50000,
-      "lastPurchaseDate": "2025-07-10T05:30:20.875Z",
+      "lastPurchaseDate": "2025-07-10T06:44:42.197Z",
       "consultationsCompleted": 5,
       "lastConsultationDate": "2025-06-15T14:30:00Z",
       "recyclingActivity": {
@@ -64,10 +64,10 @@
       "skinType": "COMBINATION"
     },
     "balance": {
-      "total": 10103963,
-      "available": 10020527,
+      "total": 10135545,
+      "available": 10052109,
       "used": 83436,
-      "transactionCount": 348
+      "transactionCount": 365
     }
   },
   "user_hk_standard": {
@@ -202,7 +202,7 @@
       "firstPurchaseDate": "2024-03-15T14:00:00Z",
       "totalPurchases": 32,
       "totalSpent": 75000,
-      "lastPurchaseDate": "2025-07-10T05:21:05.056Z",
+      "lastPurchaseDate": "2025-07-10T06:45:14.751Z",
       "consultationsCompleted": 8,
       "lastConsultationDate": "2025-06-20T15:45:00Z",
       "recyclingActivity": {
@@ -223,10 +223,10 @@
       "skinType": "NORMAL"
     },
     "balance": {
-      "total": 139085,
-      "available": 126986,
+      "total": 686905,
+      "available": 674806,
       "used": 12099,
-      "transactionCount": 65
+      "transactionCount": 77
     }
   },
   "user_jp_standard": {
@@ -1205,6 +1205,144 @@
     },
     "engagement": {
       "lastPurchaseDate": "2025-07-10T05:30:39.326Z"
+    }
+  },
+  "steve_jobs": {
+    "consumerId": "steve_jobs",
+    "profile": {
+      "market": "HK"
+    },
+    "balance": {
+      "total": 800,
+      "available": 800,
+      "used": 0,
+      "transactionCount": 1
+    },
+    "engagement": {
+      "lastPurchaseDate": "2025-07-10T05:43:30.419Z"
+    }
+  },
+  "test-consumer-1": {
+    "consumerId": "test-consumer-1",
+    "profile": {
+      "market": "JP"
+    },
+    "balance": {
+      "total": 800,
+      "available": 800,
+      "used": 0,
+      "transactionCount": 8
+    },
+    "engagement": {
+      "lastPurchaseDate": "2025-07-10T06:11:59.923Z"
+    }
+  },
+  "jkkkk": {
+    "consumerId": "jkkkk",
+    "profile": {
+      "market": "JP"
+    },
+    "balance": {
+      "total": 80,
+      "available": 80,
+      "used": 0,
+      "transactionCount": 1
+    },
+    "engagement": {
+      "lastPurchaseDate": "2025-07-10T06:02:55.826Z"
+    }
+  },
+  "smurf_lang_boss": {
+    "consumerId": "smurf_lang_boss",
+    "profile": {
+      "market": "HK"
+    },
+    "balance": {
+      "total": 0,
+      "available": 0,
+      "used": 0,
+      "transactionCount": 2
+    },
+    "engagement": {
+      "lastPurchaseDate": "2025-07-10T06:13:03.518Z"
+    }
+  },
+  "smurf": {
+    "consumerId": "smurf",
+    "profile": {
+      "market": "HK"
+    },
+    "balance": {
+      "total": 57,
+      "available": 57,
+      "used": 0,
+      "transactionCount": 13
+    },
+    "engagement": {
+      "lastPurchaseDate": "2025-07-10T06:13:23.471Z"
+    }
+  },
+  "user_jczxp_vip": {
+    "consumerId": "user_jczxp_vip",
+    "profile": {
+      "market": "JP"
+    },
+    "balance": {
+      "total": 1150,
+      "available": 1150,
+      "used": 0,
+      "transactionCount": 18
+    }
+  },
+  "test-consumer-2": {
+    "consumerId": "test-consumer-2",
+    "profile": {
+      "market": "HK"
+    },
+    "balance": {
+      "total": 225,
+      "available": 225,
+      "used": 0,
+      "transactionCount": 3
+    }
+  },
+  "test-consumer-3": {
+    "consumerId": "test-consumer-3",
+    "profile": {
+      "market": "TW"
+    },
+    "balance": {
+      "total": 1600,
+      "available": 1500,
+      "used": 100,
+      "transactionCount": 4
+    },
+    "engagement": {
+      "lastPurchaseDate": "2025-07-10T06:26:05.979Z"
+    }
+  },
+  "test-consumer-4": {
+    "consumerId": "test-consumer-4",
+    "profile": {
+      "market": "HK"
+    },
+    "balance": {
+      "total": 100,
+      "available": 100,
+      "used": 0,
+      "transactionCount": 1
+    }
+  },
+  "fasfsa": {
+    "consumerId": "fasfsa",
+    "profile": {
+      "market": "JP"
+    },
+    "balance": {
+      "total": 562,
+      "available": 62,
+      "used": 500,
+      "transactionCount": 6
     }
   }
 }

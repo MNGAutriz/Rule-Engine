@@ -213,17 +213,17 @@ class ValidationHelpers {
       return; // Not an adjustment event, skip validation
     }
 
-    // Validate required fields for adjustment
-    if (!eventData.attributes?.adjustmentPoints) {
-      throw new Error('adjustmentPoints is required for ADJUSTMENT events');
+    // Validate required fields for adjustment (support both adjustmentPoints and adjustedPoints)
+    const adjustmentPoints = eventData.attributes?.adjustmentPoints || eventData.attributes?.adjustedPoints;
+    if (!adjustmentPoints && adjustmentPoints !== 0) {
+      throw new Error('adjustmentPoints or adjustedPoints is required for ADJUSTMENT events');
     }
 
-    if (!eventData.attributes?.reason) {
-      throw new Error('reason is required for ADJUSTMENT events');
+    // Allow either reason or note for explanation
+    const reason = eventData.attributes?.reason || eventData.attributes?.note;
+    if (!reason) {
+      throw new Error('reason or note is required for ADJUSTMENT events');
     }
-
-    const adjustmentPoints = eventData.attributes.adjustmentPoints;
-    const reason = eventData.attributes.reason;
 
     // Validate adjustmentPoints is a number (can be negative)
     if (typeof adjustmentPoints !== 'number') {

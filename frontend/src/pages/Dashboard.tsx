@@ -1,13 +1,11 @@
 import React, { useState, useEffect } from 'react';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
-import { Button } from '@/components/ui/button';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { LoadingSpinner } from '@/components/common';
 import { RuleCard, StatsGrid } from '@/components/display';
-import { rulesApi, rulesManagementApi, eventsApi, consumersApi, defaultsApi } from '@/services/api';
-import type { Rule, EventData } from '@/services/api';
+import { rulesApi, rulesManagementApi, consumersApi, defaultsApi } from '@/services/api';
+import type { Rule } from '@/services/api';
 import { 
-  RefreshCw, 
   Users, 
   Crown, 
   TrendingUp, 
@@ -86,15 +84,15 @@ const Dashboard: React.FC = () => {
             // Add more stats if needed
           }));
         }
-      } catch (error) {
-        console.warn('Could not load rule statistics:', error);
+      } catch {
+        console.warn('Could not load rule statistics');
       }
 
       // Load defaults to get active markets
       try {
         const defaults = await defaultsApi.getDefaults();
         setStats(prev => ({ ...prev, activeMarkets: defaults.markets || ['HK', 'JP', 'TW'] }));
-      } catch (error) {
+      } catch {
         setStats(prev => ({ ...prev, activeMarkets: ['HK', 'JP', 'TW'] }));
       }
 
@@ -127,7 +125,7 @@ const Dashboard: React.FC = () => {
           todayEventsProcessed: finalDailyEvents,
           todayPointsAwarded: finalDailyPoints
         }));
-      } catch (error) {
+      } catch {
         // Set fallback values
         setStats(prev => ({ 
           ...prev, 
@@ -138,36 +136,10 @@ const Dashboard: React.FC = () => {
         }));
       }
 
-    } catch (error) {
+    } catch {
       // Error handled silently with fallback values
     } finally {
       setLoading(false);
-    }
-  };
-
-  const handleTestEvent = async () => {
-    const selectedMarket = stats.activeMarkets.length > 0 ? stats.activeMarkets[0] : 'HK';
-    const testEvent: EventData = {
-      eventId: `TEST_${Date.now()}`,
-      eventType: 'PURCHASE',
-      timestamp: new Date().toISOString(),
-      market: selectedMarket,
-      channel: 'STORE',
-      consumerId: `user_${selectedMarket.toLowerCase()}_standard`,
-      context: { storeId: `${selectedMarket}_STORE_001` },
-      attributes: {
-        amount: selectedMarket === 'HK' ? 1500 : selectedMarket === 'JP' ? 150000 : 45000,
-        currency: selectedMarket === 'HK' ? 'HKD' : selectedMarket === 'JP' ? 'JPY' : 'TWD',
-        skuList: [`SK_${selectedMarket}_001`]
-      }
-    };
-
-    try {
-      const result = await eventsApi.processEvent(testEvent);
-      alert(`Test successful! Awarded ${result.totalPointsAwarded} points to ${result.consumerId}`);
-      loadDashboardData();
-    } catch (error) {
-      alert('Test event failed. Check console for details.');
     }
   };
 
